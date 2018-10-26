@@ -9,7 +9,8 @@ config = {
     'password': 'Tw1l1ghtOfTh3Thund3rG0d',
     'host': 'luhack-discord-verification-bot-database.cff2dtcegzwl.eu-west-2.rds.amazonaws.com',
     'database': 'LUHack_Discord_Verification_Bot_DB',
-    'raise_on_warnings': True
+    'raise_on_warnings': True,
+    'port': 42069
 }
 
 
