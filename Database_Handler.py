@@ -9,7 +9,8 @@ config = {
     'password': '***REMOVED***',
     'host': '***REMOVED***',
     'database': 'LUHack_Discord_Verification_Bot_DB',
-    'raise_on_warnings': True
+    'raise_on_warnings': True,
+    'port': 42069
 }
 
 
