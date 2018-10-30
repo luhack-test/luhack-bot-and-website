@@ -8,13 +8,14 @@ import Misc_Functionality
 import Database_Handler
 import Email_Handler
 import Token_Handler
+from secrets import bot_client_token
 
 ***REMOVED***
 ***REMOVED***
 ***REMOVED***
 
 # Secret client token :^)
-TOKEN = '***REMOVED***'
+TOKEN = bot_client_token
 
 # Initialise discord client
 client = Bot(command_prefix='L!', pm_help=True)

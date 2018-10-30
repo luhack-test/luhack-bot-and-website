@@ -4,15 +4,16 @@
 import smtplib
 import Database_Handler
 from AES_Cipher import AESCipher
+from secrets import aes_encryption_key, email_username, email_password
 
 # Aes cipher key
-aes_key = '***REMOVED***'
+aes_key = aes_encryption_key
 
 
 # Stole most of the code and then modified it so not really commented
 def send_email(email, token):
-    gmail_user = '***REMOVED***'
-    gmail_password = '***REMOVED***'
+    gmail_user = email_username
+    gmail_password = email_password
 
     sent_from = gmail_user
     to = email
