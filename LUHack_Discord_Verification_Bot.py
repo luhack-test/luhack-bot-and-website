@@ -8,13 +8,14 @@ import Misc_Functionality
 import Database_Handler
 import Email_Handler
 import Token_Handler
+from secrets import bot_client_token
 
 # TODO Add anti-yoghurt functionality
 # TODO Come up with better ways to use keys instead of hard coding
 # TODO Add easter eggs
 
 # Secret client token :^)
-TOKEN = 'NTAyOTQwODg5MTYxNjYyNDY1.DqvQyw.ZdewAkNVqze8_RrhLnriKqWpsLM'
+TOKEN = bot_client_token
 
 # Initialise discord client
 client = Bot(command_prefix='L!', pm_help=True)

@@ -2,15 +2,16 @@
 # Database_Handler handles all database functionality required for the bot
 
 import mysql.connector
+from secrets import database_username, database_password, database_host, database, database_port
 
 # Config for mysql
 config = {
-    'user': 'LUHack',
-    'password': 'Tw1l1ghtOfTh3Thund3rG0d',
-    'host': 'luhack-discord-verification-bot-database.cff2dtcegzwl.eu-west-2.rds.amazonaws.com',
-    'database': 'LUHack_Discord_Verification_Bot_DB',
+    'user': database_username,
+    'password': database_password,
+    'host': database_host,
+    'database': database,
     'raise_on_warnings': True,
-    'port': 42069
+    'port': database_port
 }
 
 

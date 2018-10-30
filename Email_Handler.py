@@ -4,15 +4,16 @@
 import smtplib
 import Database_Handler
 from AES_Cipher import AESCipher
+from secrets import aes_encryption_key, email_username, email_password
 
 # Aes cipher key
-aes_key = 'Y0ggyB01G3t0utR3e3E3Eee3E'
+aes_key = aes_encryption_key
 
 
 # Stole most of the code and then modified it so not really commented
 def send_email(email, token):
-    gmail_user = 'luhack.discord.verifier@gmail.com'
-    gmail_password = 'F4therOfTh3W0lf'
+    gmail_user = email_username
+    gmail_password = email_password
 
     sent_from = gmail_user
     to = email
