@@ -4,9 +4,9 @@
 from subprocess import Popen
 import sys
 
-filename = sys.argv[1]
+args = sys.argv[1:]
 
 while True:
-    print("Starting " + filename)
-    p = Popen("python " + filename, shell=True)
+    print("Starting python " + " ".join(args))
+    p = Popen(["python", *args])
     p.wait()

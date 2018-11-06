@@ -2,16 +2,23 @@
 # Database_Handler handles all database functionality required for the bot
 
 import mysql.connector
-from secrets import database_username, database_password, database_host, database, database_port
+
+from luhack_bot.secrets import (
+    database_username,
+    database_password,
+    database_host,
+    database,
+    database_port,
+)
 
 # Config for mysql
 config = {
-    'user': database_username,
-    'password': database_password,
-    'host': database_host,
-    'database': database,
-    'raise_on_warnings': True,
-    'port': database_port
+    "user": database_username,
+    "password": database_password,
+    "host": database_host,
+    "database": database,
+    "raise_on_warnings": True,
+    "port": database_port,
 }
 
 
@@ -22,7 +29,7 @@ def start_database_connection():
 
 
 # Function that executes select queries and then returns the returned data
-def send_select_query(query):
+def send_select_query(query, params=None):
     # Set up connection
     connection = start_database_connection()
 
@@ -30,7 +37,7 @@ def send_select_query(query):
     db_cursor = connection.cursor()
 
     # Execute query
-    db_cursor.execute(query)
+    db_cursor.execute(query, params)
 
     # Get results
     results = db_cursor.fetchall()
@@ -44,7 +51,7 @@ def send_select_query(query):
 
 
 # Function that executes delete queries and then returns
-def send_delete_query(query):
+def send_delete_query(query, params=None):
     # Set up connection
     connection = start_database_connection()
 
@@ -52,7 +59,7 @@ def send_delete_query(query):
     db_cursor = connection.cursor()
 
     # Execute query
-    db_cursor.execute(query)
+    db_cursor.execute(query, params)
 
     # Commit
     connection.commit()
@@ -74,10 +81,11 @@ def insert_into_emails(encrypted_email):
     db_cursor = connection.cursor()
 
     # Set up sql statement
-    sql = 'INSERT INTO Emails (Email) VALUES (\"%s\")' % encrypted_email
+    sql = "INSERT INTO Emails (Email) VALUES (%s)"
+    params = (encrypted_email,)
 
     # Execute statement
-    db_cursor.execute(sql)
+    db_cursor.execute(sql, params)
 
     # Commit
     connection.commit()
@@ -94,7 +102,7 @@ def insert_into_emails(encrypted_email):
 
 
 # Function used for inserting into Requests table. Receives an array of values
-def insert_into_requests(values):
+def insert_into_requests(message_id, username, user_id, email_id):
     # Set up the connection
     connection = start_database_connection()
 
@@ -102,10 +110,11 @@ def insert_into_requests(values):
     db_cursor = connection.cursor()
 
     # Set up sql statement
-    sql = 'INSERT INTO Requests (MessageID, Username, UserID, EmailID) VALUES (\"%s\", \"%s\", \"%s\", %d)' % values
+    sql = "INSERT INTO Requests (MessageID, Username, UserID, EmailID) VALUES (%s, %s, %s, %s)"
+    params = (message_id, username, user_id, email_id)
 
     # Execute statement
-    db_cursor.execute(sql)
+    db_cursor.execute(sql, params)
 
     # Commit
     connection.commit()
@@ -122,7 +131,7 @@ def insert_into_requests(values):
 
 
 # Function used for inserting into Tokens table. Receives an array of values
-def insert_into_tokens(values):
+def insert_into_tokens(auth_token, request_insert_id):
     # Set up the connection
     connection = start_database_connection()
 
@@ -130,10 +139,11 @@ def insert_into_tokens(values):
     db_cursor = connection.cursor()
 
     # Set up sql statement
-    sql = 'INSERT INTO Tokens (Token, RequestID) VALUES (\"%s\", %d)' % values
+    sql = "INSERT INTO Tokens (Token, RequestID) VALUES (%s, %s)"
+    params = (auth_token, request_insert_id)
 
     # Execute statement
-    db_cursor.execute(sql)
+    db_cursor.execute(sql, params)
 
     # Commit
     connection.commit()
@@ -147,7 +157,7 @@ def insert_into_tokens(values):
 
 
 # Function used for inserting into Verified Users table. Recieves an array of values
-def insert_into_verified_users(values):
+def insert_into_verified_users(user_id, username, email_id):
     # Set up the connection
     connection = start_database_connection()
 
@@ -155,10 +165,11 @@ def insert_into_verified_users(values):
     db_cursor = connection.cursor()
 
     # Set up sql statement
-    sql = 'INSERT INTO VerifiedUsers (UserID, Username, EmailID) VALUES (\"%s\", \"%s\", %d)' % values
+    sql = "INSERT INTO VerifiedUsers (UserID, Username, EmailID) VALUES (%s, %s, %s)"
+    params = (user_id, username, email_id)
 
     # Execute statement
-    db_cursor.execute(sql)
+    db_cursor.execute(sql, params)
 
     # Commit
     connection.commit()
@@ -174,18 +185,10 @@ def insert_into_verified_users(values):
 # Function that takes a user id and checks if that user is already verified
 def check_is_verified(user_id):
     # Query the verified users tables for the given user_id
-    sql = 'SELECT * FROM VerifiedUsers WHERE UserID = \"%s\"' % user_id
+    sql = 'SELECT * FROM VerifiedUsers WHERE UserID = %s'
+    params = (user_id,)
 
     # Send query
-    result = send_select_query(sql)
+    result = send_select_query(sql, params)
 
-    # Count how many results were returned
-    count = 0
-    for x in result:
-        count += 1
-
-    # If 0 results were returned then user is not already verified\s
-    if count == 0:
-        return False
-    else:
-        return True
+    return len(result) > 0
