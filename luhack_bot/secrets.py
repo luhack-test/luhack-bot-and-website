@@ -17,3 +17,6 @@ bot_client_token = '***REMOVED***'
 
 # Aes key for email encryption
 aes_encryption_key = '***REMOVED***'
+
+# secret for signing tokens
+signing_secret = "dwvB5hptp/3KicECuAXbuK5Rmfmo+EQtHfIvqjgBwkm0/f1jM3sX/vMUYOIM4RBy"
