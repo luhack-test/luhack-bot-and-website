@@ -15,9 +15,11 @@ sqlalchemy_utils = "^0.33.11"
 aiosmtplib = "^1.0"
 aiomysql = "^0.0.20"
 asyncpg = "^0.18.3"
+alembic = "^1.0"
 
 [tool.poetry.dev-dependencies]
 python-language-server = "^0.25.0"
+psycopg2-binary = "^2.7"
 
 [tool.poetry.scripts]
 start_bot = 'luhack_bot:run'

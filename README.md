@@ -13,3 +13,26 @@ https://github.com/sdispater/poetry
 # running the bot
 
 `poetry run start_bot`
+
+# performing database migrations
+
+## After making changes to the db schema, you should run
+
+``` shell
+poetry run alembic revision --autogenerate -m "<description of schema change>"
+```
+
+## When the db schema has been changed, you should run
+
+``` shell
+poetry run alembic upgrade head
+```
+
+## To check if the current db schema revision is the latest
+
+``` shell
+poetry run alembic current
+```
+
+- It should show a revision hash with `(head)` next to it if the db schema is up
+  to data.
