@@ -4,6 +4,8 @@ import logging
 from textwrap import dedent
 from cryptography.fernet import Fernet
 
+from luhack_bot import db
+
 
 def run():
     """Run the bot."""
