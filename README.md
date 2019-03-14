@@ -1,4 +1,8 @@
-# LUHack_Discord_Testy_Boi
+# LUHack_Discord_Verification_Bot
+
+# secrets setup
+
+- Create a copy of `.env.example` as `.env` and fill in the secrets
 
 # poetry setup
 
