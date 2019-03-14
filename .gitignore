@@ -105,4 +105,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-/luhack_bot/secrets.py
+.env

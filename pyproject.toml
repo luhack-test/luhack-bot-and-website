@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "luhack_bot"
+version = "0.1.0"
+description = "LUHack's discord bot"
+authors = [""]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+itsdangerous = "^1.1"
+"discord.py" = { branch = "rewrite", git = "https://github.com/rapptz/discord.py" }
+cryptography = "^2.6"
+gino = "^0.8.2"
+python-dotenv = "^0.10.1"
+sqlalchemy_utils = "^0.33.11"
+aiosmtplib = "^1.0"
+aiomysql = "^0.0.20"
+asyncpg = "^0.18.3"
+
+[tool.poetry.dev-dependencies]
+python-language-server = "^0.25.0"
+
+[tool.poetry.scripts]
+start_bot = 'luhack_bot:run'
+gen_tokens = 'luhack_bot:gen_tokens'
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+

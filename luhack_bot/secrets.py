@@ -1,22 +1,23 @@
-# Database credentials
-# Put your username here (email that is associated with the github)
-# Packages - mysql-connector, discord, pycryptodome
-# The email will be reset the first time you try to connect, so use mysql workbench or something to connect and look at the database. THe password to login for the first time is password
-database_username = ''
-database = 'LUHack_Discord_Verification_Bot_Test_DB'
-database_port = 42069
-database_host = '***REMOVED***'
-database_password = ''
+import os
 
-# Email credentials
-email_username = '***REMOVED***'
-email_password = '***REMOVED***'
+from dotenv import load_dotenv
 
-# Secret bot client token
-bot_client_token = '***REMOVED***'
+load_dotenv()
 
-# Aes key for email encryption
-aes_encryption_key = '***REMOVED***'
 
-# secret for signing tokens
-signing_secret = "dwvB5hptp/3KicECuAXbuK5Rmfmo+EQtHfIvqjgBwkm0/f1jM3sX/vMUYOIM4RBy"
+def env_fail(var: str):
+    """Warn about an empty env var."""
+    print(f"Warning, missing env var: {var}")
+    exit(1)
+
+
+db_url = os.getenv("DB_URL")
+
+email_username = os.getenv("EMAIL_USER")
+email_password = os.getenv("EMAIL_PASS")
+
+bot_client_token = os.getenv("BOT_TOKEN")
+
+email_encryption_key = os.getenv("EMAIL_KEY") or env_fail("EMAIL_KEY")
+
+signing_secret = os.getenv("TOKEN_SECRET") or env_fail("TOKEN_SECRET")
