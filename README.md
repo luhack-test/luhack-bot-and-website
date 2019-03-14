@@ -1,11 +1,11 @@
 # LUHack_Discord_Testy_Boi
 
-# pipenv setup
+# poetry setup
 
-`pip install pipenv --user`
+https://github.com/sdispater/poetry
 
-# running
+`poetry install`
 
-``` batchfile
-pipenv run python Run_Forever.py -m luhack_bot.bot
-```
+# running the bot
+
+`poetry run start_bot`
