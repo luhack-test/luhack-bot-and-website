@@ -24,9 +24,7 @@ class Verification(commands.Cog):
         """Try and fetch a member in the luhack guild."""
         return self.luhack_guild.get_member(user_id)
 
-    @staticmethod
-    def bot_check_once(ctx: commands.Context) -> bool:
-        return is_in_luhack(ctx)
+    bot_check_once = staticmethod(is_in_luhack)
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -41,14 +39,14 @@ class Verification(commands.Cog):
 
     @commands.command(
         name="gen_token",
-        description="Generates an authentication token, then emails it to the provided email if you aren't already verified",
-        brief="First step on the path to Grand Master Cyber Wizard",
         aliases=["gib_token", "i_wanna_be_wizard_too", "generate_token"],
     )
     async def generate_token(self, ctx, email: email_tools.lancs_email):
         """Generates an authentication token, then emails it to the provided email if
         you aren't already verified. You must provide a valid lancaster email address or
-        you will not get an authentication token
+        you will not get an authentication token.
+
+        First step on the path to Grand Master Cyber Wizard
         """
         if (await User.get(ctx.author.id)) is not None:
             raise commands.CheckFailure("It seems you've already registered.")
@@ -63,14 +61,13 @@ class Verification(commands.Cog):
 
     @commands.command(
         name="verify_token",
-        description="Takes an authentication token, checks if it is valid and if so elevates you to Verified LUHacker",
-        brief="Second step on the path to Grand Master Cyber Wizard",
         aliases=["auth_plz", "i_really_wanna_be_wizard"],
     )
     async def verify_token(self, ctx, auth_token: str):
         """Takes an authentication token, checks if it is valid and if so elevates you to Verified LUHacker.
-
         Note that tokens expire after 30 minutes.
+
+        Second step on the path to Grand Master Cyber Wizardl.
         """
         if (await User.get(ctx.author.id)) is not None:
             raise commands.CheckFailure("It seems you've already registered.")
