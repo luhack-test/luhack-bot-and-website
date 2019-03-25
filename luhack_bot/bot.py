@@ -9,7 +9,7 @@ from discord.ext import commands
 
 from luhack_bot.db.helpers import init_db
 from luhack_bot.secrets import bot_client_token
-from luhack_bot.cogs import verification
+from luhack_bot.cogs import verification, writeups
 
 
 logger = logging.getLogger(__name__)
@@ -40,34 +40,31 @@ class LUHackBot(commands.Bot):
     def load_cogs(self):
         """Register our cogs."""
         self.add_cog(verification.Verification(self))
+        self.add_cog(writeups.Writeups(self))
 
     async def on_command_error(self, ctx, error):
         # when a command was called invalidly, give info
         if ctx.command is not None:
-            prepared_help = "{0.prefix}{1.signature}".format(ctx, ctx.command)
+            await self.help_command.prepare_help_command(ctx, ctx.command)
+            prepared_help = self.help_command.get_command_signature(ctx.command)
 
         if isinstance(error, commands.NoPrivateMessage):
             await ctx.send(
-                "This command cannot be used in private messages", delete_after=5
+                "This command cannot be used in private messages"
             )
             return
 
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(
-                f"Command missing required argument: {error}\nUsage: `{prepared_help}`",
-                delete_after=10,
+                f"Command missing required argument: {error}\nUsage: `{prepared_help}`"
             )
             return
 
         elif isinstance(error, commands.BadArgument):
-            await ctx.send(f"{error}\nUsage: `{prepared_help}`", delete_after=10)
+            await ctx.send(f"{error}\nUsage: `{prepared_help}`")
             return
 
-        elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(error, delete_after=5)
-            return
-
-        elif isinstance(error, commands.CheckFailure):
+        elif isinstance(error, (commands.CommandOnCooldown, commands.CheckFailure)):
             await ctx.send(error)
             return
 
