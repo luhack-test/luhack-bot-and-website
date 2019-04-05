@@ -17,6 +17,8 @@ aiomysql = "^0.0.20"
 asyncpg = "^0.18.3"
 alembic = "^1.0"
 SQLAlchemy-Searchable = { branch = "master", git = "https://github.com/nitros12/sqlalchemy-searchable" }
+quart = "^0.8.1"
+Flask-Pure = "^0.5.0"
 
 [tool.poetry.dev-dependencies]
 python-language-server = "^0.25.0"
