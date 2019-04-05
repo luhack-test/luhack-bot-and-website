@@ -97,7 +97,7 @@ class Writeups(commands.Cog):
         tags = ", ".join(writeup.tags)
 
         await ctx.send(
-            f"```\nid: {writeup.id}\nauthor: {author}\ntitle: {writeup.title}\ntags: {tags}\n```"
+            f"```\nid: {writeup.id}\nauthor: {author}\ntitle: {writeup.title}\ntags: {tags}\ncreation date: {writeup.creation_date}\nlast edited: {writeup.edit_date}\n```"
         )
 
     @writeups.command()
