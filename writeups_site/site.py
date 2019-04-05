@@ -37,7 +37,7 @@ async def get_db():
 @app.route("/<title>")
 async def view(title: str):
     db = await get_db()
-    writeup = await Writeup.query.where(Writeup.title == title).gino.first()
+    writeup = await Writeup.load(author=User).where(Writeup.title == title).gino.first()
 
     if writeup is None:
         abort(404, "Writeup not found")
