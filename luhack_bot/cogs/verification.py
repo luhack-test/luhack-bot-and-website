@@ -79,12 +79,20 @@ class Verification(commands.Cog):
                 "That token is invalid or is older than 30 minutes and expired."
             )
 
-        member = self.get_member_in_luhack(ctx.author.id)
+        user_id, user_email = user
+
+        if user_id != ctx.author.id:
+            raise commands.CheckFailure(
+                "Seems you're not the same person that generated the token, go away."
+            )
+
+        member: discord.Member = self.get_member_in_luhack(ctx.author.id)
 
         assert member is not None
 
         logger.info("Verifying member: %s", ctx.author)
 
+        user = User(discord_id=user_id, username=member.name, email=user_email)
         await user.create()
 
         await member.remove_roles(self.potential_role)
