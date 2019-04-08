@@ -1,0 +1,17 @@
+{% extends "base.j2" %}
+
+{% block title %}{{ writeup.title }}{% endblock title %}
+
+{% block header_content %}
+    <div class="article-meta">
+        <h1>{{ writeup.title }}</h1>
+        <h4 class="author">By: {{ writeup.author.username }}</h2>
+        <h4 class="date">{{ writeup.creation_date }}</h2>
+        <h4 class="tags">{{ writeup.tags }}</h2>
+    </div>
+{% endblock %}
+{% block content %}
+    <main>
+        {{ rendered | safe }}
+    </main>
+{% endblock %}
