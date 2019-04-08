@@ -72,7 +72,7 @@ class Verification(commands.Cog):
         if (await User.get(ctx.author.id)) is not None:
             raise commands.CheckFailure("It seems you've already registered.")
 
-        user = token_tools.decode_token(auth_token)
+        user = token_tools.decode_auth_token(auth_token)
 
         if user is None:
             raise commands.CheckFailure(

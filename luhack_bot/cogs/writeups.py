@@ -7,6 +7,7 @@ import sqlalchemy
 from sqlalchemy_searchable import search as pg_search
 from discord.ext import commands
 
+from luhack_bot.token_tools import generate_writeup_edit_token
 from luhack_bot.db.models import User, Writeup, db
 from luhack_bot.utils.checks import is_authed
 from luhack_bot import constants
@@ -117,3 +118,12 @@ class Writeups(commands.Cog):
 
         await writeup.delete()
         await ctx.send(f"RIP {writeup.title}")
+
+    @writeups.command()
+    async def token(self, ctx):
+        """Generate a token allowing you to create writeups & manage those you have authority to."""
+
+        is_admin = self.luhack_guild.get_member(ctx.author.id).guild_permissions.administrator
+        token = generate_writeup_edit_token(ctx.author.id, is_admin)
+
+        await ctx.author.send(f"Your token is: `{token}`, it is valid for 24 hours.")
