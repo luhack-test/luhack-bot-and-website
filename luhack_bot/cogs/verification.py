@@ -24,7 +24,8 @@ class Verification(commands.Cog):
         """Try and fetch a member in the luhack guild."""
         return self.luhack_guild.get_member(user_id)
 
-    bot_check_once = staticmethod(is_in_luhack)
+    async def bot_check_once(self, ctx):
+        return await is_in_luhack(ctx)
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
