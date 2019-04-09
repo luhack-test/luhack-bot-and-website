@@ -16,7 +16,7 @@ https://github.com/sdispater/poetry
 
 # running the writeups server
 
-`poetry run start_writeups`
+`poetry run hypercorn writeups_site.site:app`
 
 # performing database migrations
 
