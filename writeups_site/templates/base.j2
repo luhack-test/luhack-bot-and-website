@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {%- block head %}
+            {%- block meta %}
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device=width, initial-scale=1.0">
+                <meta property="og:title" content="{% block og_title %}LUHack Writeups{% endblock %}">
+                <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+                <meta property="og:image" content="{{ url_for("static", path="/assets/logo.png") }}">
+                <meta property="og:url" content="{{ request.get_full_path }}">
+                <meta property="og:site_name" content="LUHack Writeups">
+                <meta property="og:description" content="{% block og_description %}CTF writeups made by LUHack members.{% endblock %}">
+            {%- endblock meta %}
+            <title>{% block title %}LUHack writeups{% endblock title %}</title>
+            {%- block style %}
+                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/solid.css" integrity="sha384-QokYePQSOwpBDuhlHOsX0ymF6R/vLk/UQVz3WHa6wygxI5oGTmDTv8wahFOSspdm" crossorigin="anonymous">
+                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/fontawesome.css" integrity="sha384-vd1e11sR28tEK9YANUtpIOdjGW14pS87bUBuOIoBILVWLFnS+MCX9T6MMf0VdPGq" crossorigin="anonymous">
+                <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" crossorigin="anonymous">
+                <!--[if lte IE 8]>
+                    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-old-ie-min.css" crossorigin="anonymous">
+                <![endif]-->
+                <!--[if gt IE 8]><!-->
+                <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css" crossorigin="anonymous">
+                <!--<![endif]-->
+                <link rel="stylesheet" href="{{ url_for('static', path="/css/main.css") }}">
+                <link rel="stylesheet" href="{{ url_for('static', path="/css/highlight.css") }}">
+            {%- endblock style %}
+        {%- endblock head %}
+    </head>
+    <body>
+        <div id="layout" class="pure-g">
+            {%- block body %}
+                <div class="sidebar pure-u-1 pure-u-md-1-5">
+                    <div class="header">
+                        <h1 class="brand-title">
+                            <a href="{{ url_for("index") }}">
+                                LUHack Writeups
+                            </a>
+                        </h1>
+
+                        <nav class="nav">
+                            {% block nav %}
+                                <ul class="nav-list">
+                                    <li class="nav-item">
+                                        <a class="pure-button" href="{{ url_for("index") }}">Home</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="pure-button" href="{{ url_for("tags") }}">Tags</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="pure-button" href="{{ url_for("NewWriteup") }}">New</a>
+                                    </li>
+                                </ul>
+                            {% endblock nav %}
+                        </nav>
+
+                        <br />
+
+                        <form class="pure-form" method="GET" action="/search">
+                            <div class="pure-g">
+                                <input name="search" class="pure-input-3-4" type="text" placeholder="Search writeups">
+                                <button type="submit" class="pure-button"><i class="fas fa-search"></i></button>
+                            </div>
+                        </form>
+
+                        <div class="header-content">
+                            {%- block header_content %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+                <div class="content pure-u-1 pure-u-md-4-5">
+                    <main>
+                        {%- block content %}{% endblock content %}
+                    </main>
+                    <div class="footer">
+                        <div class="pure-menu pure-menu-horizontal">
+                            <ul>
+                                <li class="pure-menu-item"><a href="https://luhack.github.io/">LUHack website</a></li>
+                                {% if request.user.is_authenticated %}
+                                    <li class="pure-menu-item"><a href="{{ url_for("sign_out") }}" title="Log Out">Authed as: {{ request.user.username }}</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {%- block script %}{% endblock script %}
+            {%- endblock body %}
+        </div>
+    </body>
+</html>
