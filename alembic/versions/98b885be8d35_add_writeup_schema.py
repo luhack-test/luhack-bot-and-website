@@ -48,7 +48,7 @@ def upgrade():
         postgresql_using="gin",
     )
 
-    op.execute(sql_expressions.statement)
+    conn.execute(sql_expressions.statement)
 
     sync_trigger(conn, "writeups", "search_vector", ["title", "content"])
     # ### end Alembic commands ###
