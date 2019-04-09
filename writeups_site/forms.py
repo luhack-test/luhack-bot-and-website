@@ -1,3 +1,5 @@
+import re
+
 from wtforms import Form, StringField, TextAreaField, Field, validators
 from wtforms.widgets import TextInput
 
@@ -10,7 +12,7 @@ class TagListField(Field):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.data = list(filter(None, set(i.strip() for i in valuelist[0].lower().split(",\n\t "))))
+            self.data = re.split(r'[^\w-]+', valuelist[0])
         else:
             self.data = []
 
