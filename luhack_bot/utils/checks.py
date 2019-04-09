@@ -19,3 +19,5 @@ async def is_authed(ctx: commands.Context) -> bool:
 
     if user is None:
         raise commands.CheckFailure("It looks like you're not registed with luhack, go and register yourself.")
+
+    return True
