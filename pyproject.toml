@@ -24,6 +24,8 @@ hypercorn = "^0.5.3"
 mistune = "^0.8.4"
 pygments = "^2.3"
 aiofiles = "^0.4.0"
+slug = "^2.0"
+WTForms = "^2.2"
 
 [tool.poetry.dev-dependencies]
 python-language-server = "^0.25.0"

@@ -1,0 +1,15 @@
+{% from "tag_link.j2" import tag_link with context %}
+
+{% macro writeup_preview(writeup, content, url) -%}
+    <section class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="{{ url }}">{{ writeup.title }}</a></h2>
+            <p class="post-meta">By {{ writeup.author.username }} under {% for tag in writeup.tags -%}{{ tag_link(tag) }}{%- endfor %}</p>
+        </header>
+        <div class="post-description">
+            <p>
+                {{ content }}
+            </p>
+        </div>
+    </section>
+{%- endmacro %}

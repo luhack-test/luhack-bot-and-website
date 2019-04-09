@@ -78,7 +78,10 @@ class Writeups(commands.Cog):
     ):
         """Create a new writeup."""
         await Writeup.create(
-            author_id=ctx.author.id, title=title, tags=tags.split(), content=content
+            author_id=ctx.author.id,
+            title=title,
+            tags=tags.split(),
+            content=content,
         )
 
         await ctx.send("Created your writeup.")
@@ -113,7 +116,7 @@ class Writeups(commands.Cog):
             return
 
         if not self.can_edit_writeup(writeup, ctx.author.id):
-            await ctx.send("You don't have permission to edit that writeup")
+            await ctx.send("You don't have permission to delete that writeup")
             return
 
         await writeup.delete()
@@ -123,7 +126,9 @@ class Writeups(commands.Cog):
     async def token(self, ctx):
         """Generate a token allowing you to create writeups & manage those you have authority to."""
 
-        is_admin = self.luhack_guild.get_member(ctx.author.id).guild_permissions.administrator
+        is_admin = self.luhack_guild.get_member(
+            ctx.author.id
+        ).guild_permissions.administrator
         token = generate_writeup_edit_token(ctx.author.id, is_admin)
 
         await ctx.author.send(f"Your token is: `{token}`, it is valid for 24 hours.")

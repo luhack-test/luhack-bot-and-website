@@ -1,17 +1,21 @@
 {% extends "base.j2" %}
 
+{% from "tag_link.j2" import tag_link with context %}
+
 {% block title %}{{ writeup.title }}{% endblock title %}
 
 {% block header_content %}
     <div class="article-meta">
-        <h1>{{ writeup.title }}</h1>
-        <h4 class="author">By: {{ writeup.author.username }}</h2>
-        <h4 class="date">{{ writeup.creation_date }}</h2>
-        <h4 class="tags">{{ writeup.tags }}</h2>
+        <h2>{{ writeup.title }}</h2>
+        <h4 class="author">By: {{ writeup.author.username }}</h4>
+        <h4 class="date">{{ writeup.creation_date }}</h4>
+        <div class="tags">
+            {% for tag in writeup.tags %}
+                {{ tag_link(tag) }}
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
 {% block content %}
-    <main>
-        {{ rendered | safe }}
-    </main>
+    {{ rendered | safe }}
 {% endblock %}
