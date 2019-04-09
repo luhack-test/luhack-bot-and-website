@@ -1,9 +1,11 @@
 import datetime
 
+from slug import slug
 from gino import Gino
 from sqlalchemy import func
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy_utils import EncryptedType
+from sqlalchemy_utils import EncryptedType, observes
 from sqlalchemy_searchable import make_searchable
 from sqlalchemy_utils.types import TSVectorType
 
@@ -28,7 +30,9 @@ class Writeup(db.Model):
     author = relationship(User, backref=backref("writeups", passive_deletes=True))
 
     title = db.Column(db.Text(), nullable=False)
-    tags = db.Column(db.ARRAY(db.Text()), nullable=False)
+    slug = db.Column(db.Text(), nullable=False)
+
+    tags = db.Column(ARRAY(db.Text()), nullable=False)
     content = db.Column(db.Text(), nullable=False)
 
     creation_date = db.Column(db.DateTime, server_default=func.now(), nullable=False)
@@ -39,3 +43,9 @@ class Writeup(db.Model):
     )
 
     _tags_idx = db.Index("writeups_tags_array_idx", "tags", postgresql_using="gin")
+
+    @classmethod
+    def create(*args, **kwargs):
+        if "slug" not in kwargs:
+            kwargs["slug"] = slug(kwargs["title"])
+        super().create(*args, **kwargs)

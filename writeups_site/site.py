@@ -1,7 +1,11 @@
 from os import getenv
 from pathlib import Path
+from textwrap import shorten
 
 from dotenv import load_dotenv
+
+import sqlalchemy as sa
+from sqlalchemy_searchable import search as pg_search
 
 from starlette.applications import Starlette
 from starlette.authentication import requires
@@ -14,7 +18,7 @@ from starlette.responses import PlainTextResponse
 from starlette.templating import Jinja2Templates
 
 from writeups_site.middleware import TokenAuthBackend
-from writeups_site.markdown import markdown
+from writeups_site.markdown import highlight_markdown, plaintext_markdown
 from luhack_bot.db.helpers import init_db
 from luhack_bot.db.models import User, Writeup, db
 
@@ -31,10 +35,10 @@ app.add_middleware(SessionMiddleware, secret_key=getenv("TOKEN_SECRET"))
 statics = StaticFiles(directory=str(root_dir / "static"))
 app.mount("/static", statics, name="static")
 
+
 def abort(status: int, reason: str = ""):
     return PlainTextResponse(reason, status)
 
-# TODO: tags, search
 
 @app.on_event("startup")
 async def startup():
@@ -43,22 +47,89 @@ async def startup():
 
 @app.route("/")
 async def index(request: HTTPConnection):
-    return templates.TemplateResponse("base.j2", {"request": request})
+    latest = (
+        await Writeup.load(author=User)
+        .order_by(sa.desc(Writeup.creation_date))
+        .limit(20)
+        .gino.all()
+    )
+
+    rendered = [
+        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
+        for w in latest
+    ]
+
+    return templates.TemplateResponse(
+        "index.j2", {"request": request, "writeups": rendered}
+    )
 
 
-@app.route("/{title}")
+@app.route("/writeup/{slug}")
 async def view(request: HTTPConnection):
-    title = request.path_params["title"]
+    slug = request.path_params["slug"]
 
-    writeup = await Writeup.load(author=User).where(Writeup.title == title).gino.first()
+    writeup = await Writeup.load(author=User).where(Writeup.slug == slug).gino.first()
 
     if writeup is None:
         return abort(404, "Writeup not found")
 
-    rendered = markdown(writeup.content)
+    rendered = highlight_markdown(writeup.content)
 
     return templates.TemplateResponse(
         "writeup.j2", {"writeup": writeup, "request": request, "rendered": rendered}
+    )
+
+
+@app.route("/tag/{tag}")
+async def tag(request: HTTPConnection):
+    tag = request.path_params["tag"]
+
+    writeups = (
+        await Writeup.load(author=User)
+        .where(Writeup.tags.contains([tag]))
+        .order_by(sa.desc(Writeup.creation_date))
+        .gino.all()
+    )
+
+    rendered = [
+        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
+        for w in writeups
+    ]
+
+    return templates.TemplateResponse(
+        "index.j2", {"request": request, "writeups": rendered}
+    )
+
+
+@app.route("/tags")
+async def tags(request: HTTPConnection):
+    tags = (
+        await sa.select([sa.column("tag")])
+        .select_from(Writeup)
+        .select_from(sa.func.unnest(Writeup.tags).alias("tag"))
+        .group_by(sa.column("tag"))
+        .order_by(sa.func.count())
+        .gino.all()
+    )
+
+    tags = [i for (i,) in tags]
+
+    return templates.TemplateResponse("tag_list.j2", {"request": request, "tags": tags})
+
+
+@app.route("/search")
+async def search(request: HTTPConnection):
+    query = request.query_params["search"]
+
+    writeups = await pg_search(Writeup.load(author=User), query, sort=True).gino.all()
+
+    rendered = [
+        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
+        for w in writeups
+    ]
+
+    return templates.TemplateResponse(
+        "index.j2", {"request": request, "writeups": rendered}
     )
 
 
@@ -71,8 +142,8 @@ async def delete(request: HTTPConnection):
 
     if writeup is None:
         return abort(404, "Writeup not found")
-    
+
     if not request.user.is_admin and writeup.author_id != request.user.discord_id:
         return abort(400)
-   
+
     await Writeup.delete.where(Writeup.id == id).gino.status()

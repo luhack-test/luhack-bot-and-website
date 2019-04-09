@@ -14,7 +14,9 @@ class TokenAuthBackend(AuthenticationBackend):
     async def authenticate(self, request: HTTPConnection):
         token = request.query_params.get("token")
 
-        if token is None and "token" in request.session:
+        if token is None:
+            if "token" not in request.session:
+                return
             token = request.session["token"]
 
         decoded = decode_writeup_edit_token(token)

@@ -50,6 +50,10 @@ h3 {
     color: rgb(176, 202, 219);
 }
 
+.brand-title a {
+    color: inherit;
+}
+
 .nav-list {
     margin: 0;
     padding: 0;
@@ -97,13 +101,15 @@ h3 {
     color: #222;
     margin-bottom: 0.2em;
 }
+.post-title a {
+    color: #222;
+}
 .post-avatar {
     border-radius: 50px;
     float: right;
     margin-left: 1em;
 }
 .post-description {
-    font-family: Georgia, "Cambria", serif;
     color: #444;
     line-height: 1.8em;
 }
@@ -162,8 +168,11 @@ h3 {
     }
 
     .header {
-        margin: 80% 2em 0;
-        text-align: right;
+        margin: 2em 2em 0;
+    }
+
+    .header-content {
+        margin-top: 50%;
     }
 
     .sidebar {
@@ -175,4 +184,22 @@ h3 {
     .footer {
         text-align: center;
     }
+}
+
+.highlight {
+    border: 1px solid #ddd;
+    box-shadow: 5px 5px 5px #eee;
+    padding: 1em;
+    overflow-x: auto;
+}
+
+pre {
+    padding: 0.5em;
+    overflow-x: auto;
+    margin: auto;
+}
+
+input {
+    color: #000;
+    font-family: Arial, Helvetica, sans-serif;
 }
