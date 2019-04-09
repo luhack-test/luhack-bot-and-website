@@ -20,7 +20,8 @@ class Writeups(commands.Cog):
     def __init__(self, bot):
         self.luhack_guild = bot.get_guild(constants.luhack_guild_id)
 
-    cog_check = staticmethod(is_authed)
+    async def cog_check(self, ctx):
+        return await is_authed(ctx)
 
     @staticmethod
     def tag_url(tag):
