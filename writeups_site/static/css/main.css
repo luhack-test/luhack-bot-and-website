@@ -203,3 +203,12 @@ input {
     color: #000;
     font-family: Arial, Helvetica, sans-serif;
 }
+
+.post-category {
+    display: inline-block;
+}
+
+.button-danger {
+    color: white;
+    background: rgb(202, 60, 60);
+}

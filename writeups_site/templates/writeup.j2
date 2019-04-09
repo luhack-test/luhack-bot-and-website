@@ -3,6 +3,7 @@
 {% from "tag_link.j2" import tag_link with context %}
 
 {% block title %}{{ writeup.title }}{% endblock title %}
+{% block og_title %}{{ writeup.title }}{% endblock %}
 
 {% block header_content %}
     <div class="article-meta">
@@ -17,5 +18,9 @@
     </div>
 {% endblock %}
 {% block content %}
+    {% if can_edit(request, writeup) %}
+        <a class="pure-button pure-button-primary" href="{{ url_for("EditWriteup", id=writeup.id) }}">Edit</a>
+        <a class="pure-button button-danger" href="{{ url_for("delete", id=writeup.id) }}" onclick="return confirm('are you sure?')">Delete</a>
+    {% endif %}
     {{ rendered | safe }}
 {% endblock %}

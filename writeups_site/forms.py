@@ -10,7 +10,7 @@ class TagListField(Field):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.data = list(set(valuelist[0].lower().split()))
+            self.data = list(filter(None, set(i.strip() for i in valuelist[0].lower().split(",\n\t "))))
         else:
             self.data = []
 

@@ -12,9 +12,9 @@ def generate_auth_token(user_id: int, email: str) -> str:
     return token_signer.dumps({"user_id": user_id, "email": email})
 
 
-def generate_writeup_edit_token(user_id: int, is_admin: bool) -> str:
+def generate_writeup_edit_token(username: str, user_id: int, is_admin: bool) -> str:
     """Generate an auth token for editing/ creating writeups."""
-    return token_signer.dumps({"user_id": user_id, "is_admin": is_admin})
+    return token_signer.dumps({"username": username, "user_id": user_id, "is_admin": is_admin})
 
 
 def decode_auth_token(token: str) -> Optional[Tuple[int, str]]:
@@ -29,7 +29,7 @@ def decode_auth_token(token: str) -> Optional[Tuple[int, str]]:
     except BadSignature:
         return None
 
-def decode_writeup_edit_token(token: str) -> Optional[Tuple[int, bool]]:
+def decode_writeup_edit_token(token: str) -> Optional[Tuple[str, int, bool]]:
     """Decode a writeup edit token, returns a tuple of the user id and if they are
     admin if the token was valid, None otherwise.
 
@@ -38,6 +38,6 @@ def decode_writeup_edit_token(token: str) -> Optional[Tuple[int, bool]]:
 
     try:
         data = token_signer.loads(token, max_age=24 * 60 * 60)
-        return (data["user_id"], data["is_admin"])
+        return (data["username"], data["user_id"], data["is_admin"])
     except BadSignature:
         return None
