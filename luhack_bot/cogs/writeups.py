@@ -22,6 +22,14 @@ class Writeups(commands.Cog):
 
     check_once = staticmethod(is_authed)
 
+    @staticmethod
+    def tag_url(tag):
+        return constants.writeups_base_url / "tag" / tag
+
+    @staticmethod
+    def writeup_url(slug):
+        return constants.writeups_base_url / "writeup" / slug
+
     async def get_writeup(self, title: str) -> Optional[Writeup]:
         return await Writeup.query.where(Writeup.title == title).gino.first()
 
@@ -39,7 +47,7 @@ class Writeups(commands.Cog):
         author = self.luhack_guild.get_member(writeup.author_id)
         tags = ", ".join(writeup.tags)
 
-        return f'"{writeup.title}" by "{author}": {tags}'
+        return f'"{writeup.title}" ({self.writeup_url(writeup.slug)}) by {author}, tags: `{tags}`'
 
     async def show_similar_writeups(
         self, ctx, title: str, found_message: str = "Possible writeups are:"
@@ -49,7 +57,7 @@ class Writeups(commands.Cog):
         similar = [self.format_writeup(i) for i in await self.search_writeups(title)]
 
         if similar:
-            await ctx.send("{} ```\n{}\n```".format(found_message, "\n".join(similar)))
+            await ctx.send("{} \n{}\n".format(found_message, "\n".join(similar)))
         else:
             await ctx.send("No writeups found, sorry.")
 
@@ -65,44 +73,33 @@ class Writeups(commands.Cog):
             )
             return
 
-        await ctx.send(writeup.content)
+        tags = " ".join("[{}]({})".format(tag, self.tag_url(tag).human_repr()) for tag in writeup.tags)
 
-    @writeups.command(aliases=["create"])
-    async def new(
-        self,
-        ctx,
-        title: commands.clean_content,
-        tags: commands.clean_content,
-        *,
-        content: commands.clean_content,
-    ):
-        """Create a new writeup."""
-        await Writeup.create(
-            author_id=ctx.author.id,
-            title=title,
-            tags=tags.split(),
-            content=content,
-        )
+        embed = discord.Embed(title=writeup.title, timestamp=writeup.creation_date, colour=discord.Colour.blue(), author=self.luhack_guild.get_member(writeup.author_id))
+        embed.add_field(name="tags", value=tags, inline=False)
+        embed.add_field(name="link", value=self.writeup_url(writeup.slug), inline=False)
+        embed.add_field(name="last edited", value=writeup.edit_date, inline=False)
 
-        await ctx.send("Created your writeup.")
+        await ctx.send(embed=embed)
 
-    @writeups.command()
-    async def info(self, ctx, *, title: str):
-        """Get info about a writeup."""
-        writeup = await self.get_writeup(title)
+    # @writeups.command(aliases=["create"])
+    # async def new(
+    #     self,
+    #     ctx,
+    #     title: commands.clean_content,
+    #     tags: commands.clean_content,
+    #     *,
+    #     content: commands.clean_content,
+    # ):
+    #     """Create a new writeup."""
+    #     await Writeup.create_auto(
+    #         author_id=ctx.author.id,
+    #         title=title,
+    #         tags=tags.split(),
+    #         content=content,
+    #     )
 
-        if writeup is None:
-            await self.show_similar_writeups(
-                ctx, title, "Writeup by that title not found, similar writeups are:"
-            )
-            return
-
-        author = self.luhack_guild.get_member(writeup.author_id)
-        tags = ", ".join(writeup.tags)
-
-        await ctx.send(
-            f"```\nid: {writeup.id}\nauthor: {author}\ntitle: {writeup.title}\ntags: {tags}\ncreation date: {writeup.creation_date}\nlast edited: {writeup.edit_date}\n```"
-        )
+    #     await ctx.send("Created your writeup.")
 
     @writeups.command()
     async def delete(self, ctx, *, title: str):
@@ -129,6 +126,8 @@ class Writeups(commands.Cog):
         is_admin = self.luhack_guild.get_member(
             ctx.author.id
         ).guild_permissions.administrator
-        token = generate_writeup_edit_token(ctx.author.id, is_admin)
+        token = generate_writeup_edit_token(ctx.author.name, ctx.author.id, is_admin)
 
-        await ctx.author.send(f"Your token is: `{token}`, it is valid for 24 hours.")
+        url = constants.writeups_base_url.with_query(token=token)
+
+        await ctx.author.send(f"Visit this link and you'll be authed for 24 hours: {url}")

@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import sqlalchemy as sa
 from sqlalchemy_searchable import search as pg_search
 
+from starlette.endpoints import HTTPEndpoint
 from starlette.applications import Starlette
 from starlette.authentication import requires
 from starlette.staticfiles import StaticFiles
@@ -14,11 +15,13 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import HTTPConnection
 from starlette.routing import Mount
-from starlette.responses import PlainTextResponse
+from starlette.responses import PlainTextResponse, RedirectResponse
 from starlette.templating import Jinja2Templates
 
-from writeups_site.middleware import TokenAuthBackend
+from writeups_site.middleware import TokenAuthBackend, User
 from writeups_site.markdown import highlight_markdown, plaintext_markdown
+from writeups_site.forms import WriteupForm
+
 from luhack_bot.db.helpers import init_db
 from luhack_bot.db.models import User, Writeup, db
 
@@ -38,6 +41,16 @@ app.mount("/static", statics, name="static")
 
 def abort(status: int, reason: str = ""):
     return PlainTextResponse(reason, status)
+
+
+def can_edit(request, writeup):
+    if not request.user.is_authenticated:
+        return False
+
+    return request.user.is_admin or writeup.author_id == request.user.discord_id
+
+
+templates.env.globals.update(can_edit=can_edit)
 
 
 @app.on_event("startup")
@@ -133,6 +146,13 @@ async def search(request: HTTPConnection):
     )
 
 
+@app.route("/sign_out")
+async def sign_out(request: HTTPConnection):
+    request.session.pop("token", None)
+
+    return RedirectResponse(url=request.url_for("index"))
+
+
 @app.route("/delete/{id:int}")
 @requires("authenticated")
 async def delete(request: HTTPConnection):
@@ -143,7 +163,96 @@ async def delete(request: HTTPConnection):
     if writeup is None:
         return abort(404, "Writeup not found")
 
-    if not request.user.is_admin and writeup.author_id != request.user.discord_id:
+    if not can_edit(request, writeup):
         return abort(400)
 
     await Writeup.delete.where(Writeup.id == id).gino.status()
+
+    return RedirectResponse(url=request.url_for("index"))
+
+
+@app.route("/new")
+class NewWriteup(HTTPEndpoint):
+    @requires("authenticated")
+    async def get(self, request: HTTPConnection):
+        form = WriteupForm()
+
+        return templates.TemplateResponse("new.j2", {"request": request, "form": form})
+
+    @requires("authenticated")
+    async def post(self, request: HTTPConnection):
+        form = await request.form()
+
+        form = WriteupForm(form)
+
+        is_valid = form.validate()
+
+        if (
+            await Writeup.query.where(Writeup.title == form.title.data).gino.first()
+            is not None
+        ):
+            is_valid = False
+            form.errors.setdefault("title", []).append(
+                f"A writeup with the title '{form.title.data}' already exists."
+            )
+
+        if is_valid:
+            writeup = await Writeup.create_auto(
+                author_id=request.user.discord_id,
+                title=form.title.data,
+                tags=form.tags.data,
+                content=form.content.data,
+            )
+
+            return RedirectResponse(url=request.url_for("view", slug=writeup.slug))
+
+        return templates.TemplateResponse("new.j2", {"request": request, "form": form})
+
+
+@app.route("/edit/{id:int}")
+class EditWriteup(HTTPEndpoint):
+    @requires("authenticated")
+    async def get(self, request: HTTPConnection):
+        id = request.path_params["id"]
+
+        writeup = await Writeup.get(id)
+
+        if writeup is None:
+            return abort(404, "Writeup not found")
+
+        if not can_edit(request, writeup):
+            return abort(400)
+
+        form = WriteupForm(
+            title=writeup.title, tags=writeup.tags, content=writeup.content
+        )
+
+        return templates.TemplateResponse("new.j2", {"request": request, "form": form})
+
+    @requires("authenticated")
+    async def post(self, request: HTTPConnection):
+        id = request.path_params["id"]
+
+        writeup = await Writeup.get(id)
+
+        if writeup is None:
+            return abort(404, "Writeup not found")
+
+        if not can_edit(request, writeup):
+            return abort(400)
+
+        form = await request.form()
+
+        form = WriteupForm(form)
+
+        if form.validate():
+            await writeup.update_auto(
+                author_id=request.user.discord_id,
+                title=form.title.data,
+                tags=form.tags.data,
+                content=form.content.data,
+            ).apply()
+
+            return RedirectResponse(url=request.url_for("view", slug=writeup.slug))
+
+        return templates.TemplateResponse("new.j2", {"request": request, "form": form})

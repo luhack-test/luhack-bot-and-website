@@ -5,6 +5,12 @@
             {%- block meta %}
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device=width, initial-scale=1.0">
+                <meta property="og:title" content="{% block og_title %}LUHack Writeups{% endblock %}">
+                <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+                <meta property="og:image" content="{{ url_for("static", path="/assets/logo.png") }}">
+                <meta property="og:url" content="{{ request.get_full_path }}">
+                <meta property="og:site_name" content="LUHack Writeups">
+                <meta property="og:description" content="{% block og_description %}CTF writeups made by LUHack members.{% endblock %}">
             {%- endblock meta %}
             <title>{% block title %}LUHack writeups{% endblock title %}</title>
             {%- block style %}
@@ -42,6 +48,9 @@
                                     <li class="nav-item">
                                         <a class="pure-button" href="{{ url_for("tags") }}">Tags</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="pure-button" href="{{ url_for("NewWriteup") }}">New</a>
+                                    </li>
                                 </ul>
                             {% endblock nav %}
                         </nav>
@@ -68,6 +77,9 @@
                         <div class="pure-menu pure-menu-horizontal">
                             <ul>
                                 <li class="pure-menu-item"><a href="https://luhack.github.io/">LUHack website</a></li>
+                                {% if request.user.is_authenticated %}
+                                    <li class="pure-menu-item"><a href="{{ url_for("sign_out") }}" title="Log Out">Authed as: {{ request.user.username }}</a></li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>

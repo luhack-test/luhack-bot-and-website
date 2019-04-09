@@ -1,11 +1,12 @@
 from starlette.requests import HTTPConnection
-from starlette.authentication import AuthenticationBackend, AuthenticationError, BaseUser, AuthCredentials
+from starlette.authentication import AuthenticationBackend, AuthenticationError, SimpleUser, AuthCredentials
 
 from luhack_bot.token_tools import decode_writeup_edit_token
 
 
-class User(BaseUser):
-    def __init__(self, discord_id: int, is_admin: bool):
+class User(SimpleUser):
+    def __init__(self, username: str, discord_id: int, is_admin: bool):
+        super().__init__(username)
         self.discord_id = discord_id
         self.is_admin = is_admin
 
@@ -25,10 +26,10 @@ class TokenAuthBackend(AuthenticationBackend):
 
         request.session["token"] = token
 
-        user_id, is_admin = decoded
+        username, user_id, is_admin = decoded
 
         creds = ["authenticated"]
         if is_admin:
             creds.append("admin")
 
-        return AuthCredentials(creds), User(user_id, is_admin)
+        return AuthCredentials(creds), User(username, user_id, is_admin)
