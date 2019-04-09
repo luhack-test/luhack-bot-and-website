@@ -30,7 +30,7 @@ templates = Jinja2Templates(directory=str(root_dir / "templates"))
 
 load_dotenv(root_dir.parent)
 
-app = Starlette(debug=True)
+app = Starlette()
 
 app.add_middleware(AuthenticationMiddleware, backend=TokenAuthBackend())
 app.add_middleware(SessionMiddleware, secret_key=getenv("TOKEN_SECRET"))

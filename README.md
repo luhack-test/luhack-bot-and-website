@@ -14,6 +14,10 @@ https://github.com/sdispater/poetry
 
 `poetry run start_bot`
 
+# running the writeups server
+
+`poetry run start_writeups`
+
 # performing database migrations
 
 ## After making changes to the db schema, you should run
