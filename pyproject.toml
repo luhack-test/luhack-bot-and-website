@@ -28,6 +28,7 @@ yarl = "^1.3"
 "discord.py" = "^1.0"
 gunicorn = "^19.9"
 uvicorn = {git = "https://github.com/nitros12/uvicorn"}
+PyCrypto = "^2.6"
 
 [tool.poetry.dev-dependencies]
 python-language-server = "^0.25.0"
@@ -36,6 +37,8 @@ psycopg2-binary = "^2.7"
 [tool.poetry.scripts]
 start_bot = 'luhack_bot:run'
 gen_tokens = 'luhack_bot:gen_tokens'
+export_users = 'luhack_bot:export_users'
+ingest_users = 'luhack_bot:ingest_users'
 
 [build-system]
 requires = ["poetry>=0.12"]
