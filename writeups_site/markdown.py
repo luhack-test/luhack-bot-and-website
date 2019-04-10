@@ -49,8 +49,8 @@ class PlaintextRenderer(mistune.Renderer):
         return text
 
 
-highlight_renderer = HighlightRenderer()
-plaintext_renderer = PlaintextRenderer()
+highlight_renderer = HighlightRenderer(escape=True)
+plaintext_renderer = PlaintextRenderer(escape=True)
 
 highlight_markdown = mistune.Markdown(renderer=highlight_renderer)
 plaintext_markdown = mistune.Markdown(renderer=plaintext_renderer)
