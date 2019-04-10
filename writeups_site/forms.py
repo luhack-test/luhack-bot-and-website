@@ -12,7 +12,7 @@ class TagListField(Field):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.data = re.split(r'[^\w-]+', valuelist[0])
+            self.data = filter(lambda s: s and not s.isspace(), re.split(r'[^\w-]+', valuelist[0]))
         else:
             self.data = []
 
