@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 class LUHackBot(commands.Bot):
     def __init__(self, **kwargs):
-        base_kwargs = {"command_prefix": "L!", "pm_help": True}
+        base_kwargs = {"command_prefix": ["L!", "!"], "pm_help": True}
         base_kwargs.update(kwargs)
         super().__init__(**base_kwargs)
 
