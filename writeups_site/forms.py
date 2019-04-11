@@ -12,7 +12,10 @@ class TagListField(Field):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            data = filter(lambda s: s and not s.isspace(), re.split(r'[^\w-]+', valuelist[0].lower()))
+            data = filter(
+                lambda s: s and not s.isspace(),
+                re.split(r"[^\w-]+", valuelist[0].lower()),
+            )
             data = list(set(data))
             self.data = data
         else:
@@ -22,7 +25,9 @@ class TagListField(Field):
         for i in self.data:
             l = len(i)
             if l < 3 or l > 20:
-                raise ValidationError("Tags must be between 3 and 20 characters in length")
+                raise ValidationError(
+                    "Tags must be between 3 and 20 characters in length"
+                )
 
         if len(self.data) > 8:
             raise ValidationError("Writeups can have at most 8 tags")

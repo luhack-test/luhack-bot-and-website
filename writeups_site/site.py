@@ -142,7 +142,7 @@ async def search(request: HTTPConnection):
     ]
 
     return templates.TemplateResponse(
-        "index.j2", {"request": request, "writeups": rendered}
+        "index.j2", {"request": request, "writeups": rendered, "query": query}
     )
 
 
@@ -227,7 +227,9 @@ class EditWriteup(HTTPEndpoint):
             title=writeup.title, tags=writeup.tags, content=writeup.content
         )
 
-        return templates.TemplateResponse("edit.j2", {"request": request, "form": form, "writeup": writeup})
+        return templates.TemplateResponse(
+            "edit.j2", {"request": request, "form": form, "writeup": writeup}
+        )
 
     @requires("authenticated")
     async def post(self, request: HTTPConnection):
@@ -255,4 +257,6 @@ class EditWriteup(HTTPEndpoint):
 
             return RedirectResponse(url=request.url_for("view", slug=writeup.slug))
 
-        return templates.TemplateResponse("edit.j2", {"request": request, "form": form, "writeup": writeup})
+        return templates.TemplateResponse(
+            "edit.j2", {"request": request, "form": form, "writeup": writeup}
+        )
