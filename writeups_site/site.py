@@ -5,7 +5,7 @@ from textwrap import shorten
 from dotenv import load_dotenv
 
 import sqlalchemy as sa
-from sqlalchemy_searchable import search as pg_search
+from sqlalchemy_searchable import search as pg_search, search_manager
 
 from starlette.endpoints import HTTPEndpoint
 from starlette.applications import Starlette
@@ -153,17 +153,49 @@ async def tags(request: HTTPConnection):
 
 @app.route("/search")
 async def search(request: HTTPConnection):
-    query = request.query_params.get("search", "")
+    s_query = request.query_params.get("search", "")
 
-    writeups = await pg_search(Writeup.load(author=User), query, sort=True).gino.all()
+    # sorry about this
+    query = pg_search(sa.select([Writeup.join(User)]), s_query, sort=True)
+    query = query.column(
+        sa.func.ts_headline(
+            search_manager.options["regconfig"],
+            Writeup.content,
+            sa.func.tsq_parse(search_manager.options["regconfig"], s_query),
+            f"StartSel=**,StopSel=**,MaxWords=70,MinWords=30,MaxFragments=3",
+        ).label("headline")
+    )
+
+    writeups = await query.as_scalar().gino.all()
+
+    def build_writeup(r):
+        """we get back a RowProxy so manually construct the writeup from it."""
+
+        author = User(discord_id=r.discord_id, username=r.username, email=r.email)
+
+        writeup = Writeup(
+            id=r.id,
+            author_id=r.author_id,
+            title=r.title,
+            slug=r.slug,
+            tags=r.tags,
+            content=r.content,
+            creation_date=r.creation_date,
+            edit_date=r.edit_date,
+        )
+
+        writeup.author = author
+        return writeup
+
+    writeups = [(build_writeup(r), r.headline) for r in writeups]
 
     rendered = [
-        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
-        for w in writeups
+        (w, shorten(plaintext_markdown(headline), width=300, placeholder="..."))
+        for (w, headline) in writeups
     ]
 
     return templates.TemplateResponse(
-        "index.j2", {"request": request, "writeups": rendered, "query": query}
+        "index.j2", {"request": request, "writeups": rendered, "query": s_query}
     )
 
 

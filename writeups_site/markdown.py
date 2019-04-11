@@ -31,14 +31,14 @@ class PlaintextRenderer(mistune.Renderer):
     def autolink(self, link, is_email):
         return link
 
-    def codespan(self, text):
-        return f"`{text}`"
+    # def codespan(self, text):
+    #     return f"`{text}`"
 
-    def double_emphasis(self, text):
-        return f"**{text}**"
+    # def double_emphasis(self, text):
+    #     return f"**{text}**"
 
-    def emphasis(self, text):
-        return f"*{text}*"
+    # def emphasis(self, text):
+    #     return f"*{text}*"
 
     linebreak = newline = image = _nothing
 
