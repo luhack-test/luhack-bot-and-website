@@ -1,0 +1,11 @@
+{% macro tag_link(tag) %}
+    {% if tag -%}
+        <a class="post-category" href="{{ url_for('tag', tag=tag) }}">{{ tag }}</a>
+    {%- endif %}
+{%- endmacro %}
+
+{% macro user_link(username) %}
+    {% if username -%}
+        <a href="{{ url_for('user', user=username) }}">{{ username }}</a>
+    {%- endif %}
+{%- endmacro %}
