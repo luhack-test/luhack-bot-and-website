@@ -40,5 +40,7 @@
             </ul>
         {% endif %}
     </form>
+{% endblock %}
+{% block script %}
     <script>[].forEach.call(document.querySelectorAll('input[type="tags"]'), tagsInput);</script>
 {% endblock %}
