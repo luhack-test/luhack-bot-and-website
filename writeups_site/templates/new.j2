@@ -11,7 +11,7 @@
 {% block content %}
     <form class="pure-form pure-form-aligned" method="POST" action="{{ request.url }}">
         <fieldset>
-            <legend>Create new writeup</legend>
+            <legend>{% block legend %}Create new writeup{% endblock legend %}</legend>
 
             <div class="pure-control-group">
                 {{ form.title.label }}

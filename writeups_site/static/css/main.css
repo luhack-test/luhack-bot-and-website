@@ -1005,7 +1005,7 @@ h3 {
 @media (min-width: 48em) {
   .content {
     padding: 2em 3em 0;
-    margin-left: 20vw;
+    margin-left: 19vw;
   }
 
   .header {
@@ -1071,4 +1071,15 @@ input {
   line-height: 1.6;
   text-align: center;
   margin: 0 auto;
+}
+
+#page-container {
+    position: relative;
+    min-height: 100vh;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    min-height: 3.5rem;
 }

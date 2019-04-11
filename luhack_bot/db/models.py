@@ -27,7 +27,7 @@ class Writeup(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False)
-    author = relationship(User, backref=backref("writeups", passive_deletes=True))
+    author = relationship(User, backref=backref("writeups", passive_deletes=True), lazy="joined")
 
     title = db.Column(db.Text(), nullable=False, unique=True)
     slug = db.Column(db.Text(), nullable=False, unique=True)

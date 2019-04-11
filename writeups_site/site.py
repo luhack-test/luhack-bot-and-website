@@ -132,7 +132,7 @@ async def tags(request: HTTPConnection):
 
 @app.route("/search")
 async def search(request: HTTPConnection):
-    query = request.query_params["search"]
+    query = request.query_params.get("search", "")
 
     writeups = await pg_search(Writeup.load(author=User), query, sort=True).gino.all()
 
@@ -227,7 +227,7 @@ class EditWriteup(HTTPEndpoint):
             title=writeup.title, tags=writeup.tags, content=writeup.content
         )
 
-        return templates.TemplateResponse("new.j2", {"request": request, "form": form})
+        return templates.TemplateResponse("edit.j2", {"request": request, "form": form, "writeup": writeup})
 
     @requires("authenticated")
     async def post(self, request: HTTPConnection):
@@ -255,4 +255,4 @@ class EditWriteup(HTTPEndpoint):
 
             return RedirectResponse(url=request.url_for("view", slug=writeup.slug))
 
-        return templates.TemplateResponse("new.j2", {"request": request, "form": form})
+        return templates.TemplateResponse("edit.j2", {"request": request, "form": form, "writeup": writeup})
