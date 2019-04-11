@@ -114,6 +114,27 @@ async def tag(request: HTTPConnection):
     )
 
 
+@app.route("/user/{user}")
+async def user(request: HTTPConnection):
+    user = request.path_params["user"]
+
+    writeups = (
+        await Writeup.load(author=User)
+        .where(User.username == user)
+        .order_by(sa.desc(Writeup.creation_date))
+        .gino.all()
+    )
+
+    rendered = [
+        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
+        for w in writeups
+    ]
+
+    return templates.TemplateResponse(
+        "index.j2", {"request": request, "writeups": rendered}
+    )
+
+
 @app.route("/tags")
 async def tags(request: HTTPConnection):
     tags = (
