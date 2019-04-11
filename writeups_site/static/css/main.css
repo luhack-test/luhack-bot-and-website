@@ -987,7 +987,7 @@ h3 {
 
 .footer {
   padding: 1em 0;
-  width: 100vw;
+  /* width: 100vw; */
 }
 .footer a {
   color: #ccc;
@@ -1005,7 +1005,7 @@ h3 {
 @media (min-width: 48em) {
   .content {
     padding: 2em 3em 0;
-    margin-left: 19vw;
+    margin-left: 20%;
   }
 
   .header {
@@ -1023,8 +1023,7 @@ h3 {
   }
 
   .footer {
-    width: 80vw;
-    margin-left: 20vw;
+    margin-left: 20%;
   }
 
   #search-bar {
@@ -1073,13 +1072,12 @@ input {
   margin: 0 auto;
 }
 
-#page-container {
-    position: relative;
-    min-height: 100vh;
+#layout {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 }
 
-.footer {
-    position: absolute;
-    bottom: 0;
-    min-height: 3.5rem;
+.content {
+  flex: 1;
 }
