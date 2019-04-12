@@ -14,6 +14,19 @@ class HighlightRenderer(mistune.Renderer):
         formatter = html.HtmlFormatter()
         return highlight(code, lexer, formatter)
 
+    def autolink(self, link, is_email=False):
+        text = link = mistune.escape_link(link)
+        if is_email:
+            link = f"mailto:{link}"
+        return f'<a href="{link}" target="_blank">{text}</a>'
+
+    def link(self, link, title, text):
+        link = mistune.escape_link(link)
+        if not title:
+            return f'<a href="{link}" target="_blank">{text}</a>'
+        title = mistune.escape(title, quote=True)
+        return f'<a href="{link}" title="{title}" target="_blank">{text}</a>'
+
 
 class PlaintextRenderer(mistune.Renderer):
     def _nothing(*args, **kwargs):
