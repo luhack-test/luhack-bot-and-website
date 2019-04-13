@@ -18,7 +18,7 @@
     </div>
 {% endblock %}
 {% block content %}
-    {% if can_edit(request, writeup) %}
+    {% if can_edit(request, writeup.author_id) %}
         <a class="pure-button pure-button-primary" href="{{ url_for("EditWriteup", id=writeup.id) }}">Edit</a>
         <a class="pure-button button-danger" href="{{ url_for("delete", id=writeup.id) }}" onclick="return confirm('are you sure?')">Delete</a>
         <br />

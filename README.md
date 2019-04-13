@@ -40,3 +40,7 @@ poetry run alembic current
 
 - It should show a revision hash with `(head)` next to it if the db schema is up
   to data.
+
+# required postgres extensions
+
+- uuid-ossp
