@@ -1,5 +1,10 @@
 from starlette.requests import HTTPConnection
-from starlette.authentication import AuthenticationBackend, AuthenticationError, SimpleUser, AuthCredentials
+from starlette.authentication import (
+    AuthenticationBackend,
+    AuthenticationError,
+    SimpleUser,
+    AuthCredentials,
+)
 
 from luhack_bot.token_tools import decode_writeup_edit_token
 

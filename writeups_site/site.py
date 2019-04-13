@@ -88,6 +88,11 @@ async def index(request: HTTPConnection):
     )
 
 
+@app.route("/plzauth")
+async def need_auth(request: HTTPConnection):
+    return templates.TemplateResponse("plzauth.j2", {"request": request})
+
+
 @app.route("/writeup/{slug}")
 async def view(request: HTTPConnection):
     slug = request.path_params["slug"]
@@ -218,7 +223,7 @@ async def sign_out(request: HTTPConnection):
 
 
 @app.route("/delete/{id:int}")
-@requires("authenticated")
+@requires("authenticated", redirect="need_auth")
 async def delete(request: HTTPConnection):
     id = request.path_params["id"]
 
@@ -247,7 +252,7 @@ class Images(HTTPEndpoint):
 
         return Response(image.image, media_type=f"image/{image.filetype}")
 
-    @requires("authenticated")
+    @requires("authenticated", redirect="need_auth")
     async def delete(self, request: HTTPConnection):
         uuid, ext = request.path_params["file_name"]
 
@@ -265,7 +270,7 @@ class Images(HTTPEndpoint):
 
 
 @app.route("/upload-image", methods=["POST"])
-@requires("authenticated")
+@requires("authenticated", redirect="need_auth")
 async def upload_image(request: HTTPConnection):
     form = await request.form()
 
@@ -279,9 +284,7 @@ async def upload_image(request: HTTPConnection):
         author_id=request.user.discord_id, filetype=filetype, image=file_contents
     )
 
-    return UJSONResponse(
-        {"filename": f"{file.id}.{filetype}"}
-    )
+    return UJSONResponse({"filename": f"{file.id}.{filetype}"})
 
 
 async def get_existing_images(author_id: int) -> List[Tuple[str, str]]:
@@ -306,7 +309,7 @@ async def encoded_existing_images(request: HTTPConnection) -> str:
 
 @app.route("/new")
 class NewWriteup(HTTPEndpoint):
-    @requires("authenticated")
+    @requires("authenticated", redirect="need_auth")
     async def get(self, request: HTTPConnection):
         form = WriteupForm()
 
@@ -316,7 +319,7 @@ class NewWriteup(HTTPEndpoint):
             "new.j2", {"request": request, "form": form, "existing_images": images}
         )
 
-    @requires("authenticated")
+    @requires("authenticated", redirect="need_auth")
     async def post(self, request: HTTPConnection):
         form = await request.form()
 
@@ -352,7 +355,7 @@ class NewWriteup(HTTPEndpoint):
 
 @app.route("/edit/{id:int}")
 class EditWriteup(HTTPEndpoint):
-    @requires("authenticated")
+    @requires("authenticated", redirect="need_auth")
     async def get(self, request: HTTPConnection):
         id = request.path_params["id"]
 
@@ -380,7 +383,7 @@ class EditWriteup(HTTPEndpoint):
             },
         )
 
-    @requires("authenticated")
+    @requires("authenticated", redirect="need_auth")
     async def post(self, request: HTTPConnection):
         id = request.path_params["id"]
 
