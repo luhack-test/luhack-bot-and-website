@@ -32,7 +32,7 @@ from luhack_bot.db.models import Image, User, Writeup, db
 from writeups_site import converters
 from writeups_site.forms import WriteupForm
 from writeups_site.markdown import highlight_markdown, plaintext_markdown
-from writeups_site.middleware import TokenAuthBackend, User
+from writeups_site.middleware import TokenAuthBackend
 
 converters.inject()
 
