@@ -1081,3 +1081,19 @@ input {
 .content {
   flex: 1;
 }
+
+.container {
+  position: relative;
+  text-align: center;
+}
+
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.overlay-background {
+  background-color: rgba(255, 255, 255, 0.8);
+}

@@ -194,7 +194,6 @@ version = "0.8.1"
 [[package]]
 category = "main"
 description = "A collection of framework independent HTTP protocol utils."
-marker = "sys_platform != \"win32\" and sys_platform != \"cygwin\" and platform_python_implementation != \"pypy\""
 name = "httptools"
 optional = false
 python-versions = "*"
@@ -436,6 +435,7 @@ validators = ">=0.3.0"
 reference = "27f6a66cc64ab2c458a5a4228aeebf52b48f1282"
 type = "git"
 url = "https://github.com/nitros12/sqlalchemy-searchable"
+
 [[package]]
 category = "main"
 description = "Various utility functions for SQLAlchemy."
@@ -458,6 +458,14 @@ version = "0.11.4"
 
 [[package]]
 category = "main"
+description = "Ultra fast JSON encoder and decoder for Python"
+name = "ujson"
+optional = false
+python-versions = "*"
+version = "1.35"
+
+[[package]]
+category = "main"
 description = "The lightning-fast ASGI server."
 name = "uvicorn"
 optional = false
@@ -475,10 +483,10 @@ websockets = ">=6.0"
 reference = "b4d4907b2a6b9b8ca81def44e487b1ec938ee6b6"
 type = "git"
 url = "https://github.com/nitros12/uvicorn"
+
 [[package]]
 category = "main"
 description = "Fast implementation of asyncio event loop on top of libuv"
-marker = "sys_platform != \"win32\" and sys_platform != \"cygwin\" and platform_python_implementation != \"pypy\""
 name = "uvloop"
 optional = false
 python-versions = "*"
@@ -525,7 +533,7 @@ idna = ">=2.0"
 multidict = ">=4.0"
 
 [metadata]
-content-hash = "3209191b9c8976ce642e1e5a2568f284684ccf7de2e05a207af4e73396e8e308"
+content-hash = "c61bdef199084d929b65dc840bf14a77b523913f3a241101be8bc193ec144569"
 python-versions = "^3.7"
 
 [metadata.hashes]
@@ -577,6 +585,7 @@ slug = ["f55b24a0563428ce56243079f6aeb79c0dd1cc5bbf8b39b10bd6e5263ba8be5f"]
 sqlalchemy = ["d5432832f91d200c3d8b473a266d59442d825f9ea744c467e68c5d9a9479fbce"]
 sqlalchemy-utils = ["3f1cb542cf0549a0de508d4919f3ad693a36230bf4cd13fdd6253549fec71182"]
 starlette = ["7f2307d705b2d9ed584d98468616dee7625d4bc402ce841cc6fa3a863e162e8b"]
+ujson = ["f66073e5506e91d204ab0c614a148d5aa938bdbf104751be66f8ad7a222f5f86"]
 uvicorn = []
 uvloop = ["0fcd894f6fc3226a962ee7ad895c4f52e3f5c3c55098e21efb17c071849a0573", "2f31de1742c059c96cb76b91c5275b22b22b965c886ee1fced093fa27dde9e64", "459e4649fcd5ff719523de33964aa284898e55df62761e7773d088823ccbd3e0", "67867aafd6e0bc2c30a079603a85d83b94f23c5593b3cc08ec7e58ac18bf48e5", "8c200457e6847f28d8bb91c5e5039d301716f5f2fce25646f5fb3fd65eda4a26", "958906b9ca39eb158414fbb7d6b8ef1b7aee4db5c8e8e5d00fcbb69a1ce9dca7", "ac1dca3d8f3ef52806059e81042ee397ac939e5a86c8a3cea55d6b087db66115", "b284c22d8938866318e3b9d178142b8be316c52d16fcfe1560685a686718a021", "c48692bf4587ce281d641087658eca275a5ad3b63c78297bbded96570ae9ce8f", "fefc3b2b947c99737c348887db2c32e539160dcbeb7af9aa6b53db7a283538fe"]
 validators = ["68e4b74889aac1270d83636cb1dbcce3d2271e291ab14023cf95e7dbfbbce09d"]

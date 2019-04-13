@@ -2,8 +2,8 @@ import datetime
 
 from slug import slug
 from gino import Gino
-from sqlalchemy import func
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy import func, text
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy_utils import EncryptedType, observes
 from sqlalchemy_searchable import make_searchable
@@ -54,3 +54,15 @@ class Writeup(db.Model):
         if "slug" not in kwargs:
             kwargs["slug"] = slug(kwargs["title"])
         return self.update(*args, **kwargs)
+
+
+class Image(db.Model):
+    __tablename__ = "images"
+
+    id = db.Column(UUID(), primary_key=True, server_default=func.uuid_generate_v4())
+
+    author_id = db.Column(None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False)
+    author = relationship(User, backref=backref("writeups", passive_deletes=True), lazy="joined")
+
+    filetype = db.Column(db.Text(), nullable=False)
+    image = db.Column(db.LargeBinary(), nullable=False)
