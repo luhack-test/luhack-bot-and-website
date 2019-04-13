@@ -252,7 +252,7 @@ class Images(HTTPEndpoint):
 
         return Response(image.image, media_type=f"image/{image.filetype}")
 
-    @requires("authenticated", redirect="need_auth")
+    @requires("authenticated")
     async def delete(self, request: HTTPConnection):
         uuid, ext = request.path_params["file_name"]
 
