@@ -2,9 +2,9 @@
 
 {% block style %}
     {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', path="/css/tags-input.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', path="/css/tags-input.min.css") }}">
     <link rel="stylesheet" href="{{ url_for('static', path="/css/dropzone.min.css") }}">
-    <script async src="{{ url_for('static', path="/js/tags-input.js") }}"></script>
+    <script async src="{{ url_for('static', path="/js/tags-input.min.js") }}"></script>
     <script defer src="{{ url_for('static', path="/js/dropzone.min.js") }}"></script>
     <script defer src="{{ url_for('static', path="/js/new-writeup.js") }}"></script>
 {% endblock %}
