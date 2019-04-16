@@ -151,8 +151,7 @@ async def user(request: HTTPConnection):
     )
 
 
-@app.route("/tags")
-async def tags(request: HTTPConnection):
+async def get_all_tags():
     tags = (
         await sa.select([sa.column("tag")])
         .select_from(Writeup)
@@ -162,7 +161,12 @@ async def tags(request: HTTPConnection):
         .gino.all()
     )
 
-    tags = [i for (i,) in tags]
+    return [i for (i,) in tags]
+
+
+@app.route("/tags")
+async def tags(request: HTTPConnection):
+    tags = await get_all_tags()
 
     return templates.TemplateResponse("tag_list.j2", {"request": request, "tags": tags})
 
@@ -314,9 +318,16 @@ class NewWriteup(HTTPEndpoint):
         form = WriteupForm()
 
         images = await encoded_existing_images(request)
+        tags = ujson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
-            "new.j2", {"request": request, "form": form, "existing_images": images}
+            "new.j2",
+            {
+                "request": request,
+                "form": form,
+                "existing_images": images,
+                "existing_tags": tags,
+            },
         )
 
     @requires("authenticated", redirect="need_auth")
@@ -347,9 +358,16 @@ class NewWriteup(HTTPEndpoint):
             return RedirectResponse(url=request.url_for("view", slug=writeup.slug))
 
         images = await encoded_existing_images(request)
+        tags = ujson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
-            "new.j2", {"request": request, "form": form, "existing_images": images}
+            "new.j2",
+            {
+                "request": request,
+                "form": form,
+                "existing_images": images,
+                "existing_tags": tags,
+            },
         )
 
 
@@ -372,6 +390,7 @@ class EditWriteup(HTTPEndpoint):
         )
 
         images = await encoded_existing_images(request)
+        tags = ujson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "edit.j2",
@@ -380,6 +399,7 @@ class EditWriteup(HTTPEndpoint):
                 "form": form,
                 "writeup": writeup,
                 "existing_images": images,
+                "existing_tags": tags,
             },
         )
 
@@ -410,6 +430,7 @@ class EditWriteup(HTTPEndpoint):
             return RedirectResponse(url=request.url_for("view", slug=writeup.slug))
 
         images = await encoded_existing_images(request)
+        tags = ujson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "edit.j2",
@@ -418,5 +439,6 @@ class EditWriteup(HTTPEndpoint):
                 "form": form,
                 "writeup": writeup,
                 "existing_images": images,
+                "existing_tags": tags,
             },
         )

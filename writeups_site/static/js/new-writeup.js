@@ -51,3 +51,11 @@ Dropzone.options.imageUploadDropzone = {
     });
   }
 };
+
+const tags_input = document.getElementById("tags");
+const existing_tags = JSON.parse(tags_input.dataset.tagsWhitelist);
+const tags_tagify = new Tagify(tags_input, {
+  whitelist: existing_tags,
+  delimiters: ", ",
+  maxTags: 8,
+});

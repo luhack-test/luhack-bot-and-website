@@ -2,9 +2,9 @@
 
 {% block style %}
     {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', path="/css/tags-input.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', path="/css/tagify.min.css") }}">
     <link rel="stylesheet" href="{{ url_for('static', path="/css/dropzone.min.css") }}">
-    <script async src="{{ url_for('static', path="/js/tags-input.min.js") }}"></script>
+    <script defer src="{{ url_for('static', path="/js/tagify.min.js") }}"></script>
     <script defer src="{{ url_for('static', path="/js/dropzone.min.js") }}"></script>
     <script defer src="{{ url_for('static', path="/js/new-writeup.js") }}"></script>
 {% endblock %}
@@ -22,7 +22,7 @@
             </div>
             <div class="pure-control-group">
                 {{ form.tags.label }}
-                {{ form.tags(type="tags") }}
+                {{ form.tags(type="tags", data_tags_whitelist=existing_tags) }}
             </div>
             <div class="pure-control-group">
                 {{ form.content.label }}
@@ -45,7 +45,4 @@
     </form>
 
     <form action="/upload-image" class="dropzone" id="image-upload-dropzone" data-existing-images="{{ existing_images }}"></form>
-{% endblock %}
-{% block script %}
-    <script>[].forEach.call(document.querySelectorAll('input[type="tags"]'), tagsInput);</script>
 {% endblock %}
