@@ -1,7 +1,12 @@
 import re
 
+import ujson
+
 from wtforms import Form, StringField, TextAreaField, Field, validators, ValidationError
 from wtforms.widgets import TextInput
+
+
+invalid_tag_chars = re.compile(r"[^\w-]+")
 
 
 class TagListField(Field):
@@ -12,11 +17,8 @@ class TagListField(Field):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            data = filter(
-                lambda s: s and not s.isspace(),
-                re.split(r"[^\w-]+", valuelist[0].lower()),
-            )
-            data = list(set(data))
+            tags = [invalid_tag_chars.sub("", tag["value"]) for tag in ujson.decode(valuelist[0])]
+            data = list(set(tags))
             self.data = data
         else:
             self.data = []
