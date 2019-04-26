@@ -14,10 +14,6 @@ from luhack_bot.cogs import verification, writeups
 
 logger = logging.getLogger(__name__)
 
-***REMOVED***
-***REMOVED***
-***REMOVED***
-
 
 class LUHackBot(commands.Bot):
     def __init__(self, **kwargs):
