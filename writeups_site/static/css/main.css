@@ -868,7 +868,7 @@
 
 a {
   text-decoration: none;
-  color: rgb(61, 146, 201);
+  color: #93B7BE;
 }
 a:hover,
 a:focus {
@@ -897,16 +897,13 @@ h3 {
 
 .sidebar {
   overflow: hidden;
-  background: rgb(61, 79, 93);
+  background: #B5111A;
   color: #fff;
 }
 
 .brand-title,
 .brand-tagline {
   margin: 0;
-}
-.brand-title {
-  text-transform: uppercase;
 }
 .brand-tagline {
   font-weight: 300;
@@ -938,14 +935,14 @@ h3 {
 }
 .nav-item a:hover,
 .nav-item a:focus {
-  border: 2px solid rgb(61, 146, 201);
+  border: 2px solid #93B7BE;
   text-decoration: none;
 }
 
 .content-subhead {
   text-transform: uppercase;
   color: #aaa;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #DAD2D8;
   padding: 0.4em 0;
   font-size: 80%;
   font-weight: 500;
@@ -980,8 +977,8 @@ h3 {
 .post-category {
   margin: 0 0.1em;
   padding: 0.3em 1em;
-  color: #fff;
-  background: #999;
+  color: #000000;
+  background: #DAD2D8;
   font-size: 80%;
 }
 
@@ -1033,7 +1030,7 @@ h3 {
 
 .highlight {
   border: 1px solid #ddd;
-  box-shadow: 5px 5px 5px #eee;
+  box-shadow: 5px 5px 5px #DAD2D8;
   padding: 1em;
   overflow-x: auto;
 }
@@ -1060,7 +1057,7 @@ input {
 
 .footer {
   font-size: 87.5%;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #DAD2D8;
   margin-top: 3.4286em;
   padding: 1.1429em;
   background: rgb(250, 250, 250);
@@ -1096,4 +1093,18 @@ input {
 
 .overlay-background {
   background-color: rgba(255, 255, 255, 0.8);
+}
+
+.logo {
+  font-family: "Saira Extra Condensed", serif;
+  text-transform: uppercase;
+  font-size: 2em;
+}
+
+.logo-a {
+  color: #DAD2D8;
+}
+
+.logo-b {
+  color: #FFFFFF;
 }
