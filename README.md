@@ -1,4 +1,8 @@
-# LUHack_Discord_Verification_Bot
+# luhack-bot-and-website
+
+This is the repo of LUHack's Discord bot and Website.
+
+You can visit the website at: <https://scc-luhack.lancs.ac.uk>
 
 # secrets setup
 
