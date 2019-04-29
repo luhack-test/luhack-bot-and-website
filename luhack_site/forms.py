@@ -35,7 +35,7 @@ class TagListField(Field):
             raise ValidationError("Writeups can have at most 8 tags")
 
 
-class WriteupForm(Form):
+class PostForm(Form):
     title = StringField("Title", [validators.Length(min=4, max=25)])
     tags = TagListField("Tags")
     content = TextAreaField("Content")

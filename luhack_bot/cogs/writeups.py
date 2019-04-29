@@ -29,7 +29,7 @@ class Writeups(commands.Cog):
 
     @staticmethod
     def writeup_url(slug):
-        return constants.writeups_base_url / "writeup" / slug
+        return constants.writeups_base_url / "view" / slug
 
     async def get_writeup(self, title: str) -> Optional[Writeup]:
         return await Writeup.query.where(Writeup.title == title).gino.first()
@@ -120,13 +120,15 @@ class Writeups(commands.Cog):
         await writeup.delete()
         await ctx.send(f"RIP {writeup.title}")
 
-    @writeups.command()
+    @writeups.command(aliases=["link"])
     async def token(self, ctx):
         """Generate a token allowing you to create writeups & manage those you have authority to."""
 
-        is_admin = self.luhack_guild.get_member(
-            ctx.author.id
-        ).guild_permissions.administrator
+        member_in_luhack = self.luhack_guild.get_member(ctx.author.id)
+
+        is_disciple = discord.utils.get(member_in_luhack.roles, id=constants.disciple_role_id) is not None
+        is_admin = member_in_luhack.guild_permissions.administrator or is_disciple
+
         token = generate_writeup_edit_token(ctx.author.name, ctx.author.id, is_admin)
 
         url = constants.writeups_base_url.with_query(token=token)

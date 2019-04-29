@@ -1,6 +1,6 @@
-{% extends "base.j2" %}
+{% extends "writeups/base.j2" %}
 
-{% from "links.j2" import tag_link, user_link with context %}
+{% from "writeups/links.j2" import tag_link, user_link with context %}
 
 {% block title %}{{ writeup.title }}{% endblock title %}
 {% block og_title %}{{ writeup.title }}{% endblock %}
@@ -20,7 +20,7 @@
 {% block content %}
     {% if can_edit(request, writeup.author_id) %}
         <a class="pure-button pure-button-primary" href="{{ url_for("EditWriteup", id=writeup.id) }}">Edit</a>
-        <a class="pure-button button-danger" href="{{ url_for("delete", id=writeup.id) }}" onclick="return confirm('are you sure?')">Delete</a>
+        <a class="pure-button button-danger" href="{{ url_for("writeups_delete", id=writeup.id) }}" onclick="return confirm('are you sure?')">Delete</a>
         <br />
         <br />
     {% endif %}

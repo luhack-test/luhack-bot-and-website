@@ -20,7 +20,7 @@ https://github.com/sdispater/poetry
 
 # running the writeups server
 
-`poetry run uvicorn writeups_site.site:app`
+`poetry run uvicorn luhack_site.site:app`
 
 # performing database migrations
 

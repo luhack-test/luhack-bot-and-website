@@ -1,6 +1,6 @@
-{% extends "base.j2" %}
+{% extends "blog/base.j2" %}
 
-{% from "links.j2" import tag_link with context %}
+{% from "blog/links.j2" import tag_link with context %}
 
 {% block content %}
     {% for tag in tags -%}

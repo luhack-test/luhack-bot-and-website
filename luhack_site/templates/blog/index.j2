@@ -1,0 +1,11 @@
+{% extends "blog/base.j2" %}
+
+{% from "blog/preview.j2" import blog_preview with context %}
+
+{% block content %}
+    <div class="posts">
+        {% for (blog, content) in blog %}
+            {{ blog_preview(blog, content, url_for('blog_view', slug=blog.slug)) }}
+        {% endfor %}
+    </div>
+{% endblock %}

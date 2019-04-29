@@ -1,0 +1,26 @@
+{% extends "base.j2" %}
+
+{% block nav %}
+    <ul class="nav-list">
+        <li class="nav-item">
+            <a class="pure-button" href="{{ url_for("index") }}">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="pure-button" href="{{ url_for("blog_index") }}">Blog posts</a>
+        </li>
+        <li class="nav-item">
+            <a class="pure-button" href="{{ url_for("blog_all_tags") }}">Tags</a>
+        </li>
+        {% if request.user.is_admin %}
+            <li class="nav-item">
+                <a class="pure-button" href="{{ url_for("NewBlog") }}">New</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block search_bar %}
+    <form class="pure-form" method="GET" action="/search">
+        <input name="search" id="search-bar" type="search" autocomplete="off" placeholder="Search blog posts" value="{{ query }}">
+    </form>
+{% endblock %}

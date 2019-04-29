@@ -38,3 +38,13 @@ class TokenAuthBackend(AuthenticationBackend):
             creds.append("admin")
 
         return AuthCredentials(creds), User(username, user_id, is_admin)
+
+
+def can_edit(request, author_id=None):
+    if not request.user.is_authenticated:
+        return False
+
+    if author_id is None:
+        return request.user.is_admin
+
+    return request.user.is_admin or author_id == request.user.discord_id

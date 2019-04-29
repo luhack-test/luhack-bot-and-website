@@ -1,0 +1,5 @@
+{% macro tag_link(tag) -%}
+    {% if tag -%}
+        <a class="post-category" href="{{ url_for('blog_by_tag', tag=tag) }}">{{ tag }}</a>
+    {%- endif %}
+{%- endmacro %}
