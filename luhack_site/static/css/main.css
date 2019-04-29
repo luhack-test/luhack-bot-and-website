@@ -1114,3 +1114,9 @@ input {
 .logo-b {
   color: #FFFFFF;
 }
+
+code, pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
