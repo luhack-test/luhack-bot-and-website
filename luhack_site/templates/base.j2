@@ -5,12 +5,12 @@
             {%- block meta %}
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device=width, initial-scale=1.0">
-                <meta property="og:title" content="{% block og_title %}LUHack Writeups{% endblock %}">
+                <meta property="og:title" content="{% block og_title %}LUHack{% endblock %}">
                 <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-                <meta property="og:image" content="{{ url_for("static", path="/assets/logo.png") }}">
+                <meta property="og:image" content="{{ url_for("static", path="/assets/images/logo_small.png") }}">
                 <meta property="og:url" content="{{ request.get_full_path }}">
-                <meta property="og:site_name" content="LUHack Writeups">
-                <meta property="og:description" content="{% block og_description %}CTF writeups made by LUHack members.{% endblock %}">
+                <meta property="og:site_name" content="LUHack">
+                <meta property="og:description" content="{% block og_description %}LUHack's Website.{% endblock %}">
             {%- endblock meta %}
             <title>{% block title %}LUHack{% endblock title %}</title>
             {%- block style %}
