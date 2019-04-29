@@ -5,23 +5,16 @@
 
 {% block title %}LUHack Blog Posts{% endblock %}
 
-{% block nav %}
-    <ul class="nav-list">
+{% block nav_cont %}
+    <br />
+    <li class="nav-item">
+        <a class="button" href="{{ url_for("blog_all_tags") }}">Tag List</a>
+    </li>
+    {% if request.user.is_admin %}
         <li class="nav-item">
-            <a class="pure-button" href="{{ url_for("index") }}">Home</a>
+            <a class="button" href="{{ url_for("NewBlog") }}">New Blog Post</a>
         </li>
-        <li class="nav-item">
-            <a class="pure-button" href="{{ url_for("blog_index") }}">Blog posts</a>
-        </li>
-        <li class="nav-item">
-            <a class="pure-button" href="{{ url_for("blog_all_tags") }}">Tags</a>
-        </li>
-        {% if request.user.is_admin %}
-            <li class="nav-item">
-                <a class="pure-button" href="{{ url_for("NewBlog") }}">New</a>
-            </li>
-        {% endif %}
-    </ul>
+    {% endif %}
 {% endblock %}
 
 {% block search_bar %}

@@ -46,14 +46,15 @@
                             {% block nav %}
                                 <ul class="nav-list">
                                     <li class="nav-item">
-                                        <a class="pure-button" href="{{ url_for("index") }}">Home</a>
+                                        <a class="button" href="{{ url_for("index") }}">Home</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="pure-button" href="{{ url_for("writeups_index") }}">Writeups</a>
+                                        <a class="button" href="{{ url_for("writeups_index") }}">Writeups</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="pure-button" href="{{ url_for("blog_index") }}">Blog Posts</a>
+                                        <a class="button" href="{{ url_for("blog_index") }}">Blog Posts</a>
                                     </li>
+                                    {% block nav_cont %}{% endblock nav_cont %}
                                 </ul>
                             {% endblock nav %}
                         </nav>

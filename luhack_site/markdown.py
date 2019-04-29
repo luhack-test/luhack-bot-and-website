@@ -27,6 +27,19 @@ class HighlightRenderer(mistune.Renderer):
         title = mistune.escape(title, quote=True)
         return f'<a href="{link}" title="{title}" target="_blank">{text}</a>'
 
+    def image(self, src, title, text):
+        src = mistune.escape_link(src)
+        text = mistune.escape(text, quote=True)
+        if title:
+            title = mistune.escape(title, quote=True)
+            html = f'<img class="pure-img" src="{src}" alt="{text}" title="{title}" '
+        else:
+            html = f'<img class="pure-img" src="{src}" alt="{text}" '
+
+        if self.options.get("use_xhtml"):
+            return f"{html} />"
+        return f"{html} >"
+
 
 class PlaintextRenderer(mistune.Renderer):
     def _nothing(*args, **kwargs):

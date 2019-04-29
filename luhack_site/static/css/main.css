@@ -920,23 +920,29 @@ h3 {
   list-style: none;
 }
 .nav-item {
-  display: inline-block;
-  *display: inline;
-  zoom: 1;
+  display: block;
+  padding-bottom: 1em;
+  /* *display: inline; */
+  /* zoom: 1; */
 }
 .nav-item a {
-  background: transparent;
-  border: 2px solid rgb(176, 202, 219);
-  color: #fff;
+  /* background: transparent;*\/ */
+  /* border: 2px solid rgb(176, 202, 219); */
+  color: rgba(255, 255, 255, 0.5);
   margin-top: 1em;
-  letter-spacing: 0.05em;
+  /* letter-spacing: 0.05em; */
   text-transform: uppercase;
-  font-size: 85%;
+  /* font-size: 85%; */
 }
 .nav-item a:hover,
 .nav-item a:focus {
-  border: 2px solid #93B7BE;
+  /* border: 2px solid #93B7BE; */
+  color: rgb(255, 255, 255);
   text-decoration: none;
+}
+
+.button {
+  font-weight: 600;
 }
 
 .content-subhead {
