@@ -921,7 +921,6 @@ h3 {
 
 summary {
     outline: none;
-    /* font-size: 1.em; */
 }
 
 summary::-webkit-details-marker {
@@ -938,7 +937,7 @@ summary:after {
     width: 1em;
 }
 
-details[open] summary:after {
+details[open] > summary:after {
     content: "-";
 }
 
