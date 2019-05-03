@@ -1,5 +1,8 @@
+from itertools import groupby
 from textwrap import shorten
 from typing import List, Tuple
+from datetime import datetime
+import calendar
 
 import sqlalchemy as sa
 import ujson
@@ -22,17 +25,34 @@ from luhack_bot.db.models import Blog, db
 router = Router()
 
 
+async def blogs_grouped() -> List[Tuple[str, List[Tuple[str, List[Blog]]]]]:
+    """Return all blogs grouped by year and month in the format [(year, [(month, [blog])])]"""
+    all_blogs = await Blog.query.order_by(sa.desc(Blog.creation_date)).gino.all()
+
+    def group_monthly(blogs):
+        for k, v in groupby(blogs, key=lambda blog: blog.creation_date.month):
+            yield (calendar.month_name[k], list(v))
+
+    def group_yearly(blogs):
+        for k, v in groupby(blogs, key=lambda blog: blog.creation_date.year):
+            yield (str(k), list(v))
+
+    return [(year, list(group_monthly(year_blogs))) for year, year_blogs in group_yearly(all_blogs)]
+
+
 @router.route("/")
 async def blog_index(request: HTTPConnection):
     latest = await Blog.query.order_by(sa.desc(Blog.creation_date)).limit(20).gino.all()
 
     rendered = [
-        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
+        (w, shorten(plaintext_markdown(w.content), width=800, placeholder="..."))
         for w in latest
     ]
 
+    grouped_blogs = await blogs_grouped()
+
     return templates.TemplateResponse(
-        "blog/index.j2", {"request": request, "blog": rendered}
+        "blog/index.j2", {"request": request, "blog": rendered, "grouped_blogs": grouped_blogs}
     )
 
 
@@ -63,12 +83,14 @@ async def blog_by_tag(request: HTTPConnection):
     )
 
     rendered = [
-        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
+        (w, shorten(plaintext_markdown(w.content), width=800, placeholder="..."))
         for w in blog
     ]
 
+    grouped_blogs = await blogs_grouped()
+
     return templates.TemplateResponse(
-        "blog/index.j2", {"request": request, "blog": rendered}
+        "blog/index.j2", {"request": request, "blog": rendered, "grouped_blogs": grouped_blogs}
     )
 
 
@@ -89,8 +111,10 @@ async def get_all_tags():
 async def blog_all_tags(request: HTTPConnection):
     tags = await get_all_tags()
 
+    grouped_blogs = await blogs_grouped()
+
     return templates.TemplateResponse(
-        "blog/tag_list.j2", {"request": request, "tags": tags}
+        "blog/tag_list.j2", {"request": request, "tags": tags, "grouped_blogs": grouped_blogs}
     )
 
 
@@ -129,12 +153,14 @@ async def blog_search(request: HTTPConnection):
     blog = [(build_blog(r), r.headline) for r in blog]
 
     rendered = [
-        (w, shorten(plaintext_markdown(headline), width=300, placeholder="..."))
+        (w, shorten(plaintext_markdown(headline), width=800, placeholder="..."))
         for (w, headline) in blog
     ]
 
+    grouped_blogs = await blogs_grouped()
+
     return templates.TemplateResponse(
-        "blog/index.j2", {"request": request, "blog": rendered, "query": s_query}
+        "blog/index.j2", {"request": request, "blog": rendered, "query": s_query, "grouped_blogs": grouped_blogs}
     )
 
 

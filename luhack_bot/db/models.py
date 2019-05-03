@@ -26,8 +26,12 @@ class Writeup(db.Model):
     __tablename__ = "writeups"
 
     id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False)
-    author = relationship(User, backref=backref("writeups", passive_deletes=True), lazy="joined")
+    author_id = db.Column(
+        None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False
+    )
+    author = relationship(
+        User, backref=backref("writeups", passive_deletes=True), lazy="joined"
+    )
 
     title = db.Column(db.Text(), nullable=False, unique=True)
     slug = db.Column(db.Text(), nullable=False, unique=True)
@@ -36,7 +40,12 @@ class Writeup(db.Model):
     content = db.Column(db.Text(), nullable=False)
 
     creation_date = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    edit_date = db.Column(db.DateTime, server_default=func.now(), server_onupdate=func.now(), nullable=False)
+    edit_date = db.Column(
+        db.DateTime,
+        server_default=func.now(),
+        server_onupdate=func.now(),
+        nullable=False,
+    )
 
     search_vector = db.Column(
         TSVectorType("title", "content", weights={"title": "A", "content": "B"})
@@ -49,7 +58,7 @@ class Writeup(db.Model):
         if "slug" not in kwargs:
             kwargs["slug"] = slug(kwargs["title"])
         return cls.create(*args, **kwargs)
-    
+
     def update_auto(self, *args, **kwargs):
         if "slug" not in kwargs:
             kwargs["slug"] = slug(kwargs["title"])
@@ -61,8 +70,12 @@ class Image(db.Model):
 
     id = db.Column(UUID(), primary_key=True, server_default=func.uuid_generate_v4())
 
-    author_id = db.Column(None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False)
-    author = relationship(User, backref=backref("images", passive_deletes=True), lazy="joined")
+    author_id = db.Column(
+        None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False
+    )
+    author = relationship(
+        User, backref=backref("images", passive_deletes=True), lazy="joined"
+    )
 
     filetype = db.Column(db.Text(), nullable=False)
     image = db.Column(db.LargeBinary(), nullable=False)
@@ -80,7 +93,12 @@ class Blog(db.Model):
     content = db.Column(db.Text(), nullable=False)
 
     creation_date = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    edit_date = db.Column(db.DateTime, server_default=func.now(), server_onupdate=func.now(), nullable=False)
+    edit_date = db.Column(
+        db.DateTime,
+        server_default=func.now(),
+        server_onupdate=func.now(),
+        nullable=False,
+    )
 
     search_vector = db.Column(
         TSVectorType("title", "content", weights={"title": "A", "content": "B"})

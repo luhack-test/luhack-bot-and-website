@@ -1,9 +1,14 @@
 {% extends "blog/base.j2" %}
 
+{% from "blog/date_accordion.j2" import blog_accordion with context %}
 {% from "blog/links.j2" import tag_link with context %}
 
 {% block content %}
     {% for tag in tags -%}
         {{ tag_link(tag)  }}
     {%- endfor %}
+{% endblock %}
+
+{% block header_content %}
+    {{ blog_accordion(grouped_blogs) }}
 {% endblock %}
