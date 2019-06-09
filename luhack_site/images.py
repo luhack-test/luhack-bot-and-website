@@ -11,6 +11,7 @@ from starlette.routing import Router
 
 from luhack_bot.db.models import Image
 
+from luhack_site.utils import abort
 from luhack_site.authorization import can_edit
 from luhack_site import converters
 
@@ -27,7 +28,7 @@ class Images(HTTPEndpoint):
 
         image = await Image.get(uuid)
 
-        if image.filetype != ext:
+        if image is None or image.filetype != ext:
             return abort(404)
 
         return Response(image.image, media_type=f"image/{image.filetype}")

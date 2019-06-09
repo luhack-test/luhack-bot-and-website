@@ -1,0 +1,55 @@
+<html>
+  <head>
+      <meta charset="utf-8">
+      <title>Stego Challenge</title>
+      <link href="{{ url_for('static', path="/css/hacker.css") }}" rel="stylesheet">
+  </head>
+
+  <style>
+    h1{
+      text-align: center;
+    }
+    .content {
+      padding-top: 30px;
+      text-align: center;
+      max-width: 1000px;
+      margin: auto;
+      font-size: 36px;
+    }
+    ul {
+      list-style: none;
+      padding-bottom: 20px;
+    }
+    li {
+      padding-top: 20px;
+    }
+    h2 {
+      font-size: 50px;
+    }
+  </style>
+
+  <body>
+    <body>
+        <h1>LUHack 2019 Stego Challenge</h1>
+        <div class="content">
+          <ul>
+              <li>Below is an image</li>
+              <li>There is more to this image than meets the eye...</li>
+              <li>Can you find the hidden string?</li>
+          </ul>
+      </div>
+
+      <div class="well">
+        <center>
+          <h2>Contemplating Secrets</h2>
+          <img src="{{ url_for("images", file_name="72e95eef-fb8f-4496-b7ff-cfad05fba6c7.jpeg") }}" alt="Stego">
+        </center>
+      </div>
+
+      <div class="content">
+        <ul>
+          <li>Useful links:</li>
+          <li><a href="https://29a.ch/photo-forensics/#forensic-magnifier">Forensically</li>
+        </ul>
+  </body>
+</html>

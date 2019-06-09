@@ -11,6 +11,7 @@ from starlette.requests import HTTPConnection
 from starlette.responses import RedirectResponse
 from starlette.routing import Router
 
+from luhack_site.utils import abort
 from luhack_site.authorization import can_edit
 from luhack_site.forms import PostForm
 from luhack_site.markdown import highlight_markdown, plaintext_markdown

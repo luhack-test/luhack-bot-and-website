@@ -65,6 +65,13 @@ async def sign_out(request: HTTPConnection):
 
     return RedirectResponse(url=request.url_for("index"))
 
+@app.route("/challenge")
+async def view_challenge(request: HTTPConnection):
+    return templates.TemplateResponse("challenge/challenge.j2", {"request": request})
+
+@app.route("/stegoBoi")
+async def view_stego(request: HTTPConnection):
+    return templates.TemplateResponse("challenge/stegoboi.j2", {"request": request})
 
 @app.on_event("startup")
 async def startup():
