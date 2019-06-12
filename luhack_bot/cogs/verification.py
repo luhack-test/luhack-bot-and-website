@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import discord
@@ -20,6 +21,10 @@ class Verification(commands.Cog):
             constants.verified_luhacker_role_id
         )
 
+        loop = asyncio.get_event_loop()
+        loop.create_task(self.fix_missing_roles())
+        loop.create_task(self.update_usernames())
+
     def get_member_in_luhack(self, user_id: int) -> discord.Member:
         """Try and fetch a member in the luhack guild."""
         return self.luhack_guild.get_member(user_id)
@@ -27,16 +32,31 @@ class Verification(commands.Cog):
     def bot_check_once(self, ctx):
         return is_in_luhack(ctx)
 
+    async def apply_roles(self, member):
+        user = await User.get(member.id)
+        if user is not None:
+            await member.add_roles(self.verified_role)
+            await member.remove_roles(self.potential_role)
+        else:
+            await member.add_roles(self.potential_role)
+
     @commands.Cog.listener()
     async def on_member_join(self, member):
         # if the user is already in the db, then they're verified
-        user = await User.get(member.id)
-        if user is not None:
-            await member.add_roles(
-                self.verified_role, reason="Verified member re-joined"
-            )
-        else:
-            await member.add_roles(self.potential_role, reason="Member joined")
+        await self.apply_roles(member)
+
+    async def fix_missing_roles(self):
+        """Apply missing roles on bot startup"""
+        for member in self.luhack_guild.members:
+            await self.apply_roles(member)
+
+    async def update_usernames(self):
+        users = await User.query.gino.all()
+        for user in users:
+            member = self.luhack_guild.get_member(user.discord_id)
+            if member is None:
+                continue
+            await user.update(username=member.name).apply()
 
     @commands.command(
         name="gen_token",
@@ -70,7 +90,10 @@ class Verification(commands.Cog):
 
         Second step on the path to Grand Master Cyber Wizardl.
         """
-        if (await User.get(ctx.author.id)) is not None:
+        existing_user = await User.get(ctx.author.id)
+        is_flagged = existing_user is not None and existing_user.flagged_for_deletion is not None
+
+        if existing_user is not None and not is_flagged:
             raise commands.CheckFailure("It seems you've already registered.")
 
         user = token_tools.decode_auth_token(auth_token)
@@ -93,6 +116,12 @@ class Verification(commands.Cog):
 
         logger.info("Verifying member: %s", ctx.author)
 
+        if is_flagged:
+            await existing_user.update(flagged_for_deletion=None).apply()
+            await ctx.send("Congrats, you've been re-verified!")
+            await self.bot.log(f"re-verified member {member} ({member.id})")
+            return
+
         user = User(discord_id=user_id, username=member.name, email=user_email)
         await user.create()
 
@@ -102,3 +131,4 @@ class Verification(commands.Cog):
         await ctx.send(
             "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!"
         )
+        await self.bot.log(f"verified member {member} ({member.id})")

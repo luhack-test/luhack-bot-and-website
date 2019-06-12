@@ -7,9 +7,10 @@ import time
 import discord
 from discord.ext import commands
 
+from luhack_bot import constants
 from luhack_bot.db.helpers import init_db
 from luhack_bot.secrets import bot_client_token
-from luhack_bot.cogs import verification, writeups
+from luhack_bot.cogs import verification, writeups, activity_checker
 
 
 logger = logging.getLogger(__name__)
@@ -37,6 +38,18 @@ class LUHackBot(commands.Bot):
         """Register our cogs."""
         self.add_cog(verification.Verification(self))
         self.add_cog(writeups.Writeups(self))
+        self.add_cog(activity_checker.ActivityChecker(self))
+
+
+    async def log_message(self, *args, **kwargs):
+        luhack_guild = self.get_guild(constants.luhack_guild_id)
+        log_chan = luhack_guild.get_channel(constants.bot_log_channel_id)
+
+        if log_chan is None:
+            logger.warn("Log channel is missing")
+            return
+
+        await log_chan.send(*args, **kwargs)
 
     async def on_command_error(self, ctx, error):
         # when a command was called invalidly, give info

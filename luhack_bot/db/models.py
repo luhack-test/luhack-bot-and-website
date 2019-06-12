@@ -15,11 +15,29 @@ db = Gino()
 
 
 class User(db.Model):
+    """Full users, that have a lancs email."""
     __tablename__ = "users"
 
     discord_id = db.Column(db.BigInteger(), primary_key=True)
     username = db.Column(db.Text(), nullable=False)
     email = db.Column(EncryptedType(db.Text(), email_encryption_key), nullable=False)
+    #: when the user became verified, not when they joined the guild
+    joined_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    last_talked = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+
+    #: set to the time when the acc was flagged for deletion, we then delete and
+    #  unverify any user that's been flagged for more than a week
+    flagged_for_deletion = db.Column(db.DateTime, nullable=True)
+
+
+# class ProspectiveUser(db.Model):
+#     """Prospective users, that are in from an auth code."""
+
+#     __tablename__ = "prospective_users"
+
+#     discord_id = db.Column(db.BigInteger(), primary_key=True)
+#     username = db.Column(db.Text(), nullable=False)
+#     joined_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
 
 
 class Writeup(db.Model):
@@ -27,7 +45,7 @@ class Writeup(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(
-        None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False
+        None, db.ForeignKey("users.discord_id", ondelete="SET NULL"), nullable=True
     )
     author = relationship(
         User, backref=backref("writeups", passive_deletes=True), lazy="joined"

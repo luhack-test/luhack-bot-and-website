@@ -1,7 +1,8 @@
+import discord
 from discord.ext import commands
 
 from luhack_bot.db.models import User
-from luhack_bot.constants import luhack_guild_id
+from luhack_bot.constants import luhack_guild_id, disciple_role_id
 
 
 def is_in_luhack(ctx: commands.Context) -> bool:
@@ -11,6 +12,18 @@ def is_in_luhack(ctx: commands.Context) -> bool:
 
     return True
 
+def is_disciple_or_admin(ctx: commands.Context) -> bool:
+    """Ensure a member is a disciple or admin."""
+    if ctx.guild is None or ctx.guild.id != luhack_guild_id:
+        raise commands.CheckFailure("You can only use this command in the luhack guild")
+
+    is_disciple = discord.utils.get(ctx.author.roles, id=disciple_role_id) is not None
+    is_admin = ctx.author.guild_permissions.administrator
+
+    if not (is_admin or is_disciple):
+        raise commands.CheckFailure("You must be an admin or disciple to use this command.")
+
+    return True
 
 async def is_authed(ctx: commands.Context) -> bool:
     """Ensure a member is registered with LUHack."""
