@@ -17,6 +17,7 @@ from luhack_site.forms import PostForm
 from luhack_site.markdown import highlight_markdown, plaintext_markdown
 from luhack_site.templater import templates
 from luhack_site.images import encoded_existing_images
+from luhack_site.content_logger import log_edit, log_create, log_delete
 
 from luhack_bot.db.models import User, Writeup, db
 
@@ -185,7 +186,9 @@ async def writeups_delete(request: HTTPConnection):
     if not can_edit(request, writeup.author_id):
         return abort(400)
 
-    await Writeup.delete.where(Writeup.id == id).gino.status()
+    await writeup.delete()
+
+    await log_delete("writeup", writeup.title, request.user.username)
 
     return RedirectResponse(url=request.url_for("writeups_index"))
 
@@ -234,7 +237,10 @@ class NewWriteup(HTTPEndpoint):
                 content=form.content.data,
             )
 
-            return RedirectResponse(url=request.url_for("writeups_view", slug=writeup.slug))
+            url=request.url_for("writeups_view", slug=writeup.slug)
+            await log_create("writeup", writeup.title, request.user.username, url)
+
+            return RedirectResponse(url=url)
 
         images = await encoded_existing_images(request)
         tags = ujson.dumps(await get_all_tags())
@@ -306,7 +312,10 @@ class EditWriteup(HTTPEndpoint):
                 content=form.content.data,
             ).apply()
 
-            return RedirectResponse(url=request.url_for("writeups_view", slug=writeup.slug))
+            url=request.url_for("writeups_view", slug=writeup.slug)
+            await log_edit("writeup", writeup.title, request.user.username, url)
+
+            return RedirectResponse(url=url)
 
         images = await encoded_existing_images(request)
         tags = ujson.dumps(await get_all_tags())

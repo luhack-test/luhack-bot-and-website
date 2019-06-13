@@ -2,8 +2,6 @@ from os import getenv
 from pathlib import Path
 from typing import List, Tuple
 
-from dotenv import load_dotenv
-
 from starlette.applications import Starlette
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -13,6 +11,7 @@ from starlette.routing import Mount
 from starlette.requests import HTTPConnection
 from starlette.staticfiles import StaticFiles
 
+from luhack_site import load_env
 from luhack_site.authorization import TokenAuthBackend, can_edit
 from luhack_site.templater import templates
 from luhack_site.writeups import router as writeups_router
@@ -23,8 +22,6 @@ from luhack_bot.db.helpers import init_db
 
 
 root_dir = Path(__file__).parent
-
-load_dotenv(root_dir.parent)
 
 app = Starlette(
     routes=[

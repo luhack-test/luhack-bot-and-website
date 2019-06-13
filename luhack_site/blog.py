@@ -20,6 +20,7 @@ from luhack_site.forms import PostForm
 from luhack_site.markdown import highlight_markdown, plaintext_markdown
 from luhack_site.templater import templates
 from luhack_site.images import encoded_existing_images
+from luhack_site.content_logger import log_edit, log_create, log_delete
 
 from luhack_bot.db.models import Blog, db
 
@@ -178,7 +179,8 @@ async def blog_delete(request: HTTPConnection):
     if not can_edit(request):
         return abort(400)
 
-    await Blog.delete.where(Blog.id == id).gino.status()
+    await blog.delete()
+    await log_delete("blog", blog.name, request.user.username)
 
     return RedirectResponse(url=request.url_for("blog_index"))
 
@@ -224,7 +226,10 @@ class NewBlog(HTTPEndpoint):
                 title=form.title.data, tags=form.tags.data, content=form.content.data
             )
 
-            return RedirectResponse(url=request.url_for("blog_view", slug=blog.slug))
+            url = request.url_for("blog_view", slug=blog.slug)
+            await log_create("blog", blog.name, request.user.username, url)
+
+            return RedirectResponse(url=url)
 
         images = await encoded_existing_images(request)
         tags = ujson.dumps(await get_all_tags())
@@ -291,7 +296,10 @@ class EditBlog(HTTPEndpoint):
                 title=form.title.data, tags=form.tags.data, content=form.content.data
             ).apply()
 
-            return RedirectResponse(url=request.url_for("blog_view", slug=blog.slug))
+            url = request.url_for("blog_view", slug=blog.slug)
+            await log_edit("blog", blog.name, request.user.username, url)
+
+            return RedirectResponse(url=url)
 
         images = await encoded_existing_images(request)
         tags = ujson.dumps(await get_all_tags())
