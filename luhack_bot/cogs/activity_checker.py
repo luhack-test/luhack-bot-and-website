@@ -112,22 +112,23 @@ class ActivityChecker(commands.Cog):
 
     async def background_loop(self):
         """The background task for fetching users that haven't messaged in a year."""
-        await asyncio.sleep(timedelta(days=1).total_seconds())
+        while True:
+            await asyncio.sleep(timedelta(days=1).total_seconds())
 
-        one_week_ago = datetime.utcnow() - timedelta(weeks=1)
+            one_week_ago = datetime.utcnow() - timedelta(weeks=1)
 
-        users_to_delete = await User.query.where(
-            (User.flagged_for_deletion != None)
-            & (User.flagged_for_deletion < one_week_ago)
-        ).gino.all()
-        for user in users_to_delete:
-            await self.remove_verified_user(user)
+            users_to_delete = await User.query.where(
+                (User.flagged_for_deletion != None)
+                & (User.flagged_for_deletion < one_week_ago)
+            ).gino.all()
+            for user in users_to_delete:
+                await self.remove_verified_user(user)
 
-        for member in self.get_inactive_potential_members():
-            await self.bot.log(
-                f"Kicking inactive potential-only member {member} ({member.id})"
-            )
-            # await member.kick(reason="Inactive potential-only user.")
+            for member in self.get_inactive_potential_members():
+                await self.bot.log(
+                    f"Kicking inactive potential-only member {member} ({member.id})"
+                )
+                # await member.kick(reason="Inactive potential-only user.")
 
     async def cog_check(self, ctx):
         return is_disciple_or_admin(ctx)

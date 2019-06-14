@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from luhack_bot import constants, email_tools, token_tools
 from luhack_bot.db.models import User
-from luhack_bot.utils.checks import is_in_luhack
+from luhack_bot.utils.checks import is_in_luhack, is_disciple_or_admin, in_channel
 
 logger = logging.getLogger(__name__)
 
@@ -81,8 +81,7 @@ class Verification(commands.Cog):
         await ctx.send(f"Noice, I've sent an email to: `{email}` with your token!")
 
     @commands.command(
-        name="verify_token",
-        aliases=["auth_plz", "i_really_wanna_be_wizard"],
+        name="verify_token", aliases=["auth_plz", "i_really_wanna_be_wizard"]
     )
     async def verify_token(self, ctx, auth_token: str):
         """Takes an authentication token, checks if it is valid and if so elevates you to Verified LUHacker.
@@ -91,7 +90,9 @@ class Verification(commands.Cog):
         Second step on the path to Grand Master Cyber Wizardl.
         """
         existing_user = await User.get(ctx.author.id)
-        is_flagged = existing_user is not None and existing_user.flagged_for_deletion is not None
+        is_flagged = (
+            existing_user is not None and existing_user.flagged_for_deletion is not None
+        )
 
         if existing_user is not None and not is_flagged:
             raise commands.CheckFailure("It seems you've already registered.")
@@ -132,3 +133,21 @@ class Verification(commands.Cog):
             "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!"
         )
         await self.bot.log(f"verified member {member} ({member.id})")
+
+    @commands.check(is_disciple_or_admin)
+    @commands.check(in_channel(constants.inner_magic_circle_id))
+    @commands.command()
+    async def check_email(self, ctx, name: str):
+        """See what user an email belongs to."""
+        user = await User.query.where(
+            (User.email == f"{name}@lancaster.ac.uk")
+            | (User.email == f"{name}@lancs.ac.uk")
+            | (User.email == f"{name}@live.lancs.ac.uk")
+        ).gino.first()
+
+        if user is None:
+            await ctx.send("No user with that email exists.")
+        else:
+            await ctx.send(
+                f"User: {user.username} ({user.discord_id}). Joined at: {user.joined_at}, Last talked: {user.last_talked}"
+            )

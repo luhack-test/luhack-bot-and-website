@@ -5,6 +5,14 @@ from luhack_bot.db.models import User
 from luhack_bot.constants import luhack_guild_id, disciple_role_id
 
 
+def in_channel(channel_id: int):
+    def inner(ctx: commands.Context):
+        if ctx.channel.id != channel_id:
+            raise commands.CheckFailure(f"This command is only usable inside <#{channel_id}>")
+        return True
+    return inner
+
+
 def is_in_luhack(ctx: commands.Context) -> bool:
     """Ensure a member is in the luhack guild."""
     if ctx.bot.get_guild(luhack_guild_id).get_member(ctx.author.id) is None:
