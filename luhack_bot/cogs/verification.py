@@ -139,15 +139,13 @@ class Verification(commands.Cog):
     @commands.command()
     async def check_email(self, ctx, name: str):
         """See what user an email belongs to."""
-        user = await User.query.where(
-            (User.email == f"{name}@lancaster.ac.uk")
-            | (User.email == f"{name}@lancs.ac.uk")
-            | (User.email == f"{name}@live.lancs.ac.uk")
-        ).gino.first()
+        users = await User.query.gino.all()
 
-        if user is None:
-            await ctx.send("No user with that email exists.")
+        for user in users:
+            if name in user.email:
+                await ctx.send(
+                    f"User: {user.username} ({user.discord_id}). Joined at: {user.joined_at}, Last talked: {user.last_talked}"
+                )
+                return
         else:
-            await ctx.send(
-                f"User: {user.username} ({user.discord_id}). Joined at: {user.joined_at}, Last talked: {user.last_talked}"
-            )
+            await ctx.send("No user with that email exists.")
