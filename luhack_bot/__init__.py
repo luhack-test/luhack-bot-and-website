@@ -13,7 +13,9 @@ def run():
 
     ch = logging.StreamHandler(sys.stderr)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
 
     ch.setFormatter(formatter)
 
@@ -30,8 +32,8 @@ def run():
 
 def gen_tokens():
     """Generate tokens for the bot."""
-    email_key = Fernet.generate_key().decode('utf-8')
-    token_secret = Fernet.generate_key().decode('utf-8')
+    email_key = Fernet.generate_key().decode("utf-8")
+    token_secret = Fernet.generate_key().decode("utf-8")
 
     print(
         dedent(
@@ -41,6 +43,7 @@ def gen_tokens():
     """
         )
     )
+
 
 def export_users():
     # exports verified users from the old db to the new db
@@ -58,42 +61,43 @@ def export_users():
 
     from luhack_bot.crypto import fernet
 
-
     class AESCipher(object):
         """
         A classical AES Cipher. Can use any size of data and any size of password thanks to padding.
         Also ensure the coherence and the type of the data with a unicode to byte converter.
         """
+
         def __init__(self, key):
             self.bs = 32
             self.key = hashlib.sha256(AESCipher.str_to_bytes(key)).digest()
 
         @staticmethod
         def str_to_bytes(data):
-            u_type = type(b''.decode('utf8'))
+            u_type = type(b"".decode("utf8"))
             if isinstance(data, u_type):
-                return data.encode('utf8')
+                return data.encode("utf8")
             return data
 
         def _pad(self, s):
-            return s + (self.bs - len(s) % self.bs) * AESCipher.str_to_bytes(chr(self.bs - len(s) % self.bs))
+            return s + (self.bs - len(s) % self.bs) * AESCipher.str_to_bytes(
+                chr(self.bs - len(s) % self.bs)
+            )
 
         @staticmethod
         def _unpad(s):
-            return s[:-ord(s[len(s)-1:])]
+            return s[: -ord(s[len(s) - 1 :])]
 
         def encrypt(self, raw):
             raw = self._pad(AESCipher.str_to_bytes(raw))
             iv = Random.new().read(AES.block_size)
             cipher = AES.new(self.key, AES.MODE_CBC, iv)
-            return base64.b64encode(iv + cipher.encrypt(raw)).decode('utf-8')
+            return base64.b64encode(iv + cipher.encrypt(raw)).decode("utf-8")
 
         def decrypt(self, enc):
             enc = base64.b64decode(enc)
-            iv = enc[:AES.block_size]
+            iv = enc[: AES.block_size]
             cipher = AES.new(self.key, AES.MODE_CBC, iv)
-            return self._unpad(cipher.decrypt(enc[AES.block_size:])).decode('utf-8')
-
+            return self._unpad(cipher.decrypt(enc[AES.block_size :])).decode("utf-8")
 
     parser = argparse.ArgumentParser(description="Export users")
     parser.add_argument("old_aes_key")
@@ -106,25 +110,29 @@ def export_users():
     def update_user(user, cipher):
         email = user["email"]
         decrypted = cipher.decrypt(email)
-        encrypted = base64.b64encode(fernet.encrypt(decrypted.encode("utf-8"))).decode('utf-8')
+        encrypted = base64.b64encode(fernet.encrypt(decrypted.encode("utf-8"))).decode(
+            "utf-8"
+        )
         user["email"] = encrypted
         return user
 
     args = parser.parse_args()
 
-    conn = pymysql.connect(host=args.old_db_host,
-                        user=args.old_db_user,
-                        password=args.old_db_pass,
-                        port=args.old_db_port,
-                        db=args.old_db,
-                        charset="utf8mb4",
-                        cursorclass=pymysql.cursors.DictCursor)
+    conn = pymysql.connect(
+        host=args.old_db_host,
+        user=args.old_db_user,
+        password=args.old_db_pass,
+        port=args.old_db_port,
+        db=args.old_db,
+        charset="utf8mb4",
+        cursorclass=pymysql.cursors.DictCursor,
+    )
 
     cipher = AESCipher(args.old_aes_key)
 
     try:
         with conn.cursor() as cursor:
-            sql = "SELECT UserID as user_id, Username as username, Email as email from VerifiedUsers, Emails"
+            sql = "SELECT UserID as user_id, Username as username, Email as email from VerifiedUsers, Emails where VerifiedUsers.EmailID = Emails.EmailID"
             cursor.execute(sql)
             users = cursor.fetchall()
 
@@ -134,6 +142,7 @@ def export_users():
 
     finally:
         conn.close()
+
 
 def ingest_users():
     # ingests users exported from the old db
@@ -147,19 +156,23 @@ def ingest_users():
     from luhack_bot.db.helpers import init_db
     from luhack_bot.db.models import User
 
-
     parser = argparse.ArgumentParser(description="Ingest users")
-    parser.add_argument('users_file')
+    parser.add_argument("users_file")
 
     async def insert_users(users):
         await init_db()
 
         for user in users:
-            email = fernet.decrypt(base64.b64decode(user["email"])).decode('utf-8')
+            email = fernet.decrypt(base64.b64decode(user["email"])).decode("utf-8")
             d_id = int(user["user_id"])
 
-            if await User.get(d_id) is None:
-                await User.create(discord_id=d_id, username=user["username"], email=email)
+            existing_user = await User.get(d_id)
+            if existing_user is None:
+                await User.create(
+                    discord_id=d_id, username=user["username"], email=email
+                )
+            else:
+                await existing_user.update(discord_id=d_id, email=email).apply()
 
     args = parser.parse_args()
 
