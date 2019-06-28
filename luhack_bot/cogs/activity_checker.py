@@ -52,7 +52,7 @@ class ActivityChecker(commands.Cog):
         #     )
         # )
 
-        await self.bot.log(
+        await self.bot.log_message(
             f"Removed member {member} ({member.id}) for being flagged for more than a week."
         )
 
@@ -125,7 +125,7 @@ class ActivityChecker(commands.Cog):
                 await self.remove_verified_user(user)
 
             for member in self.get_inactive_potential_members():
-                await self.bot.log(
+                await self.bot.log_message(
                     f"Kicking inactive potential-only member {member} ({member.id})"
                 )
                 # await member.kick(reason="Inactive potential-only user.")

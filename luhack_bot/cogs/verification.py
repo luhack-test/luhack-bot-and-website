@@ -4,7 +4,7 @@ import logging
 import discord
 from discord.ext import commands
 
-from luhack_bot import constants, email_tools, token_tools
+from luhack_bot import constants, email_tools, token_tools, secrets
 from luhack_bot.db.models import User
 from luhack_bot.utils.checks import is_in_luhack, is_disciple_or_admin, in_channel
 
@@ -13,9 +13,13 @@ logger = logging.getLogger(__name__)
 
 class Verification(commands.Cog):
     def __init__(self, bot):
+        self.bot = bot
         self.luhack_guild = bot.get_guild(constants.luhack_guild_id)
         self.potential_role = self.luhack_guild.get_role(
             constants.potential_luhacker_role_id
+        )
+        self.prospective_role = self.luhack_guild.get_role(
+            constants.prospective_luhacker_role_id
         )
         self.verified_role = self.luhack_guild.get_role(
             constants.verified_luhacker_role_id
@@ -36,7 +40,7 @@ class Verification(commands.Cog):
         user = await User.get(member.id)
         if user is not None:
             await member.add_roles(self.verified_role)
-            await member.remove_roles(self.potential_role)
+            await member.remove_roles(self.potential_role, self.prospective_role)
         else:
             await member.add_roles(self.potential_role)
 
@@ -57,6 +61,19 @@ class Verification(commands.Cog):
             if member is None:
                 continue
             await user.update(username=member.name).apply()
+
+    @commands.command()
+    async def become_prospective(self, ctx, token: str):
+        """Become a prospective luhacker."""
+        if token != secrets.prospective_token:
+            raise commands.CheckFailure("Not a valid prospective token")
+
+        member = self.get_member_in_luhack(ctx.author.id)
+
+        await member.remove_roles(self.potential_role)
+        await member.add_roles(self.prospective_role)
+        await ctx.send("Prospective luhacker granted, congrats!")
+        await self.bot.log_message(f"made member prospective {member} ({member.id})")
 
     @commands.command(
         name="gen_token",
@@ -120,19 +137,19 @@ class Verification(commands.Cog):
         if is_flagged:
             await existing_user.update(flagged_for_deletion=None).apply()
             await ctx.send("Congrats, you've been re-verified!")
-            await self.bot.log(f"re-verified member {member} ({member.id})")
+            await self.bot.log_message(f"re-verified member {member} ({member.id})")
             return
 
         user = User(discord_id=user_id, username=member.name, email=user_email)
         await user.create()
 
-        await member.remove_roles(self.potential_role)
+        await member.remove_roles(self.potential_role, self.prospective_role)
         await member.add_roles(self.verified_role)
 
         await ctx.send(
             "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!"
         )
-        await self.bot.log(f"verified member {member} ({member.id})")
+        await self.bot.log_message(f"verified member {member} ({member.id})")
 
     @commands.check(is_disciple_or_admin)
     @commands.check(in_channel(constants.inner_magic_circle_id))

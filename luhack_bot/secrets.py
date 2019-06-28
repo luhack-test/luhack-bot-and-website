@@ -21,3 +21,5 @@ bot_client_token = os.getenv("BOT_TOKEN")
 email_encryption_key = os.getenv("EMAIL_KEY") or env_fail("EMAIL_KEY")
 
 signing_secret = os.getenv("TOKEN_SECRET") or env_fail("TOKEN_SECRET")
+
+prospective_token = os.getenv("PROSPECTIVE_TOKEN") or env_fail("PROSPECTIVE_TOKEN")
