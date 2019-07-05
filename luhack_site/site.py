@@ -17,7 +17,7 @@ from luhack_site.templater import templates
 from luhack_site.writeups import router as writeups_router
 from luhack_site.images import router as images_router
 from luhack_site.blog import router as blog_router
-from luhack_site.middleware import CSPMiddleware
+from luhack_site.middleware import CSPMiddleware, HSTSMiddleware, WebSecMiddleware
 
 from luhack_bot.db.helpers import init_db
 
@@ -32,9 +32,17 @@ app = Starlette(
     ]
 )
 
+app.add_middleware(HSTSMiddleware)
+app.add_middleware(WebSecMiddleware)
 app.add_middleware(
     CSPMiddleware,
-    default_src=("'self'", "use.fontawesome.com", "unpkg.com", "fonts.googleapis.com", "fonts.gstatic.com"),
+    default_src=(
+        "'self'",
+        "use.fontawesome.com",
+        "unpkg.com",
+        "fonts.googleapis.com",
+        "fonts.gstatic.com",
+    ),
     style_src=("'self'", "use.fontawesome.com", "unpkg.com", "fonts.googleapis.com"),
 )
 app.add_middleware(AuthenticationMiddleware, backend=TokenAuthBackend())

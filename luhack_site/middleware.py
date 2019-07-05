@@ -5,25 +5,10 @@ from starlette.datastructures import Headers, MutableHeaders
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 
-class CSPMiddleware:
-    def __init__(
-        self,
-        app: ASGIApp,
-        default_src: typing.Sequence[str] = ("'none'",),
-        script_src: typing.Sequence[str] = ("'self'",),
-        connect_src: typing.Sequence[str] = ("'self'",),
-        img_src: typing.Sequence[str] = ("*",),
-        style_src: typing.Sequence[str] = ("'self'",),
-    ):
+class HeaderMiddleware:
+    def __init__(self, app: ASGIApp, headers: typing.Dict[str, str]):
         self.app = app
-        ds = "default-src " + " ".join(default_src)
-        scs = "script-src " + " ".join(script_src)
-        cs = "connect-src " + " ".join(connect_src)
-        is_ = "img-src " + " ".join(img_src)
-        sts = "style-src " + " ".join(style_src)
-        header_content = ";".join((ds, scs, cs, is_, sts))
-
-        self.headers = {"Content-Security-Policy": header_content}
+        self.__headers = headers
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send):
         if scope["type"] != "http":
@@ -48,6 +33,43 @@ class CSPMiddleware:
 
         message.setdefault("headers", [])
         headers = MutableHeaders(scope=message)
-        headers.update(self.headers)
+        headers.update(self.__headers)
 
         await send(message)
+
+
+class WebSecMiddleware(HeaderMiddleware):
+    def __init__(self, app: ASGIApp):
+        super().__init__(
+            app,
+            {
+                "X-Content-Type-Options": "nosniff",
+                "X-Frame-Options": "DENY",
+                "X-XSS-Protection": "1; mode=block",
+            },
+        )
+
+
+class HSTSMiddleware(HeaderMiddleware):
+    def __init__(self, app: ASGIApp):
+        super().__init__(app, {"Strict-Transport-Security": "max-age=63072000"})
+
+
+class CSPMiddleware(HeaderMiddleware):
+    def __init__(
+        self,
+        app: ASGIApp,
+        default_src: typing.Sequence[str] = ("'none'",),
+        script_src: typing.Sequence[str] = ("'self'",),
+        connect_src: typing.Sequence[str] = ("'self'",),
+        img_src: typing.Sequence[str] = ("*",),
+        style_src: typing.Sequence[str] = ("'self'",),
+    ):
+        ds = "default-src " + " ".join(default_src)
+        scs = "script-src " + " ".join(script_src)
+        cs = "connect-src " + " ".join(connect_src)
+        is_ = "img-src " + " ".join(img_src)
+        sts = "style-src " + " ".join(style_src)
+        header_content = ";".join((ds, scs, cs, is_, sts))
+
+        super().__init__(app, {"Content-Security-Policy": header_content})
