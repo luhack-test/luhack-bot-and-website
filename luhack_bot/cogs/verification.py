@@ -25,9 +25,8 @@ class Verification(commands.Cog):
             constants.verified_luhacker_role_id
         )
 
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.fix_missing_roles())
-        loop.create_task(self.update_usernames())
+        bot.loop.create_task(self.fix_missing_roles())
+        bot.loop.create_task(self.update_usernames())
 
     def get_member_in_luhack(self, user_id: int) -> discord.Member:
         """Try and fetch a member in the luhack guild."""

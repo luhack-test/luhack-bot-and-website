@@ -32,6 +32,8 @@ class LUHackBot(commands.Bot):
         print(f'Timestamp:  {time.strftime("%Y-%m-%d %H:%M:%S")}')
         print("----------------Logs-----------------")
 
+    def run(self, *args, **kwargs):
+        super().run(*args, **kwargs)
         self.load_cogs()
 
     def load_cogs(self):
