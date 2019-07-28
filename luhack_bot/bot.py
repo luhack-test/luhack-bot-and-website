@@ -33,11 +33,12 @@ class LUHackBot(commands.Bot):
         print("----------------Logs-----------------")
 
     def run(self, *args, **kwargs):
+        self.loop.create_task(self.load_cogs())
         super().run(*args, **kwargs)
-        self.load_cogs()
 
-    def load_cogs(self):
+    async def load_cogs(self):
         """Register our cogs."""
+        await self.wait_until_ready()
         self.add_cog(verification.Verification(self))
         self.add_cog(writeups.Writeups(self))
         self.add_cog(activity_checker.ActivityChecker(self))
@@ -56,8 +57,10 @@ class LUHackBot(commands.Bot):
     async def on_command_error(self, ctx, error):
         # when a command was called invalidly, give info
         if ctx.command is not None:
-            await self.help_command.prepare_help_command(ctx, ctx.command)
-            prepared_help = self.help_command.get_command_signature(ctx.command)
+            cmd = self.help_command.copy()
+            cmd.context = ctx
+            await cmd.prepare_help_command(ctx, ctx.command.qualified_name)
+            prepared_help = cmd.get_command_signature(ctx.command)
 
         if isinstance(error, commands.NoPrivateMessage):
             await ctx.send(
