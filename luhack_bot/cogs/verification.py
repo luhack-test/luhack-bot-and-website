@@ -155,7 +155,7 @@ class Verification(commands.Cog):
     @commands.command()
     async def add_user_manually(self, ctx, member: discord.Member, email: str):
         """Manually auth a member."""
-        logger.info("Verifying member: %s", ctx.author)
+        logger.info("Verifying member: %s", member)
 
         user = User(discord_id=member.id, username=member.name, email=email)
         await user.create()
