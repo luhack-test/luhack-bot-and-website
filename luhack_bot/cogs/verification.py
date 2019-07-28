@@ -153,6 +153,25 @@ class Verification(commands.Cog):
     @commands.check(is_disciple_or_admin)
     @commands.check(in_channel(constants.inner_magic_circle_id))
     @commands.command()
+    async def add_user_manually(self, ctx, member: discord.Member, email: str):
+        """Manually auth a member."""
+        logger.info("Verifying member: %s", ctx.author)
+
+        user = User(discord_id=member.id, username=member.name, email=email)
+        await user.create()
+
+        await member.remove_roles(self.potential_role, self.prospective_role)
+        await member.add_roles(self.verified_role)
+
+        await member.send(
+            "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!"
+        )
+        await ctx.send(f"Manually verified {member}")
+        await self.bot.log_message(f"verified member {member} ({member.id})")
+
+    @commands.check(is_disciple_or_admin)
+    @commands.check(in_channel(constants.inner_magic_circle_id))
+    @commands.command()
     async def check_email(self, ctx, name: str):
         """See what user an email belongs to."""
         users = await User.query.gino.all()
