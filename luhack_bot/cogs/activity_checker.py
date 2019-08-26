@@ -66,7 +66,7 @@ class ActivityChecker(commands.Cog):
 
         def check(member: discord.Member):
             # role ids of all member roles except @everyone
-            role_ids = [r.id for id in member.roles[1:]]
+            role_ids = [r.id for id in member.roles if not r.is_default()]
 
             # no roles, or only role is the potential role
             if role_ids and role_ids != [constants.potential_luhacker_role_id]:
@@ -93,15 +93,10 @@ class ActivityChecker(commands.Cog):
 
         return [m for m in self.luhack_guild.members if await check(m)]
 
-    def is_member_excepted(self, member: discord.Member):
-        """Does the member have a role other than potential or verified?"""
-        for role in member.roles[1:]:
-            if role.id not in (
-                constants.potential_luhacker_role_id,
-                constants.verified_luhacker_role_id,
-            ):
-                return True
-        return False
+    def is_member_excepted(self, member: discord.Member) -> bool:
+        """Is the member disciple?"""
+        role_ids = {role.id for role in member.roles}
+        return bool(role_ids & constants.trusted_role_ids)
 
     async def flag_inactive_member(self, member: discord.Member):
         user = await User.get(member.id)
