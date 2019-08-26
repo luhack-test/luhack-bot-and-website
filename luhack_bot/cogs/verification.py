@@ -85,7 +85,12 @@ class Verification(commands.Cog):
 
         First step on the path to Grand Master Cyber Wizard
         """
-        if (await User.get(ctx.author.id)) is not None:
+        existing_user = await User.get(ctx.author.id)
+        is_flagged = (
+            existing_user is not None and existing_user.flagged_for_deletion is not None
+        )
+
+        if existing_user is not None and not is_flagged:
             raise commands.CheckFailure("It seems you've already registered.")
 
         auth_token = token_tools.generate_auth_token(ctx.author.id, email)

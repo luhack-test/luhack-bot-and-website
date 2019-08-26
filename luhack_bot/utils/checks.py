@@ -42,3 +42,16 @@ async def is_authed(ctx: commands.Context) -> bool:
         raise commands.CheckFailure("It looks like you're not registed with luhack, go and register yourself.")
 
     return True
+
+# async def can_use_verif_commands(ctx: commands.Context) -> bool:
+#     """Ensure a member is allowed to use the verification commands (is flagged or new)."""
+
+#     existing_user = await User.get(ctx.author.id)
+#     is_flagged = (
+#         existing_user is not None and existing_user.flagged_for_deletion is not None
+#     )
+
+#     if existing_user is not None and not is_flagged:
+#         raise commands.CheckFailure("It seems you've already registered.")
+
+#     return True

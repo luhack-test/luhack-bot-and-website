@@ -108,8 +108,8 @@ class ActivityChecker(commands.Cog):
         if user is None:
             return
 
-        # await member.send("Hey, you've been inactive on luhack for a while, to remain in the server you'll "
-        #                   "need to re-verify using `!gen_token` again or you will be removed in a week.")
+        await member.send("Hey, you've been inactive on luhack for a while, to remain in the server you'll "
+                          "need to re-verify using `!gen_token` again or you will be removed in a week.")
         await user.update(flagged_for_deletion=datetime.utcnow()).apply()
 
     async def background_loop(self):
@@ -135,6 +135,10 @@ class ActivityChecker(commands.Cog):
 
     async def cog_check(self, ctx):
         return is_disciple_or_admin(ctx)
+
+    @commands.command()
+    async def manually_flag_inactive(self, ctx, member: discord.Member):
+        await self.flag_inactive_member(member)
 
     @commands.command(name="mark_inactive")
     async def mark_inactive_dry(self, ctx):
