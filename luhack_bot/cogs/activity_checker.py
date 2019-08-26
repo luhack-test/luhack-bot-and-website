@@ -141,14 +141,22 @@ class ActivityChecker(commands.Cog):
         """Mark inactive users, this is a dry run."""
         inactive = await self.get_inactive_verified_members()
 
-        await ctx.send("Flagged users (dry run): ```\n" + "\n".join(f"{m} ({m.id})" for m in inactive) + "\n```")
+        total_members = len(self.luhack_guild.members)
+
+        stats = f"{100 * len(inactive) / total_members:.0f}% (inactive: {len(inactive)} / total: {total_members})"
+
+        await ctx.send(f"Flagged users ({stats}) (dry run): ```\n" + "\n".join(f"{m} ({m.id})" for m in inactive) + "\n```")
 
     @commands.command(name="mark_inactive_non_dry")
     async def mark_inactive(self, ctx):
         """Mark inactive users."""
         inactive = await self.get_inactive_verified_members()
 
-        await ctx.send("Flagged users: ```\n" + "\n".join(f"{m} ({m.id})" for m in inactive) + "\n```")
+        total_members = len(self.luhack_guild.members)
+
+        stats = f"{100 * len(inactive) / total_members:.0f}% (inactive: {len(inactive)} / total: {total_members})"
+
+        await ctx.send(f"Flagged users ({stats}): ```\n" + "\n".join(f"{m} ({m.id})" for m in inactive) + "\n```")
 
         for member in inactive:
             await self.flag_inactive_member(member)
