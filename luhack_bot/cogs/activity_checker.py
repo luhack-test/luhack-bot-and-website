@@ -62,7 +62,8 @@ class ActivityChecker(commands.Cog):
             # role ids of all member roles except @everyone
             role_ids = [r.id for r in member.roles if not r.is_default()]
 
-            # no roles, or only role is the potential role
+            # potential users are any users with no roles, or only role is the potential role
+            # so if they have anything else, we don't get them here
             if role_ids and role_ids != [constants.potential_luhacker_role_id]:
                 return False
 
@@ -121,7 +122,7 @@ class ActivityChecker(commands.Cog):
                 await self.bot.log_message(
                     f"Kicking inactive potential-only member {member} ({member.id})"
                 )
-                # await member.kick(reason="Inactive potential-only user.")
+                await member.kick(reason="Inactive potential-only user.")
 
             await asyncio.sleep(timedelta(days=1).total_seconds())
 
