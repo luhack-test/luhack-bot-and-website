@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class ActivityChecker(commands.Cog):
     """Cog for keeping track of when members last spoke, if they've not spoken in a
-    year: we'll ask them to re-verify, then remove the verified role after a
+    month: we'll ask them to re-verify, then remove the verified role after a
     week or so.
     """
 
@@ -56,6 +56,8 @@ class ActivityChecker(commands.Cog):
             f"Removed member {member} ({member.id}) for being flagged for more than a week."
         )
 
+        # await user.delete()
+
         # await member.kick(reason="Removed for being inactive.")
 
     def get_inactive_potential_members(self):
@@ -76,7 +78,7 @@ class ActivityChecker(commands.Cog):
 
     async def get_inactive_verified_members(self):
         """Get verified but inactive members"""
-        three_month_ago = datetime.utcnow() - timedelta(weeks=3 * 4)
+        one_month_ago = datetime.utcnow() - timedelta(weeks=4)
 
         async def check(member: discord.Member):
             # role ids of all member roles except @everyone
@@ -87,7 +89,7 @@ class ActivityChecker(commands.Cog):
             if self.is_member_excepted(member):
                 return False
 
-            return user.last_talked < three_month_ago
+            return user.last_talked < one_month_ago
 
         return [m for m in self.luhack_guild.members if await check(m)]
 
@@ -111,7 +113,7 @@ class ActivityChecker(commands.Cog):
         await user.update(flagged_for_deletion=datetime.utcnow()).apply()
 
     async def background_loop(self):
-        """The background task for fetching users that haven't messaged in a year."""
+        """The background task for fetching users that haven't messaged in a month."""
         while True:
             await asyncio.sleep(timedelta(days=1).total_seconds())
 
@@ -121,6 +123,7 @@ class ActivityChecker(commands.Cog):
                 (User.flagged_for_deletion != None)
                 & (User.flagged_for_deletion < one_week_ago)
             ).gino.all()
+
             for user in users_to_delete:
                 await self.remove_verified_user(user)
 
