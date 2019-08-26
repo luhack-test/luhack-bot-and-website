@@ -43,22 +43,17 @@ class ActivityChecker(commands.Cog):
         if member is None:
             return
 
-        # await member.send(
-        #     textwrap.dedent(
-        #         """
-        # Hey, you've been inactive on luhack for a long time so we've removed you from
-        # the guild and unverified you, feel free to join back and re-verify.
-        # """
-        #     )
-        # )
+        await member.send(
+            "Hey, you've been inactive on luhack for a long time so we've removed you from the guild and unverified you, feel free to join back and re-verify."
+        )
 
         await self.bot.log_message(
             f"Removed member {member} ({member.id}) for being flagged for more than a week."
         )
 
-        # await user.delete()
+        await user.delete()
 
-        # await member.kick(reason="Removed for being inactive.")
+        await member.kick(reason="Removed for being inactive.")
 
     def get_inactive_potential_members(self):
         """Is the member potential only and joined more than a month ago?"""
