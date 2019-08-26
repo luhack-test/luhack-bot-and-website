@@ -51,7 +51,10 @@ class Verification(commands.Cog):
     async def fix_missing_roles(self):
         """Apply missing roles on bot startup"""
         for member in self.luhack_guild.members:
-            await self.apply_roles(member)
+            try:
+                await self.apply_roles(member)
+            except discord.errors.NotFound:
+                continue
 
     async def update_usernames(self):
         users = await User.query.gino.all()
