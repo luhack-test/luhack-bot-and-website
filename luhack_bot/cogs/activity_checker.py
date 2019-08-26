@@ -152,7 +152,7 @@ class ActivityChecker(commands.Cog):
         for m in inactive:
             paginator.add_line(f"{m.mention} ({m.id})")
 
-        for page in m.pages:
+        for page in paginator.pages:
             await ctx.send(page)
 
     @commands.command(name="mark_inactive_non_dry")
@@ -171,7 +171,7 @@ class ActivityChecker(commands.Cog):
         for m in inactive:
             paginator.add_line(f"{m.mention} ({m.id})")
 
-        for page in m.pages:
+        for page in paginator.pages:
             await ctx.send(page)
 
         for member in inactive:
