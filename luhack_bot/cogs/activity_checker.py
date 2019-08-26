@@ -37,7 +37,6 @@ class ActivityChecker(commands.Cog):
         await user.update(last_talked=datetime.utcnow()).apply()
 
     async def remove_verified_user(self, user: User):
-        # await user.delete()
         member = self.get_member_in_luhack(user.discord_id)
 
         if member is None:
@@ -61,7 +60,7 @@ class ActivityChecker(commands.Cog):
 
         def check(member: discord.Member):
             # role ids of all member roles except @everyone
-            role_ids = [r.id for id in member.roles if not r.is_default()]
+            role_ids = [r.id for r in member.roles if not r.is_default()]
 
             # no roles, or only role is the potential role
             if role_ids and role_ids != [constants.potential_luhacker_role_id]:
