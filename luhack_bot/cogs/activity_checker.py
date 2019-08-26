@@ -115,8 +115,6 @@ class ActivityChecker(commands.Cog):
     async def background_loop(self):
         """The background task for fetching users that haven't messaged in a month."""
         while True:
-            await asyncio.sleep(timedelta(days=1).total_seconds())
-
             one_week_ago = datetime.utcnow() - timedelta(weeks=1)
 
             users_to_delete = await User.query.where(
@@ -132,6 +130,8 @@ class ActivityChecker(commands.Cog):
                     f"Kicking inactive potential-only member {member} ({member.id})"
                 )
                 # await member.kick(reason="Inactive potential-only user.")
+
+            await asyncio.sleep(timedelta(days=1).total_seconds())
 
     async def cog_check(self, ctx):
         return is_disciple_or_admin(ctx)
