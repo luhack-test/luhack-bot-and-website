@@ -145,7 +145,7 @@ class ActivityChecker(commands.Cog):
 
         stats = f"{100 * len(inactive) / total_members:.0f}% (inactive: {len(inactive)} / total: {total_members})"
 
-        await ctx.send(f"Flagged users ({stats}) (dry run): ```\n" + "\n".join(f"{m} ({m.id})" for m in inactive) + "\n```")
+        await ctx.send(f"Flagged users ({stats}) (dry run):\n" + "\n".join(f"{m.mention} ({m.id})" for m in inactive))
 
     @commands.command(name="mark_inactive_non_dry")
     async def mark_inactive(self, ctx):
@@ -156,7 +156,7 @@ class ActivityChecker(commands.Cog):
 
         stats = f"{100 * len(inactive) / total_members:.0f}% (inactive: {len(inactive)} / total: {total_members})"
 
-        await ctx.send(f"Flagged users ({stats}): ```\n" + "\n".join(f"{m} ({m.id})" for m in inactive) + "\n```")
+        await ctx.send(f"Flagged users ({stats}):\n" + "\n".join(f"{m.mention} ({m.id})" for m in inactive))
 
         for member in inactive:
             await self.flag_inactive_member(member)
