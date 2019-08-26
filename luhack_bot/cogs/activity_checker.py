@@ -115,12 +115,15 @@ class ActivityChecker(commands.Cog):
     async def background_loop(self):
         """The background task for fetching users that haven't messaged in a month."""
         while True:
+            logger.info("Running pass of removing flagged users")
             one_week_ago = datetime.utcnow() - timedelta(weeks=1)
 
             users_to_delete = await User.query.where(
                 (User.flagged_for_deletion != None)
                 & (User.flagged_for_deletion < one_week_ago)
             ).gino.all()
+
+            logger.info(f"Users to remove: {users_to_delete}")
 
             for user in users_to_delete:
                 await self.remove_verified_user(user)
