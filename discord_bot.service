@@ -5,7 +5,7 @@ After=multi-user.target
 [Service]
 Type=simple
 User=bsimms
-ExecStart=/home/bsimms/.pyenv/shims/poetry run start_bot
+ExecStart=/home/bsimms/.poetry/bin/poetry run start_bot
 Restart=always
 RestartSec=5
 WorkingDirectory=/home/bsimms/luhack_bot
