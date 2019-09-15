@@ -20,8 +20,8 @@ def is_in_luhack(ctx: commands.Context) -> bool:
 
     return True
 
-def is_disciple_or_admin(ctx: commands.Context) -> bool:
-    """Ensure a member is a disciple or admin."""
+def is_admin_in_guild(ctx: commands.Context) -> bool:
+    """Ensure a member is a disciple or admin and the command is being used in the luhack guild."""
     if ctx.guild is None or ctx.guild.id != luhack_guild_id:
         raise commands.CheckFailure("You can only use this command in the luhack guild")
 

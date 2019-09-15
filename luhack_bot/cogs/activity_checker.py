@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 
 from luhack_bot import constants
-from luhack_bot.utils.checks import is_disciple_or_admin
+from luhack_bot.utils.checks import is_admin_in_guild
 from luhack_bot.db.models import User
 
 logger = logging.getLogger(__name__)
@@ -23,6 +23,9 @@ class ActivityChecker(commands.Cog):
         self.bot = bot
         self.luhack_guild = bot.get_guild(constants.luhack_guild_id)
         self.task = asyncio.create_task(self.background_loop())
+
+    async def cog_check(self, ctx):
+        return is_admin_in_guild(ctx)
 
     def get_member_in_luhack(self, user_id: int) -> discord.Member:
         """Try and fetch a member in the luhack guild."""
@@ -125,9 +128,6 @@ class ActivityChecker(commands.Cog):
                 await member.kick(reason="Inactive potential-only user.")
 
             await asyncio.sleep(timedelta(days=1).total_seconds())
-
-    async def cog_check(self, ctx):
-        return is_disciple_or_admin(ctx)
 
     @commands.command()
     async def manually_flag_inactive(self, ctx, member: discord.Member):

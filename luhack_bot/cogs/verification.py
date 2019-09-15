@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from luhack_bot import constants, email_tools, token_tools, secrets
 from luhack_bot.db.models import User
-from luhack_bot.utils.checks import is_in_luhack, is_disciple_or_admin, in_channel
+from luhack_bot.utils.checks import is_in_luhack, is_admin_in_guild, in_channel
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class Verification(commands.Cog):
     def bot_check_once(self, ctx):
         return is_in_luhack(ctx)
 
-    async def apply_roles(self, member):
+    async def apply_roles(self, member: discord.Member):
         user = await User.get(member.id)
         if user is not None:
             await member.add_roles(self.verified_role)
@@ -158,7 +158,7 @@ class Verification(commands.Cog):
         )
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
-    @commands.check(is_disciple_or_admin)
+    @commands.check(is_admin_in_guild)
     @commands.check(in_channel(constants.inner_magic_circle_id))
     @commands.command()
     async def add_user_manually(self, ctx, member: discord.Member, email: str):
@@ -177,7 +177,7 @@ class Verification(commands.Cog):
         await ctx.send(f"Manually verified {member}")
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
-    @commands.check(is_disciple_or_admin)
+    @commands.check(is_admin_in_guild)
     @commands.check(in_channel(constants.inner_magic_circle_id))
     @commands.command()
     async def check_email(self, ctx, name: str):
@@ -189,6 +189,6 @@ class Verification(commands.Cog):
                 await ctx.send(
                     f"User: {user.username} ({user.discord_id}). Joined at: {user.joined_at}, Last talked: {user.last_talked}"
                 )
-                return
+                break
         else:
             await ctx.send("No user with that email exists.")

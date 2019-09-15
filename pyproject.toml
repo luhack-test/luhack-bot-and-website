@@ -30,6 +30,8 @@ gunicorn = "^19.9"
 uvicorn = {git = "https://github.com/nitros12/uvicorn"}
 PyCrypto = "^2.6"
 ujson = "^1.35"
+python-dateutil = "^2.8.0"
+parsedatetime = "^2.4"
 
 [tool.poetry.dev-dependencies]
 python-language-server = "^0.27"

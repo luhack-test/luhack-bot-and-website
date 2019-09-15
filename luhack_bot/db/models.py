@@ -134,3 +134,19 @@ class Blog(db.Model):
         if "slug" not in kwargs:
             kwargs["slug"] = slug(kwargs["title"])
         return self.update(*args, **kwargs)
+
+
+class Todo(db.Model):
+    __tablename__ = "todos"
+
+    id = db.Column(db.Integer, primary_key=True)
+    assigned = db.Column(db.BigInteger(), nullable=True)
+    started = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    deadline = db.Column(db.DateTime)
+
+    # completed date & cancelled = cancelled
+    # completed date & !cancelled = completed
+    cancelled = db.Column(db.Boolean, nullable=False, server_default='f', default=False)
+    completed = db.Column(db.DateTime, nullable=True)
+
+    content = db.Column(db.Text(), nullable=False)
