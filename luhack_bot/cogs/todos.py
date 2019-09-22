@@ -145,13 +145,17 @@ class Todos(commands.Cog):
         await ctx.send(embed=self.render_todo_to_embed(todo))
 
     @todo.command(name="deadline")
-    async def todo_edit_deadline(self, ctx: commands.Context, todo: TodoConverter, *, deadline: Optional[FutureTime]):
-        """Edit or remove a todo's deadline.
+    async def todo_edit_deadline(self, ctx: commands.Context, todo: TodoConverter, *, deadline: FutureTime):
+        """Edit a todo's deadline."""
 
-        Can be used to remove a deadline by simply not passing the deadline argument
-        """
+        await todo.update(deadline=deadline.dt).apply()
+        await ctx.send(embed=self.render_todo_to_embed(todo))
 
-        await todo.update(deadline=deadline).apply()
+    @todo.command(name="clear_deadline")
+    async def todo_remove_deadline(self, ctx: commands.Context, todo: TodoConverter):
+        """Edit a todo's deadline."""
+
+        await todo.update(deadline=None).apply()
         await ctx.send(embed=self.render_todo_to_embed(todo))
 
     async def todo_list_inner(self, ctx: commands.Context, q, assignee: Optional[discord.Member]):
