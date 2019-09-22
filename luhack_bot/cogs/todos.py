@@ -8,8 +8,8 @@ import sqlalchemy as sa
 from discord.ext import commands
 
 from luhack_bot.db.models import User, Todo, db
-from luhack_bot.utils.time import UserFriendlyTime, human_timedelta
 from luhack_bot.utils.checks import is_admin
+from luhack_bot.utils.time import UserFriendlyTime, human_timedelta, FutureTime
 from luhack_bot import constants
 
 
@@ -97,9 +97,12 @@ class Todos(commands.Cog):
 
     @commands.group(aliases=["todos"], invoke_without_command=True)
     async def todo(self, ctx: commands.Context, todo: TodoConverter):
-        """View a todo by id."""
+        """View a todo by id (todo), or list your todos (todos)."""
 
-        await ctx.send(embed=self.render_todo_to_embed(todo))
+        if ctx.invoked_with == "todo":
+            await ctx.send(embed=self.render_todo_to_embed(todo))
+        else:
+            ctx.invoke(self.todo_list, assignee=ctx.author)
 
     @todo.command(name="complete")
     async def todo_mark_complete(self, ctx: commands.Context, todo: TodoConverter):
@@ -130,6 +133,23 @@ class Todos(commands.Cog):
         """Remove an assignment from a todo."""
 
         await todo.update(assigned=None).apply()
+        await ctx.send(embed=self.render_todo_to_embed(todo))
+
+    @todo.command(name="content")
+    async def todo_edit_content(self, ctx: commands.Context, todo: TodoConverter, *, content):
+        """Edit a todo's content."""
+
+        await todo.update(content=content).apply()
+        await ctx.send(embed=self.render_todo_to_embed(todo))
+
+    @todo.command(name="deadline")
+    async def todo_edit_deadline(self, ctx: commands.Context, todo: TodoConverter, *, deadline: Optional[FutureTime]):
+        """Edit or remove a todo's deadline.
+
+        Can be used to remove a deadline by simply not passing the deadline argument
+        """
+
+        await todo.update(deadline=deadline).apply()
         await ctx.send(embed=self.render_todo_to_embed(todo))
 
     async def todo_list_inner(self, ctx: commands.Context, q, assignee: Optional[discord.Member]):
