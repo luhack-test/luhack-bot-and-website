@@ -95,14 +95,16 @@ class Todos(commands.Cog):
 
         return embed
 
-    @commands.group(aliases=["todos"], invoke_without_command=True)
-    async def todo(self, ctx: commands.Context, todo: TodoConverter):
-        """View a todo by id (todo), or list your todos (todos)."""
+    @commands.command(name="todos")
+    async def list_todos(self, ctx: commands.Context):
+        """List your in-progress todos."""
+        await ctx.invoke(self.todo_list, assignee=ctx.author)
 
-        if ctx.invoked_with == "todo":
-            await ctx.send(embed=self.render_todo_to_embed(todo))
-        else:
-            ctx.invoke(self.todo_list, assignee=ctx.author)
+    @commands.group(invoke_without_command=True)
+    async def todo(self, ctx: commands.Context, todo: TodoConverter):
+        """View a todo by id."""
+
+        await ctx.send(embed=self.render_todo_to_embed(todo))
 
     @todo.command(name="complete")
     async def todo_mark_complete(self, ctx: commands.Context, todo: TodoConverter):
