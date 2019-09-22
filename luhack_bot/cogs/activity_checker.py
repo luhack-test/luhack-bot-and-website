@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 
 from luhack_bot import constants
-from luhack_bot.utils.checks import is_admin_in_guild
+from luhack_bot.utils.checks import is_admin
 from luhack_bot.db.models import User
 
 logger = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ class ActivityChecker(commands.Cog):
         self.task = asyncio.create_task(self.background_loop())
 
     async def cog_check(self, ctx):
-        return is_admin_in_guild(ctx)
+        return is_admin(ctx)
 
     def get_member_in_luhack(self, user_id: int) -> discord.Member:
         """Try and fetch a member in the luhack guild."""

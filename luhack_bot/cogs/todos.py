@@ -8,8 +8,8 @@ import sqlalchemy as sa
 from discord.ext import commands
 
 from luhack_bot.db.models import User, Todo, db
-from luhack_bot.utils.checks import is_admin_in_guild
 from luhack_bot.utils.time import UserFriendlyTime, human_timedelta
+from luhack_bot.utils.checks import is_admin
 from luhack_bot import constants
 
 
@@ -47,7 +47,7 @@ class Todos(commands.Cog):
         self.luhack_guild: discord.Guild = bot.get_guild(constants.luhack_guild_id)
 
     async def cog_check(self, ctx):
-        return is_admin_in_guild(ctx)
+        return is_admin(ctx)
 
     def render_todo_to_text(self, todo: Todo) -> str:
         if todo.completed:

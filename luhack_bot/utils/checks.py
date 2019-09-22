@@ -20,13 +20,14 @@ def is_in_luhack(ctx: commands.Context) -> bool:
 
     return True
 
-def is_admin_in_guild(ctx: commands.Context) -> bool:
-    """Ensure a member is a disciple or admin and the command is being used in the luhack guild."""
-    if ctx.guild is None or ctx.guild.id != luhack_guild_id:
-        raise commands.CheckFailure("You can only use this command in the luhack guild")
+def is_admin(ctx: commands.Context) -> bool:
+    """Ensure a member is a disciple or admin."""
+    member_in_luhack = ctx.bot.get_guild(luhack_guild_id).get_member(ctx.author.id)
+    if member_in_luhack is None:
+        raise commands.CheckFailure("You must be an admin or disciple to use this command.")
 
-    is_disciple = discord.utils.get(ctx.author.roles, id=disciple_role_id) is not None
-    is_admin = ctx.author.guild_permissions.administrator
+    is_disciple = discord.utils.get(member_in_luhack.roles, id=disciple_role_id) is not None
+    is_admin = member_in_luhack.guild_permissions.administrator
 
     if not (is_admin or is_disciple):
         raise commands.CheckFailure("You must be an admin or disciple to use this command.")

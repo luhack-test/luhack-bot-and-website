@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from luhack_bot import constants, email_tools, token_tools, secrets
 from luhack_bot.db.models import User
-from luhack_bot.utils.checks import is_in_luhack, is_admin_in_guild, in_channel
+from luhack_bot.utils.checks import is_in_luhack, is_admin, in_channel
 
 logger = logging.getLogger(__name__)
 
@@ -158,7 +158,7 @@ class Verification(commands.Cog):
         )
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
-    @commands.check(is_admin_in_guild)
+    @commands.check(is_admin)
     @commands.check(in_channel(constants.inner_magic_circle_id))
     @commands.command()
     async def add_user_manually(self, ctx, member: discord.Member, email: str):
@@ -177,7 +177,7 @@ class Verification(commands.Cog):
         await ctx.send(f"Manually verified {member}")
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
-    @commands.check(is_admin_in_guild)
+    @commands.check(is_admin)
     @commands.check(in_channel(constants.inner_magic_circle_id))
     @commands.command()
     async def check_email(self, ctx, name: str):
