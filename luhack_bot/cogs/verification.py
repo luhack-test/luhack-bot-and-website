@@ -100,7 +100,7 @@ class Verification(commands.Cog):
 
         logger.info("Generated token for user: %s, %s", ctx.author, auth_token)
 
-        await email_tools.send_email(email, auth_token)
+        await email_tools.send_verify_email(email, auth_token)
 
         await ctx.send(f"Noice, I've sent an email to: `{email}` with your token!")
 

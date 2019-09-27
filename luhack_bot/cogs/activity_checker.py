@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import discord
 from discord.ext import commands
 
-from luhack_bot import constants
+from luhack_bot import constants, email_tools
 from luhack_bot.utils.checks import is_admin
 from luhack_bot.db.models import User
 
@@ -103,6 +103,7 @@ class ActivityChecker(commands.Cog):
 
         await member.send("Hey, you've been inactive on luhack for a while, to remain in the server you'll "
                           "need to re-verify using `!gen_token` again or you will be removed in a week.")
+        await email_tools.send_reverify_email(user.email)
         await user.update(flagged_for_deletion=datetime.utcnow()).apply()
 
     async def background_loop(self):

@@ -1,5 +1,3 @@
-# Created by DethMetalDuck
-# Email Handler deals with all the functionality required for emails. Interacts with database_handler to do so
 import logging
 import textwrap
 from email.mime.text import MIMEText
@@ -12,7 +10,7 @@ from luhack_bot.secrets import email_password, email_username
 logger = logging.getLogger(__name__)
 
 
-async def send_email(target_email: str, token: str):
+async def send_verify_email(target_email: str, token: str):
     """Send an auth email."""
     subject = "LUHack Discord Verification Bot Authentication Email"
 
@@ -36,6 +34,30 @@ async def send_email(target_email: str, token: str):
         await smtp.send_message(msg)
 
     logger.info(f"Sent auth email to: {target_email}")
+
+
+async def send_reverify_email(target_email: str):
+    """Send an auth email."""
+    subject = "LUHack Discord inactivity reminder"
+
+    body = textwrap.dedent(
+        f"""
+        Heya!
+        You are receiving this email because you haven't been active on the luhack discord server for a while.
+        To remain in the server you'll need to re-verify using the `!gen_token` command again or you'll be removed in a week.
+        """
+    )
+
+    msg = MIMEText(body)
+    msg["From"] = email_username
+    msg["To"] = target_email
+    msg["Subject"] = subject
+
+    async with aiosmtplib.SMTP("smtp.gmail.com", port=465, use_tls=True) as smtp:
+        await smtp.login(email_username, email_password)
+        await smtp.send_message(msg)
+
+    logger.info(f"Sent reverify request email to: {target_email}")
 
 
 def is_lancs_email(email: str) -> bool:
