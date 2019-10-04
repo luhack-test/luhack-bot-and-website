@@ -10,7 +10,7 @@ from discord.ext import commands
 from luhack_bot import constants
 from luhack_bot.db.helpers import init_db
 from luhack_bot.secrets import bot_client_token
-from luhack_bot.cogs import verification, writeups, activity_checker, todos
+from luhack_bot.cogs import verification, writeups, activity_checker, todos, admin
 
 
 logger = logging.getLogger(__name__)
@@ -43,6 +43,7 @@ class LUHackBot(commands.Bot):
         self.add_cog(writeups.Writeups(self))
         self.add_cog(activity_checker.ActivityChecker(self))
         self.add_cog(todos.Todos(self))
+        self.add_cog(admin.Admin(self))
 
     async def log_message(self, *args, **kwargs):
         luhack_guild = self.get_guild(constants.luhack_guild_id)
