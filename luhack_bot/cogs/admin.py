@@ -31,7 +31,7 @@ class Admin(commands.Cog):
         return is_admin(ctx)
 
     @commands.command(name="eval")
-    async def eval_fn(ctx, *, cmd):
+    async def eval_fn(self, ctx, *, cmd):
         """Evaluates input.
         Input is interpreted as newline seperated statements.
         If the last statement is an expression, that is the return value.
