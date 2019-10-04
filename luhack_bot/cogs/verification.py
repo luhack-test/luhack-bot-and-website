@@ -14,23 +14,13 @@ logger = logging.getLogger(__name__)
 class Verification(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.luhack_guild = bot.get_guild(constants.luhack_guild_id)
-        self.potential_role = self.luhack_guild.get_role(
-            constants.potential_luhacker_role_id
-        )
-        self.prospective_role = self.luhack_guild.get_role(
-            constants.prospective_luhacker_role_id
-        )
-        self.verified_role = self.luhack_guild.get_role(
-            constants.verified_luhacker_role_id
-        )
 
         bot.loop.create_task(self.fix_missing_roles())
         bot.loop.create_task(self.update_usernames())
 
     def get_member_in_luhack(self, user_id: int) -> discord.Member:
         """Try and fetch a member in the luhack guild."""
-        return self.luhack_guild.get_member(user_id)
+        return self.bot.luhack_guild().get_member(user_id)
 
     def bot_check_once(self, ctx):
         return is_in_luhack(ctx)
@@ -38,10 +28,10 @@ class Verification(commands.Cog):
     async def apply_roles(self, member: discord.Member):
         user = await User.get(member.id)
         if user is not None:
-            await member.add_roles(self.verified_role)
-            await member.remove_roles(self.potential_role, self.prospective_role)
+            await member.add_roles(self.bot.verified_role())
+            await member.remove_roles(self.bot.potential_role(), self.bot.prospective_role())
         else:
-            await member.add_roles(self.potential_role)
+            await member.add_roles(self.bot.potential_role())
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -50,7 +40,7 @@ class Verification(commands.Cog):
 
     async def fix_missing_roles(self):
         """Apply missing roles on bot startup"""
-        for member in self.luhack_guild.members:
+        for member in self.bot.luhack_guild().members:
             try:
                 await self.apply_roles(member)
             except discord.errors.NotFound:
@@ -59,7 +49,7 @@ class Verification(commands.Cog):
     async def update_usernames(self):
         users = await User.query.gino.all()
         for user in users:
-            member = self.luhack_guild.get_member(user.discord_id)
+            member = self.bot.luhack_guild().get_member(user.discord_id)
             if member is None:
                 continue
             await user.update(username=member.name).apply()
@@ -72,8 +62,8 @@ class Verification(commands.Cog):
 
         member = self.get_member_in_luhack(ctx.author.id)
 
-        await member.remove_roles(self.potential_role)
-        await member.add_roles(self.prospective_role)
+        await member.remove_roles(self.bot.potential_role())
+        await member.add_roles(self.bot.prospective_role())
         await ctx.send("Prospective luhacker granted, congrats!")
         await self.bot.log_message(f"made member prospective {member} ({member.id})")
 
@@ -150,8 +140,8 @@ class Verification(commands.Cog):
         user = User(discord_id=user_id, username=member.name, email=user_email)
         await user.create()
 
-        await member.remove_roles(self.potential_role, self.prospective_role)
-        await member.add_roles(self.verified_role)
+        await member.remove_roles(self.bot.potential_role(), self.bot.prospective_role())
+        await member.add_roles(self.bot.verified_role())
 
         await ctx.send(
             "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!"
@@ -168,8 +158,8 @@ class Verification(commands.Cog):
         user = User(discord_id=member.id, username=member.name, email=email)
         await user.create()
 
-        await member.remove_roles(self.potential_role, self.prospective_role)
-        await member.add_roles(self.verified_role)
+        await member.remove_roles(self.bot.potential_role(), self.bot.prospective_role())
+        await member.add_roles(self.bot.verified_role())
 
         await member.send(
             "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!"

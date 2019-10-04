@@ -44,7 +44,7 @@ def format_dt(dt: datetime) -> str:
 
 class Todos(commands.Cog):
     def __init__(self, bot: commands.Bot):
-        self.luhack_guild: discord.Guild = bot.get_guild(constants.luhack_guild_id)
+        self.bot = bot
 
     async def cog_check(self, ctx):
         return is_admin(ctx)
@@ -59,7 +59,7 @@ class Todos(commands.Cog):
             due_for = f" (due for {format_dt(todo.deadline)})" if todo.deadline else ""
             status = f"[in progress{due_for}]"
 
-        assigned = todo.assigned and self.luhack_guild.get_member(todo.assigned) or ""
+        assigned = todo.assigned and self.bot.luhack_guild().get_member(todo.assigned) or ""
 
         return f"({todo.id}) {status} {format_dt(todo.started)} {assigned}: {todo.content}"
 
@@ -76,7 +76,7 @@ class Todos(commands.Cog):
             due_for = f" (due for {format_dt(todo.deadline)})" if todo.deadline else ""
             status = f"[in progress{due_for}]"
 
-        assigned: discord.Member = todo.assigned and self.luhack_guild.get_member(todo.assigned)
+        assigned: discord.Member = todo.assigned and self.bot.luhack_guild().get_member(todo.assigned)
 
         embed = discord.Embed(
             title=f"Todo #{todo.id} {status}",

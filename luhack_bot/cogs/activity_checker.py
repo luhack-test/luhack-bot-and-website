@@ -21,7 +21,6 @@ class ActivityChecker(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.luhack_guild = bot.get_guild(constants.luhack_guild_id)
         self.task = asyncio.create_task(self.background_loop())
 
     async def cog_check(self, ctx):
@@ -29,7 +28,7 @@ class ActivityChecker(commands.Cog):
 
     def get_member_in_luhack(self, user_id: int) -> discord.Member:
         """Try and fetch a member in the luhack guild."""
-        return self.luhack_guild.get_member(user_id)
+        return self.bot.luhack_guild().get_member(user_id)
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -72,7 +71,7 @@ class ActivityChecker(commands.Cog):
 
             return member.joined_at < one_month_ago
 
-        return [m for m in self.luhack_guild.members if check(m)]
+        return [m for m in self.bot.luhack_guild().members if check(m)]
 
     async def get_inactive_verified_members(self):
         """Get verified but inactive members"""
@@ -89,7 +88,7 @@ class ActivityChecker(commands.Cog):
 
             return user.last_talked < one_month_ago
 
-        return [m for m in self.luhack_guild.members if await check(m)]
+        return [m for m in self.bot.luhack_guild().members if await check(m)]
 
     def is_member_excepted(self, member: discord.Member) -> bool:
         """Is the member disciple?"""
@@ -139,7 +138,7 @@ class ActivityChecker(commands.Cog):
         """Mark inactive users, this is a dry run."""
         inactive = await self.get_inactive_verified_members()
 
-        total_members = len(self.luhack_guild.members)
+        total_members = len(self.bot.luhack_guild().members)
 
         stats = f"{100 * len(inactive) / total_members:.0f}% (inactive: {len(inactive)} / total: {total_members})"
 
@@ -158,7 +157,7 @@ class ActivityChecker(commands.Cog):
         """Mark inactive users."""
         inactive = await self.get_inactive_verified_members()
 
-        total_members = len(self.luhack_guild.members)
+        total_members = len(self.bot.luhack_guild().members)
 
         stats = f"{100 * len(inactive) / total_members:.0f}% (inactive: {len(inactive)} / total: {total_members})"
 

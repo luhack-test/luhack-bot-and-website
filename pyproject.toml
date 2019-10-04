@@ -25,13 +25,13 @@ aiofiles = "^0.4"
 slug = "^2.0"
 WTForms = "^2.2"
 yarl = "^1.3"
-"discord.py" = "^1.2"
 gunicorn = "^19.9"
 uvicorn = {git = "https://github.com/nitros12/uvicorn"}
 PyCrypto = "^2.6"
 ujson = "^1.35"
 python-dateutil = "^2.8.0"
 parsedatetime = "^2.4"
+"discord.py" = "^1.2.3"
 
 [tool.poetry.dev-dependencies]
 python-language-server = "^0.27"

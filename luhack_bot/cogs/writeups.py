@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class Writeups(commands.Cog):
     def __init__(self, bot):
-        self.luhack_guild = bot.get_guild(constants.luhack_guild_id)
+        self.bot = bot
 
     async def cog_check(self, ctx):
         return await is_authed(ctx)
@@ -41,11 +41,11 @@ class Writeups(commands.Cog):
     def can_edit_writeup(self, writeup: Writeup, user_id: int) -> bool:
         return (
             writeup.author_id == user_id
-            or self.luhack_guild.get_member(user_id).guild_permissions.administrator
+            or self.bot.luhack_guild().get_member(user_id).guild_permissions.administrator
         )
 
     def format_writeup(self, writeup: Writeup) -> str:
-        author = self.luhack_guild.get_member(writeup.author_id)
+        author = self.bot.luhack_guild().get_member(writeup.author_id)
         tags = ", ".join(writeup.tags)
 
         return f'"{writeup.title}" ({self.writeup_url(writeup.slug)}) by {author}, tags: `{tags}`'
@@ -76,7 +76,7 @@ class Writeups(commands.Cog):
 
         tags = " ".join("[{}]({})".format(tag, self.tag_url(tag).human_repr()) for tag in writeup.tags)
 
-        embed = discord.Embed(title=writeup.title, timestamp=writeup.creation_date, colour=discord.Colour.blue(), author=self.luhack_guild.get_member(writeup.author_id))
+        embed = discord.Embed(title=writeup.title, timestamp=writeup.creation_date, colour=discord.Colour.blue(), author=self.bot.luhack_guild().get_member(writeup.author_id))
         embed.add_field(name="tags", value=tags, inline=False)
         embed.add_field(name="link", value=self.writeup_url(writeup.slug), inline=False)
         embed.add_field(name="last edited", value=writeup.edit_date, inline=False)
@@ -124,7 +124,7 @@ class Writeups(commands.Cog):
     async def token(self, ctx):
         """Generate a token allowing you to create writeups & manage those you have authority to."""
 
-        member_in_luhack = self.luhack_guild.get_member(ctx.author.id)
+        member_in_luhack = self.bot.luhack_guild().get_member(ctx.author.id)
 
         is_disciple = discord.utils.get(member_in_luhack.roles, id=constants.disciple_role_id) is not None
         is_admin = member_in_luhack.guild_permissions.administrator or is_disciple

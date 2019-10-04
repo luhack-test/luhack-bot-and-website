@@ -39,14 +39,27 @@ class LUHackBot(commands.Bot):
     async def load_cogs(self):
         """Register our cogs."""
         await self.wait_until_ready()
+        print(self.luhack_guild().roles)
         self.add_cog(verification.Verification(self))
         self.add_cog(writeups.Writeups(self))
         self.add_cog(activity_checker.ActivityChecker(self))
         self.add_cog(todos.Todos(self))
         self.add_cog(admin.Admin(self))
 
+    def luhack_guild(self):
+        return self.get_guild(constants.luhack_guild_id)
+
+    def potential_role(self):
+        return self.luhack_guild().get_role(constants.potential_luhacker_role_id)
+
+    def prospective_role(self):
+        return self.luhack_guild().get_role(constants.prospective_luhacker_role_id)
+
+    def verified_role(self):
+        return self.luhack_guild().get_role(constants.verified_luhacker_role_id)
+
     async def log_message(self, *args, **kwargs):
-        luhack_guild = self.get_guild(constants.luhack_guild_id)
+        luhack_guild = self.luhack_guild()
         log_chan = luhack_guild.get_channel(constants.bot_log_channel_id)
 
         if log_chan is None:
