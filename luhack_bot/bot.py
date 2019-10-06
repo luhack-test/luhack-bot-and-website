@@ -8,10 +8,13 @@ import discord
 from discord.ext import commands
 
 from luhack_bot import constants
+from luhack_bot.cogs import activity_checker
+from luhack_bot.cogs import admin
+from luhack_bot.cogs import todos
+from luhack_bot.cogs import verification
+from luhack_bot.cogs import writeups
 from luhack_bot.db.helpers import init_db
 from luhack_bot.secrets import bot_client_token
-from luhack_bot.cogs import verification, writeups, activity_checker, todos, admin
-
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +42,6 @@ class LUHackBot(commands.Bot):
     async def load_cogs(self):
         """Register our cogs."""
         await self.wait_until_ready()
-        print(self.luhack_guild().roles)
         self.add_cog(verification.Verification(self))
         self.add_cog(writeups.Writeups(self))
         self.add_cog(activity_checker.ActivityChecker(self))
@@ -77,9 +79,7 @@ class LUHackBot(commands.Bot):
             prepared_help = cmd.get_command_signature(ctx.command)
 
         if isinstance(error, commands.NoPrivateMessage):
-            await ctx.send(
-                "This command cannot be used in private messages"
-            )
+            await ctx.send("This command cannot be used in private messages")
             return
 
         elif isinstance(error, commands.MissingRequiredArgument):

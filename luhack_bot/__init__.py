@@ -1,10 +1,8 @@
-import sys
 import logging
-
+import sys
 from textwrap import dedent
-from cryptography.fernet import Fernet
 
-from luhack_bot import db
+from cryptography.fernet import Fernet
 
 
 def run():

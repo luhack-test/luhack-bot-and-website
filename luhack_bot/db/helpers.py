@@ -1,7 +1,4 @@
-import os
-from typing import Optional
-
-from luhack_bot.db.models import User, db
+from luhack_bot.db.models import db
 from luhack_bot.secrets import db_url
 
 

@@ -1,11 +1,17 @@
 import logging
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
+from discord.ext import tasks
 
-from luhack_bot import constants, email_tools, secrets, token_tools
+from luhack_bot import constants
+from luhack_bot import email_tools
+from luhack_bot import secrets
+from luhack_bot import token_tools
 from luhack_bot.db.models import User
-from luhack_bot.utils.checks import in_channel, is_admin, is_in_luhack
+from luhack_bot.utils.checks import in_channel
+from luhack_bot.utils.checks import is_admin
+from luhack_bot.utils.checks import is_in_luhack
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +39,9 @@ class Verification(commands.Cog):
         user = await User.get(member.id)
         if user is not None:
             await member.add_roles(self.bot.verified_role())
-            await member.remove_roles(self.bot.potential_role(), self.bot.prospective_role())
+            await member.remove_roles(
+                self.bot.potential_role(), self.bot.prospective_role()
+            )
         else:
             await member.add_roles(self.bot.potential_role())
 
@@ -151,7 +159,9 @@ class Verification(commands.Cog):
         user = User(discord_id=user_id, username=member.name, email=user_email)
         await user.create()
 
-        await member.remove_roles(self.bot.potential_role(), self.bot.prospective_role())
+        await member.remove_roles(
+            self.bot.potential_role(), self.bot.prospective_role()
+        )
         await member.add_roles(self.bot.verified_role())
 
         await ctx.send(
@@ -169,7 +179,9 @@ class Verification(commands.Cog):
         user = User(discord_id=member.id, username=member.name, email=email)
         await user.create()
 
-        await member.remove_roles(self.bot.potential_role(), self.bot.prospective_role())
+        await member.remove_roles(
+            self.bot.potential_role(), self.bot.prospective_role()
+        )
         await member.add_roles(self.bot.verified_role())
 
         await member.send(

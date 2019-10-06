@@ -1,23 +1,24 @@
 import logging
-import textwrap
-from typing import Optional, Union
 from datetime import datetime
+from typing import Optional
+from typing import Union
 
 import discord
 import sqlalchemy as sa
 from discord.ext import commands
 
-from luhack_bot.db.models import User, Todo, db
+from luhack_bot.db.models import Todo
 from luhack_bot.utils.checks import is_admin
-from luhack_bot.utils.time import UserFriendlyTime, human_timedelta, FutureTime
-from luhack_bot import constants
-
+from luhack_bot.utils.time import FutureTime
+from luhack_bot.utils.time import UserFriendlyTime
+from luhack_bot.utils.time import human_timedelta
 
 logger = logging.getLogger(__name__)
 
 
 class CommandUnion:
     """Like typing.Union but doesn't cry when you pass none-types."""
+
     __origin__ = Union
 
     def __init__(self, *convs):
@@ -59,9 +60,13 @@ class Todos(commands.Cog):
             due_for = f" (due for {format_dt(todo.deadline)})" if todo.deadline else ""
             status = f"[in progress{due_for}]"
 
-        assigned = todo.assigned and self.bot.luhack_guild().get_member(todo.assigned) or ""
+        assigned = (
+            todo.assigned and self.bot.luhack_guild().get_member(todo.assigned) or ""
+        )
 
-        return f"({todo.id}) {status} {format_dt(todo.started)} {assigned}: {todo.content}"
+        return (
+            f"({todo.id}) {status} {format_dt(todo.started)} {assigned}: {todo.content}"
+        )
 
     def render_todo_to_embed(self, todo: Todo) -> discord.Embed:
         if todo.completed:
@@ -76,7 +81,9 @@ class Todos(commands.Cog):
             due_for = f" (due for {format_dt(todo.deadline)})" if todo.deadline else ""
             status = f"[in progress{due_for}]"
 
-        assigned: discord.Member = todo.assigned and self.bot.luhack_guild().get_member(todo.assigned)
+        assigned: discord.Member = todo.assigned and self.bot.luhack_guild().get_member(
+            todo.assigned
+        )
 
         embed = discord.Embed(
             title=f"Todo #{todo.id} {status}",
@@ -87,7 +94,7 @@ class Todos(commands.Cog):
 
         if assigned:
             embed.set_author(name=assigned, icon_url=assigned.avatar_url)
-       
+
         if todo.deadline:
             isoformat = format_dt(todo.deadline)
             delta = human_timedelta(todo.deadline)
@@ -121,7 +128,9 @@ class Todos(commands.Cog):
         await ctx.send(embed=self.render_todo_to_embed(todo))
 
     @todo.command(name="assign")
-    async def todo_assign(self, ctx: commands.Context, todo: TodoConverter, assignee: discord.Member):
+    async def todo_assign(
+        self, ctx: commands.Context, todo: TodoConverter, assignee: discord.Member
+    ):
         """Assign a member to a todo.
 
         Note: TODO's can only have one assignee (this can be changed if needed).
@@ -138,14 +147,18 @@ class Todos(commands.Cog):
         await ctx.send(embed=self.render_todo_to_embed(todo))
 
     @todo.command(name="content")
-    async def todo_edit_content(self, ctx: commands.Context, todo: TodoConverter, *, content):
+    async def todo_edit_content(
+        self, ctx: commands.Context, todo: TodoConverter, *, content
+    ):
         """Edit a todo's content."""
 
         await todo.update(content=content).apply()
         await ctx.send(embed=self.render_todo_to_embed(todo))
 
     @todo.command(name="deadline")
-    async def todo_edit_deadline(self, ctx: commands.Context, todo: TodoConverter, *, deadline: FutureTime):
+    async def todo_edit_deadline(
+        self, ctx: commands.Context, todo: TodoConverter, *, deadline: FutureTime
+    ):
         """Edit a todo's deadline."""
 
         await todo.update(deadline=deadline.dt).apply()
@@ -158,7 +171,9 @@ class Todos(commands.Cog):
         await todo.update(deadline=None).apply()
         await ctx.send(embed=self.render_todo_to_embed(todo))
 
-    async def todo_list_inner(self, ctx: commands.Context, q, assignee: Optional[discord.Member]):
+    async def todo_list_inner(
+        self, ctx: commands.Context, q, assignee: Optional[discord.Member]
+    ):
         if assignee:
             q = q.where(Todo.assigned == assignee.id)
 
@@ -178,9 +193,10 @@ class Todos(commands.Cog):
         if not paginator.pages:
             await ctx.send("No TODOs!")
 
-
     @todo.group(name="list", invoke_without_command=True)
-    async def todo_list(self, ctx: commands.Context, *, assignee: Optional[discord.Member]):
+    async def todo_list(
+        self, ctx: commands.Context, *, assignee: Optional[discord.Member]
+    ):
         """List in-progress todos.
 
         Optionally list only those assigned to a member.
@@ -190,7 +206,9 @@ class Todos(commands.Cog):
         await self.todo_list_inner(ctx, q, assignee)
 
     @todo_list.command(name="completed")
-    async def todo_list_completed(self, ctx: commands.Context, *, assignee: Optional[discord.Member]):
+    async def todo_list_completed(
+        self, ctx: commands.Context, *, assignee: Optional[discord.Member]
+    ):
         """List completed todos.
 
         Optionally list only those assigned to a member.
@@ -200,7 +218,9 @@ class Todos(commands.Cog):
         await self.todo_list_inner(ctx, q, assignee)
 
     @todo_list.command(name="cancelled")
-    async def todo_list_cancelled(self, ctx: commands.Context, *, assignee: Optional[discord.Member]):
+    async def todo_list_cancelled(
+        self, ctx: commands.Context, *, assignee: Optional[discord.Member]
+    ):
         """List cancelle todos.
 
         Optionally list only those assigned to a member.
@@ -213,8 +233,11 @@ class Todos(commands.Cog):
     async def todo_new(
         self,
         ctx: commands.Context,
-        assignee: Optional[discord.Member], *,
-        rest: CommandUnion(UserFriendlyTime(commands.clean_content), commands.clean_content),
+        assignee: Optional[discord.Member],
+        *,
+        rest: CommandUnion(
+            UserFriendlyTime(commands.clean_content), commands.clean_content
+        ),
     ):
         """Create a todo.
 

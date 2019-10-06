@@ -5,7 +5,8 @@ from email.mime.text import MIMEText
 from discord.ext.commands import BadArgument
 
 import aiosmtplib
-from luhack_bot.secrets import email_password, email_username
+from luhack_bot.secrets import email_password
+from luhack_bot.secrets import email_username
 
 logger = logging.getLogger(__name__)
 

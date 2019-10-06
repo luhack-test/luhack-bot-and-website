@@ -1,6 +1,8 @@
-from typing import Optional, Tuple
+from typing import Optional
+from typing import Tuple
 
-from itsdangerous import BadSignature, URLSafeTimedSerializer
+from itsdangerous import BadSignature
+from itsdangerous import URLSafeTimedSerializer
 
 from luhack_bot.secrets import signing_secret
 
@@ -14,7 +16,9 @@ def generate_auth_token(user_id: int, email: str) -> str:
 
 def generate_writeup_edit_token(username: str, user_id: int, is_admin: bool) -> str:
     """Generate an auth token for editing/ creating writeups."""
-    return token_signer.dumps({"username": username, "user_id": user_id, "is_admin": is_admin})
+    return token_signer.dumps(
+        {"username": username, "user_id": user_id, "is_admin": is_admin}
+    )
 
 
 def decode_auth_token(token: str) -> Optional[Tuple[int, str]]:
@@ -28,6 +32,7 @@ def decode_auth_token(token: str) -> Optional[Tuple[int, str]]:
         return (user["user_id"], user["email"])
     except BadSignature:
         return None
+
 
 def decode_writeup_edit_token(token: str) -> Optional[Tuple[str, int, bool]]:
     """Decode a writeup edit token, returns a tuple of the user id and if they are

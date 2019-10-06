@@ -1,5 +1,6 @@
 # thanks danny: https://github.com/Rapptz/RoboDanny/blob/7af9dbb7c44027e1c34e1e9b545c52c416acadae/cogs/utils/formats.py
 
+
 class plural:
     def __init__(self, value):
         self.value = value

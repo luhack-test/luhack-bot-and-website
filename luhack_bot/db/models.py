@@ -1,12 +1,11 @@
-import datetime
-
-from slug import slug
 from gino import Gino
-from sqlalchemy import func, text
-from sqlalchemy.dialects.postgresql import ARRAY, UUID
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy_utils import EncryptedType, observes
-from sqlalchemy_searchable import make_searchable
+from slug import slug
+from sqlalchemy import func
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import backref
+from sqlalchemy.orm import relationship
+from sqlalchemy_utils import EncryptedType
 from sqlalchemy_utils.types import TSVectorType
 
 from luhack_bot.secrets import email_encryption_key
@@ -16,6 +15,7 @@ db = Gino()
 
 class User(db.Model):
     """Full users, that have a lancs email."""
+
     __tablename__ = "users"
 
     discord_id = db.Column(db.BigInteger(), primary_key=True)
@@ -146,7 +146,7 @@ class Todo(db.Model):
 
     # completed date & cancelled = cancelled
     # completed date & !cancelled = completed
-    cancelled = db.Column(db.Boolean, nullable=False, server_default='f', default=False)
+    cancelled = db.Column(db.Boolean, nullable=False, server_default="f", default=False)
     completed = db.Column(db.DateTime, nullable=True)
 
     content = db.Column(db.Text(), nullable=False)

@@ -1,17 +1,15 @@
 import logging
-import textwrap
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 import discord
-import sqlalchemy
-from sqlalchemy_searchable import search as pg_search
 from discord.ext import commands
+from sqlalchemy_searchable import search as pg_search
 
-from luhack_bot.token_tools import generate_writeup_edit_token
-from luhack_bot.db.models import User, Writeup, db
-from luhack_bot.utils.checks import is_authed
 from luhack_bot import constants
-
+from luhack_bot.db.models import Writeup
+from luhack_bot.token_tools import generate_writeup_edit_token
+from luhack_bot.utils.checks import is_authed
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +39,9 @@ class Writeups(commands.Cog):
     def can_edit_writeup(self, writeup: Writeup, user_id: int) -> bool:
         return (
             writeup.author_id == user_id
-            or self.bot.luhack_guild().get_member(user_id).guild_permissions.administrator
+            or self.bot.luhack_guild()
+            .get_member(user_id)
+            .guild_permissions.administrator
         )
 
     def format_writeup(self, writeup: Writeup) -> str:
@@ -74,9 +74,17 @@ class Writeups(commands.Cog):
             )
             return
 
-        tags = " ".join("[{}]({})".format(tag, self.tag_url(tag).human_repr()) for tag in writeup.tags)
+        tags = " ".join(
+            "[{}]({})".format(tag, self.tag_url(tag).human_repr())
+            for tag in writeup.tags
+        )
 
-        embed = discord.Embed(title=writeup.title, timestamp=writeup.creation_date, colour=discord.Colour.blue(), author=self.bot.luhack_guild().get_member(writeup.author_id))
+        embed = discord.Embed(
+            title=writeup.title,
+            timestamp=writeup.creation_date,
+            colour=discord.Colour.blue(),
+            author=self.bot.luhack_guild().get_member(writeup.author_id),
+        )
         embed.add_field(name="tags", value=tags, inline=False)
         embed.add_field(name="link", value=self.writeup_url(writeup.slug), inline=False)
         embed.add_field(name="last edited", value=writeup.edit_date, inline=False)
@@ -126,11 +134,16 @@ class Writeups(commands.Cog):
 
         member_in_luhack = self.bot.luhack_guild().get_member(ctx.author.id)
 
-        is_disciple = discord.utils.get(member_in_luhack.roles, id=constants.disciple_role_id) is not None
+        is_disciple = (
+            discord.utils.get(member_in_luhack.roles, id=constants.disciple_role_id)
+            is not None
+        )
         is_admin = member_in_luhack.guild_permissions.administrator or is_disciple
 
         token = generate_writeup_edit_token(ctx.author.name, ctx.author.id, is_admin)
 
         url = constants.writeups_base_url.with_query(token=token)
 
-        await ctx.author.send(f"Visit this link and you'll be authed for 24 hours: {url}")
+        await ctx.author.send(
+            f"Visit this link and you'll be authed for 24 hours: {url}"
+        )
