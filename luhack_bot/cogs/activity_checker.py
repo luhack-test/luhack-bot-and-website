@@ -1,10 +1,8 @@
-import asyncio
 import logging
-import textwrap
 from datetime import datetime, timedelta
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 from luhack_bot import constants, email_tools
 from luhack_bot.db.models import User
@@ -21,7 +19,7 @@ class ActivityChecker(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.task = asyncio.create_task(self.background_loop())
+        self.background_loop.start()
 
     async def cog_check(self, ctx):
         return is_admin(ctx)
@@ -42,6 +40,7 @@ class ActivityChecker(commands.Cog):
         member = self.get_member_in_luhack(user.discord_id)
 
         if member is None:
+            logger.error(f"Tried to remove member {user.username} <@{user.discord_id}> ({user.discord_id}) but discord doesn't think they exist?")
             return
 
         await member.send(
@@ -105,29 +104,27 @@ class ActivityChecker(commands.Cog):
         await email_tools.send_reverify_email(user.email)
         await user.update(flagged_for_deletion=datetime.utcnow()).apply()
 
+    @tasks.loop(hours=24)
     async def background_loop(self):
         """The background task for fetching users that haven't messaged in a month."""
-        while True:
-            logger.info("Running pass of removing flagged users")
-            one_week_ago = datetime.utcnow() - timedelta(weeks=1)
+        logger.info("Running pass of removing flagged users")
+        one_week_ago = datetime.utcnow() - timedelta(weeks=1)
 
-            users_to_delete = await User.query.where(
-                (User.flagged_for_deletion != None)
-                & (User.flagged_for_deletion < one_week_ago)
-            ).gino.all()
+        users_to_delete = await User.query.where(
+            (User.flagged_for_deletion != None)
+            & (User.flagged_for_deletion < one_week_ago)
+        ).gino.all()
 
-            logger.info(f"Users to remove: {users_to_delete}")
+        logger.info(f"Users to remove: {users_to_delete}")
 
-            for user in users_to_delete:
-                await self.remove_verified_user(user)
+        for user in users_to_delete:
+            await self.remove_verified_user(user)
 
-            for member in self.get_inactive_potential_members():
-                await self.bot.log_message(
-                    f"Kicking inactive potential-only member {member} ({member.id})"
-                )
-                await member.kick(reason="Inactive potential-only user.")
-
-            await asyncio.sleep(timedelta(days=1).total_seconds())
+        for member in self.get_inactive_potential_members():
+            await self.bot.log_message(
+                f"Kicking inactive potential-only member {member} ({member.id})"
+            )
+            await member.kick(reason="Inactive potential-only user.")
 
     @commands.command()
     async def manually_flag_inactive(self, ctx, member: discord.Member):

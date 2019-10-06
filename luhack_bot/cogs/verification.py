@@ -1,12 +1,11 @@
-import asyncio
 import logging
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
-from luhack_bot import constants, email_tools, token_tools, secrets
+from luhack_bot import constants, email_tools, secrets, token_tools
 from luhack_bot.db.models import User
-from luhack_bot.utils.checks import is_in_luhack, is_admin, in_channel
+from luhack_bot.utils.checks import in_channel, is_admin, is_in_luhack
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +14,13 @@ class Verification(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        bot.loop.create_task(self.fix_missing_roles())
-        bot.loop.create_task(self.update_usernames())
+        self.fix_missing_roles.start()
+        self.update_members.start()
+
+        #: members that have left the discord but are in the database, we keep
+        # track here so we can remove them after they've been away for more than
+        # a day
+        self.members_flagged_as_left = set()
 
     def get_member_in_luhack(self, user_id: int) -> discord.Member:
         """Try and fetch a member in the luhack guild."""
@@ -38,21 +42,28 @@ class Verification(commands.Cog):
         # if the user is already in the db, then they're verified
         await self.apply_roles(member)
 
+    @tasks.loop(hours=1)
     async def fix_missing_roles(self):
-        """Apply missing roles on bot startup"""
+        """Apply missing roles."""
         for member in self.bot.luhack_guild().members:
             try:
                 await self.apply_roles(member)
             except discord.errors.NotFound:
                 continue
 
-    async def update_usernames(self):
+    @tasks.loop(hours=24)
+    async def update_members(self):
         users = await User.query.gino.all()
         for user in users:
             member = self.bot.luhack_guild().get_member(user.discord_id)
             if member is None:
-                continue
-            await user.update(username=member.name).apply()
+                if user.discord_id in self.members_flagged_as_left:
+                    await user.delete()
+                    self.members_flagged_as_left.discard(user.discord_id)
+                else:
+                    self.members_flagged_as_left.add(user.discord_id)
+            else:
+                await user.update(username=member.name).apply()
 
     @commands.command()
     async def become_prospective(self, ctx, token: str):
