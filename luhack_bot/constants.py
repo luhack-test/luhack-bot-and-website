@@ -13,5 +13,5 @@ trusted_role_ids = {
     master_cyber_wizard_role_id,
 }
 bot_log_channel_id = 588443109994528816
-inner_magic_circle_id = 506447021780107275
+inner_magic_circle_id = 631618075254325257
 writeups_base_url = yarl.URL("https://scc-luhack.lancs.ac.uk/writeups")
