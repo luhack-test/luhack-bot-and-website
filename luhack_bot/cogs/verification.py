@@ -193,6 +193,21 @@ class Verification(commands.Cog):
     @commands.check(is_admin)
     @commands.check(in_channel(constants.inner_magic_circle_id))
     @commands.command()
+    async def user_info(self, ctx, member: discord.Member):
+        """Get info for a user."""
+        user = await User.get(member.id)
+
+        if user is None:
+            await ctx.send("No info for that user ;_;")
+            return
+
+        await ctx.send(
+            f"User: {user.username} ({user.discord_id}) <{user.email}>. Joined at: {user.joined_at}, Last talked: {user.last_talked}"
+        )
+
+    @commands.check(is_admin)
+    @commands.check(in_channel(constants.inner_magic_circle_id))
+    @commands.command()
     async def check_email(self, ctx, name: str):
         """See what user an email belongs to."""
         users = await User.query.gino.all()
