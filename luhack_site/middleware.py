@@ -62,7 +62,7 @@ class CSPMiddleware(HeaderMiddleware):
         default_src: typing.Sequence[str] = ("'none'",),
         script_src: typing.Sequence[str] = ("'self'",),
         connect_src: typing.Sequence[str] = ("'self'",),
-        img_src: typing.Sequence[str] = ("*",),
+        img_src: typing.Sequence[str] = ("*", "'self'", "data:"),
         style_src: typing.Sequence[str] = ("'self'",),
     ):
         ds = "default-src " + " ".join(default_src)
