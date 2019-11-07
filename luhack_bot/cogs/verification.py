@@ -20,8 +20,9 @@ class Verification(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        self.fix_missing_roles.start()
-        self.update_members.start()
+        if not secrets.is_test_mode:
+            self.fix_missing_roles.start()
+            self.update_members.start()
 
         #: members that have left the discord but are in the database, we keep
         # track here so we can remove them after they've been away for more than

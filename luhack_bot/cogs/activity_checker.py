@@ -8,6 +8,7 @@ from discord.ext import tasks
 
 from luhack_bot import constants
 from luhack_bot import email_tools
+from luhack_bot import secrets
 from luhack_bot.db.models import User
 from luhack_bot.utils.checks import is_admin
 
@@ -22,7 +23,8 @@ class ActivityChecker(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.background_loop.start()
+        if not secrets.is_test_mode:
+            self.background_loop.start()
 
     async def cog_check(self, ctx):
         return is_admin(ctx)
