@@ -1,3 +1,4 @@
+import random
 import ast
 import textwrap
 
@@ -5,6 +6,24 @@ import discord
 from discord.ext import commands
 
 from luhack_bot.utils.checks import is_admin
+
+
+coc_urls = [
+    "https://cdn.discordapp.com/attachments/631618075254325257/632260899939287051/unknown.png",
+    "https://cdn.discordapp.com/attachments/631618075254325257/632258249579561012/2Q.png",
+    "https://cdn.discordapp.com/attachments/631618075254325257/632257793201799198/unknown.png",
+    "https://cdn.discordapp.com/attachments/631618075254325257/632257107076579331/unknown.png",
+    "https://cdn.discordapp.com/attachments/631618075254325257/632246273466040321/unknown.png",
+    "https://cdn.discordapp.com/attachments/631618075254325257/632183877477203978/IMG_20191010_231703.jpg",
+    "https://cdn.discordapp.com/attachments/631618075254325257/632183673269125120/download.jpg",
+    "https://cdn.discordapp.com/attachments/631618075254325257/632182097003413505/IMG_20191010_232642.jpg",
+    "https://cdn.discordapp.com/attachments/631618075254325257/631996568467406848/unknown.png",
+    "https://cdn.discordapp.com/attachments/631618075254325257/631987156969193485/unknown.png",
+    "https://cdn.discordapp.com/attachments/631618075254325257/631984684905267200/IMG_20191010_234106.jpg",
+    "https://cdn.discordapp.com/attachments/631618075254325257/631984019537395723/IMG_20191010_233823.jpg",
+    "https://cdn.discordapp.com/attachments/631618075254325257/631982101289369616/IMG_20191010_233104.jpg",
+    "https://cdn.discordapp.com/attachments/631618075254325257/631980398099824691/IMG_20191010_232415.jpg",
+]
 
 
 def insert_returns(body):
@@ -29,6 +48,13 @@ class Admin(commands.Cog):
 
     async def cog_check(self, ctx):
         return is_admin(ctx)
+
+    @commands.command()
+    async def coc(self, ctx):
+        """!!!CoC Violation!!!"""
+        img = random.choice(coc_urls)
+        msg = f"!!!CoC Violation Detected!!!!\n{img}"
+        await ctx.send(msg)
 
     @commands.command(name="eval")
     async def eval_fn(self, ctx, *, cmd):
