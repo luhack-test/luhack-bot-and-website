@@ -42,6 +42,7 @@ start_bot = 'luhack_bot:run'
 gen_tokens = 'luhack_bot:gen_tokens'
 export_users = 'luhack_bot:export_users'
 ingest_users = 'luhack_bot:ingest_users'
+export_content = 'luhack_bot:export_writeups_and_blog_posts'
 
 [build-system]
 requires = ["poetry>=0.12"]
