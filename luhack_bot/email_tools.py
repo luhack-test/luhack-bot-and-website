@@ -31,9 +31,10 @@ async def send_verify_email(target_email: str, token: str):
                 },
                 json={
                     "personalizations": [{"to": [{"email": target_email}],
-                                          "from": [{"email": "verifier@luhack.me"}]}],
-                    "subject": subject,
-                    "content": [{"type": "text/plain", "value": body}]
+                                          "subject": subject}],
+                    "content": [{"type": "text/plain", "value": body}],
+                    "from": {"email": "verifier@luhack.me", "name": "LuHack Verification"},
+
                 }
         ) as r:
             assert r.status == 202, await r.read()
@@ -61,9 +62,10 @@ async def send_reverify_email(target_email: str):
                 },
                 json={
                     "personalizations": [{"to": [{"email": target_email}],
-                                          "from": [{"email": "verifier@luhack.me"}]}],
-                    "subject": subject,
-                    "content": [{"type": "text/plain", "value": body}]
+                                          "subject": subject}],
+                    "content": [{"type": "text/plain", "value": body}],
+                    "from": {"email": "verifier@luhack.me", "name": "LuHack Reverification"},
+
                 }
         ) as r:
             assert r.status == 202, await r.read()
