@@ -36,7 +36,7 @@ async def send_verify_email(target_email: str, token: str):
                     "content": [{"type": "text/plain", "value": body}]
                 }
         ) as r:
-            assert r.status == 202
+            assert r.status == 202, await r.read()
 
     logger.info(f"Sent auth email to: {target_email}")
 
@@ -66,7 +66,7 @@ async def send_reverify_email(target_email: str):
                     "content": [{"type": "text/plain", "value": body}]
                 }
         ) as r:
-            assert r.status == 202
+            assert r.status == 202, await r.read()
 
     logger.info(f"Sent reverify request email to: {target_email}")
 
