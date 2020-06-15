@@ -13,10 +13,9 @@ def env_fail(var: str):
 
 db_url = os.getenv("DB_URL")
 
-email_username = os.getenv("EMAIL_USER")
-email_password = os.getenv("EMAIL_PASS")
+sendgrid_token = os.getenv("SENDGRID_TOKEN") or env_fail("SENDGRID_TOKEN")
 
-bot_client_token = os.getenv("BOT_TOKEN")
+bot_client_token = os.getenv("BOT_TOKEN") or env_fail("BOT_TOKEN")
 
 email_encryption_key = os.getenv("EMAIL_KEY") or env_fail("EMAIL_KEY")
 

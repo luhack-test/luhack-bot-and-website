@@ -1,12 +1,10 @@
 import logging
 import textwrap
-from email.mime.text import MIMEText
+import aiohttp
 
 from discord.ext.commands import BadArgument
 
-import aiosmtplib
-from luhack_bot.secrets import email_password
-from luhack_bot.secrets import email_username
+from luhack_bot.secrets import sendgrid_token
 
 logger = logging.getLogger(__name__)
 
@@ -25,14 +23,20 @@ async def send_verify_email(target_email: str, token: str):
         """
     )
 
-    msg = MIMEText(body)
-    msg["From"] = email_username
-    msg["To"] = target_email
-    msg["Subject"] = subject
-
-    async with aiosmtplib.SMTP("smtp.gmail.com", port=465, use_tls=True) as smtp:
-        await smtp.login(email_username, email_password)
-        await smtp.send_message(msg)
+    async with aiohttp.ClientSession() as sess:
+        async with sess.post(
+                "https://api.sendgrid.com/v3/mail/send",
+                headers={
+                    "Authorization": f"Bearer {sendgrid_token}",
+                },
+                json={
+                    "personalizations": [{"to": [{"email": target_email}],
+                                          "from": [{"email": "verifier@luhack.me"}]}],
+                    "subject": subject,
+                    "content": [{"type": "text/plain", "value": body}]
+                }
+        ) as r:
+            assert r.status == 202
 
     logger.info(f"Sent auth email to: {target_email}")
 
@@ -49,14 +53,20 @@ async def send_reverify_email(target_email: str):
         """
     )
 
-    msg = MIMEText(body)
-    msg["From"] = email_username
-    msg["To"] = target_email
-    msg["Subject"] = subject
-
-    async with aiosmtplib.SMTP("smtp.gmail.com", port=465, use_tls=True) as smtp:
-        await smtp.login(email_username, email_password)
-        await smtp.send_message(msg)
+    async with aiohttp.ClientSession() as sess:
+        async with sess.post(
+                "https://api.sendgrid.com/v3/mail/send",
+                headers={
+                    "Authorization": f"Bearer {sendgrid_token}",
+                },
+                json={
+                    "personalizations": [{"to": [{"email": target_email}],
+                                          "from": [{"email": "verifier@luhack.me"}]}],
+                    "subject": subject,
+                    "content": [{"type": "text/plain", "value": body}]
+                }
+        ) as r:
+            assert r.status == 202
 
     logger.info(f"Sent reverify request email to: {target_email}")
 
