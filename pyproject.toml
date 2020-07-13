@@ -33,7 +33,7 @@ parsedatetime = "^2.4"
 
 [tool.poetry.dev-dependencies]
 aiomysql = "^0.0"
-python-language-server = "^0.27"
+python-language-server = "^0.30"
 psycopg2-binary = "^2.8"
 
 [tool.poetry.scripts]
