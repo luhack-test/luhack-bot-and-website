@@ -7,29 +7,29 @@ authors = [""]
 [tool.poetry.dependencies]
 python = "^3.7"
 itsdangerous = "^1.1"
-cryptography = "^2.7"
-gino = "^0.8"
+cryptography = "^2.9"
+gino = "^1.0"
 python-dotenv = "^0.14"
-sqlalchemy_utils = "^0.34"
-asyncpg = "^0.18"
-alembic = "^1.0"
+sqlalchemy_utils = "^0.36"
+asyncpg = "^0.20"
+alembic = "^1.4"
 "sqlalchemy-searchable" = { tag = "1.1.2", git = "https://github.com/nitros12/sqlalchemy-searchable" }
 starlette = "^0.13"
-jinja2 = "^2.10"
+jinja2 = "^2.11"
 python-multipart = "^0.0"
 mistune = "^0.8"
-pygments = "^2.4"
-aiofiles = "^0.4"
+pygments = "^2.6"
+aiofiles = "^0.5"
 slug = "^2.0"
-WTForms = "^2.2"
-yarl = "^1.3"
+WTForms = "^2.3"
+yarl = "^1.4"
 gunicorn = "^20.0"
-uvicorn = {git = "https://github.com/nitros12/uvicorn"}
 PyCrypto = "^2.6"
 ujson = "^3.0"
-python-dateutil = "^2.8.0"
-parsedatetime = "^2.4"
-"discord.py" = "^1.2.3"
+python-dateutil = "^2.8"
+parsedatetime = "^2.6"
+"discord.py" = "^1.3"
+uvicorn = "^0.11.5"
 
 [tool.poetry.dev-dependencies]
 aiomysql = "^0.0"
@@ -44,6 +44,5 @@ ingest_users = 'luhack_bot:ingest_users'
 export_content = 'luhack_bot:export_writeups_and_blog_posts'
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
-
+requires = ["poetry>=1.0"]
+build-backend = "poetry.core.masonry.api"
