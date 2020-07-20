@@ -573,7 +573,7 @@ description = "The little ASGI library that shines."
 name = "starlette"
 optional = false
 python-versions = ">=3.6"
-version = "0.13.4"
+version = "0.13.5"
 
 [package.extras]
 full = ["aiofiles", "graphene", "itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests", "ujson"]
@@ -1041,8 +1041,8 @@ sqlalchemy-utils = [
     {file = "SQLAlchemy-Utils-0.36.8.tar.gz", hash = "sha256:fb66e9956e41340011b70b80f898fde6064ec1817af77199ee21ace71d7d6ab0"},
 ]
 starlette = [
-    {file = "starlette-0.13.4-py3-none-any.whl", hash = "sha256:0fb4b38d22945b46acb880fedee7ee143fd6c0542992501be8c45c0ed737dd1a"},
-    {file = "starlette-0.13.4.tar.gz", hash = "sha256:04fe51d86fd9a594d9b71356ed322ccde5c9b448fc716ac74155e5821a922f8d"},
+    {file = "starlette-0.13.5-py3-none-any.whl", hash = "sha256:3bdc56c0ce4857038e51c263d63a50a33306cbc375ba62b7fd54a13a2987de1b"},
+    {file = "starlette-0.13.5.tar.gz", hash = "sha256:27eb45ea740ea0d379b3adcd3ba53b538b5176d89daa3e8d96220f15630ae38a"},
 ]
 ujson = [
     {file = "ujson-3.0.0-cp35-cp35m-macosx_10_14_x86_64.whl", hash = "sha256:0959a5b569e192459b492b007e3fd63d8f4b4bcb4f69dcddca850a9b9dfe3e7a"},
