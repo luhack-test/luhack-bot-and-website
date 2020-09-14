@@ -159,14 +159,6 @@ docs = ["sphinx (1.8.5)", "sphinxcontrib-trio (1.1.1)", "sphinxcontrib-websuppor
 voice = ["PyNaCl (1.3.0)"]
 
 [[package]]
-category = "dev"
-description = "Clean single-source support for Python 3 and 2"
-name = "future"
-optional = false
-python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
-version = "0.18.2"
-
-[[package]]
 category = "main"
 description = "GINO Is Not ORM - a Python asyncio ORM on SQLAlchemy core."
 name = "gino"
@@ -263,14 +255,15 @@ category = "dev"
 description = "An autocompletion tool for Python that can be used for text editors."
 name = "jedi"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "0.15.2"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+version = "0.17.2"
 
 [package.dependencies]
-parso = ">=0.5.2"
+parso = ">=0.7.0,<0.8.0"
 
 [package.extras]
-testing = ["colorama (0.4.1)", "docopt", "pytest (>=3.9.0,<5.0.0)"]
+qa = ["flake8 (3.7.9)"]
+testing = ["Django (<3.1)", "colorama", "docopt", "pytest (>=3.9.0,<5.0.0)"]
 
 [[package]]
 category = "main"
@@ -439,10 +432,10 @@ description = "JSON RPC 2.0 server library"
 name = "python-jsonrpc-server"
 optional = false
 python-versions = "*"
-version = "0.2.0"
+version = "0.4.0"
 
 [package.dependencies]
-future = ">=0.14.0"
+ujson = ">=3.0.0"
 
 [package.extras]
 test = ["versioneer", "pylint", "pycodestyle", "pyflakes", "pytest", "mock", "pytest-cov", "coverage"]
@@ -453,24 +446,25 @@ description = "Python Language Server for the Language Server Protocol"
 name = "python-language-server"
 optional = false
 python-versions = "*"
-version = "0.30.0"
+version = "0.35.0"
 
 [package.dependencies]
-jedi = ">=0.14.1,<0.16"
+jedi = ">=0.17.0,<0.18.0"
 pluggy = "*"
-python-jsonrpc-server = ">=0.1.0"
+python-jsonrpc-server = ">=0.4.0"
+ujson = ">=3.0.0"
 
 [package.extras]
-all = ["autopep8", "flake8", "mccabe", "pycodestyle", "pydocstyle (>=2.0.0)", "pyflakes (>=1.6.0)", "pylint", "rope (>=0.10.5)", "yapf"]
+all = ["autopep8", "flake8 (>=3.8.0)", "mccabe (>=0.6.0,<0.7.0)", "pycodestyle (>=2.6.0,<2.7.0)", "pydocstyle (>=2.0.0)", "pyflakes (>=2.2.0,<2.3.0)", "pylint (>=2.5.0)", "rope (>=0.10.5)", "yapf"]
 autopep8 = ["autopep8"]
-flake8 = ["flake8"]
-mccabe = ["mccabe"]
-pycodestyle = ["pycodestyle"]
+flake8 = ["flake8 (>=3.8.0)"]
+mccabe = ["mccabe (>=0.6.0,<0.7.0)"]
+pycodestyle = ["pycodestyle (>=2.6.0,<2.7.0)"]
 pydocstyle = ["pydocstyle (>=2.0.0)"]
-pyflakes = ["pyflakes (>=1.6.0)"]
-pylint = ["pylint"]
+pyflakes = ["pyflakes (>=2.2.0,<2.3.0)"]
+pylint = ["pylint (>=2.5.0)"]
 rope = ["rope (>0.10.5)"]
-test = ["versioneer", "pylint", "pytest", "mock", "pytest-cov", "coverage", "numpy", "pandas", "matplotlib"]
+test = ["versioneer", "pylint (>=2.5.0)", "pytest", "mock", "pytest-cov", "coverage", "numpy", "pandas", "matplotlib", "flaky", "pyqt5"]
 yapf = ["yapf"]
 
 [[package]]
@@ -679,7 +673,8 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "d47090013332281bfd061417cd181fbed9fefbe0293000188f26a28d58169de2"
+content-hash = "d5de7dd4e505f53cbe772d89002352438c7012f25c3a26b21e9f05a1b7e411ab"
+lock-version = "1.0"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -806,9 +801,6 @@ decorator = [
     {file = "discord.py-1.3.4-py3-none-any.whl", hash = "sha256:8ef58d6fc1e66903bc00ae79c4c09a38aa71043e88a83da4d2e8b9b1c9f9b9e2"},
     {file = "discord.py-1.3.4.tar.gz", hash = "sha256:1b546a32c0cd83d949392a71e5b06e30e19d1067246e3826d32ae9b8b3d06c1e"},
 ]
-future = [
-    {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
-]
 gino = [
     {file = "gino-1.0.1-py3-none-any.whl", hash = "sha256:56df57cfdefbaf897a7c4897c265a0e91a8cca80716fb64f7d3cf6d501fdfb3d"},
     {file = "gino-1.0.1.tar.gz", hash = "sha256:fe4189e82fe9d20c4a5f03fc775fb91c168061c5176b4c95623caeef22316150"},
@@ -848,8 +840,8 @@ itsdangerous = [
     {file = "itsdangerous-1.1.0.tar.gz", hash = "sha256:321b033d07f2a4136d3ec762eac9f16a10ccd60f53c0c91af90217ace7ba1f19"},
 ]
 jedi = [
-    {file = "jedi-0.15.2-py2.py3-none-any.whl", hash = "sha256:1349c1e8c107095a55386628bb3b2a79422f3a2cab8381e34ce19909e0cf5064"},
-    {file = "jedi-0.15.2.tar.gz", hash = "sha256:e909527104a903606dd63bea6e8e888833f0ef087057829b89a18364a856f807"},
+    {file = "jedi-0.17.2-py2.py3-none-any.whl", hash = "sha256:98cc583fa0f2f8304968199b01b6b4b94f469a1f4a74c1560506ca2a211378b5"},
+    {file = "jedi-0.17.2.tar.gz", hash = "sha256:86ed7d9b750603e4ba582ea8edc678657fb4007894a12bcf6f4bb97892f31d20"},
 ]
 jinja2 = [
     {file = "Jinja2-2.11.2-py2.py3-none-any.whl", hash = "sha256:f0a4641d3cf955324a89c04f3d94663aa4d638abe8f733ecd3582848e1c37035"},
@@ -992,10 +984,12 @@ python-editor = [
     {file = "python_editor-1.0.4-py3.5.egg", hash = "sha256:c3da2053dbab6b29c94e43c486ff67206eafbe7eb52dbec7390b5e2fb05aac77"},
 ]
 python-jsonrpc-server = [
-    {file = "python-jsonrpc-server-0.2.0.tar.gz", hash = "sha256:59ce9c9523c14c493a327b3a27ee37464a36dc2b9d8ab485ecbcedd38840380a"},
+    {file = "python-jsonrpc-server-0.4.0.tar.gz", hash = "sha256:62c543e541f101ec5b57dc654efc212d2c2e3ea47ff6f54b2e7dcb36ecf20595"},
+    {file = "python_jsonrpc_server-0.4.0-py3-none-any.whl", hash = "sha256:e5a908ff182e620aac07db5f57887eeb0afe33993008f57dc1b85b594cea250c"},
 ]
 python-language-server = [
-    {file = "python-language-server-0.30.0.tar.gz", hash = "sha256:adc7c17a44bd7708e5f832997763926de34bad67549cd4b52a0efb2f70245aed"},
+    {file = "python-language-server-0.35.0.tar.gz", hash = "sha256:ac0bbc549b38565aa945b6335cc65c5e7230b8b60417af3bf9df5d1aacb03f90"},
+    {file = "python_language_server-0.35.0-py2.py3-none-any.whl", hash = "sha256:a9b91d98ae362ddf66e2146dc5e8fb29c2729e77176ecb286dae0a39016969c9"},
 ]
 python-multipart = [
     {file = "python-multipart-0.0.5.tar.gz", hash = "sha256:f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"},
