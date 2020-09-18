@@ -32,9 +32,32 @@ services:
       - DB_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@db:$POSTGRES_PORT/$POSTGRES_DATABASE
     networks:
       - db
-    ports:
-      - "8080:8080"
+      - caddy
+    labels:
+      caddy: scc-luhack.lancaster.ac.uk, scc-luhack.lancs.ac.uk
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+      caddy.tls: "ben@bensimms.moe"
     command: /bin/sh start_site.sh
+
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - caddy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # this volume is needed to keep the certificates
+      # otherwise, new ones will be re-issued upon restart
+      - caddy_data:/data
+    labels: # Global options
+      caddy.email: ben@bensimms.moe
 
 networks:
   db:
+  caddy:
+
+volumes:
+  caddy_data: {}
