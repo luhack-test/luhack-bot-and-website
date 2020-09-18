@@ -1,4 +1,15 @@
 import yarl
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def env_fail(var: str):
+    """Warn about an empty env var."""
+    print(f"Warning, missing env var: {var}")
+    exit(1)
 
 luhack_guild_id = 485103891298385923
 potential_luhacker_role_id = 486250289691754496
@@ -15,3 +26,6 @@ trusted_role_ids = {
 bot_log_channel_id = 588443109994528816
 inner_magic_circle_id = 631618075254325257
 writeups_base_url = yarl.URL("https://scc-luhack.lancs.ac.uk/writeups")
+
+from_email_address = os.getenv("FROM_EMAIL_ADDRESS") or env_fail("FROM_EMAIL_ADDRESS")
+is_test_mode = (os.getenv("TEST_MODE") or "0") == "1"

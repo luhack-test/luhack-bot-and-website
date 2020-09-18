@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  db:
+    image: "postgres:13"
+    env_file: .env
+    restart: always
+    volumes:
+      - ./db-data:/var/lib/postgresql/data/
+    networks:
+      - db
+
+  bot:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      - DB_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@db:$POSTGRES_PORT/$POSTGRES_DATABASE
+    networks:
+      - db
+    command: /bin/sh start_bot.sh
+
+  site:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      - DB_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@db:$POSTGRES_PORT/$POSTGRES_DATABASE
+    networks:
+      - db
+    ports:
+      - "8080:8080"
+    command: /bin/sh start_site.sh
+
+networks:
+  db:

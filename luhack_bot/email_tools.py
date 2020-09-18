@@ -5,6 +5,7 @@ import aiohttp
 from discord.ext.commands import BadArgument
 
 from luhack_bot.secrets import sendgrid_token
+from luhack_bot.constants import from_email_address
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +21,8 @@ async def send_verify_email(target_email: str, token: str):
 
 
         Your authentication token is: {token}
+
+        DM the bot and use the command: "!verify {token}"
         """
     )
 
@@ -33,7 +36,7 @@ async def send_verify_email(target_email: str, token: str):
                     "personalizations": [{"to": [{"email": target_email}],
                                           "subject": subject}],
                     "content": [{"type": "text/plain", "value": body}],
-                    "from": {"email": "verifier@luhack.me", "name": "LuHack Verification"},
+                    "from": {"email": from_email_address, "name": "LUHack Verification"},
 
                 }
         ) as r:
@@ -50,7 +53,7 @@ async def send_reverify_email(target_email: str):
         f"""
         Heya!
         You are receiving this email because you haven't been active on the luhack discord server for a while.
-        To remain in the server you'll need to re-verify using the `!gen_token` command again or you'll be removed in a week.
+        To remain in the server you'll need to re-verify using the `!token` command again or you'll be removed in a week.
         """
     )
 
@@ -64,7 +67,7 @@ async def send_reverify_email(target_email: str):
                     "personalizations": [{"to": [{"email": target_email}],
                                           "subject": subject}],
                     "content": [{"type": "text/plain", "value": body}],
-                    "from": {"email": "verifier@luhack.me", "name": "LuHack Reverification"},
+                    "from": {"email": from_email_address, "name": "LUHack Reverification"},
 
                 }
         ) as r:

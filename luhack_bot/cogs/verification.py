@@ -20,7 +20,7 @@ class Verification(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        if not secrets.is_test_mode:
+        if not constants.is_test_mode:
             self.fix_missing_roles.start()
             self.update_members.start()
 
@@ -88,17 +88,23 @@ class Verification(commands.Cog):
         await self.bot.log_message(f"made member prospective {member} ({member.id})")
 
     @commands.command(
-        name="gen_token",
-        aliases=["gib_token", "i_wanna_be_wizard_too", "generate_token"],
+        name="token",
+        aliases=["gib_token", "i_wanna_be_wizard_too", "generate_token", "gen_token"],
     )
     async def generate_token(self, ctx, email: email_tools.lancs_email):
-        """Generates an authentication token, then emails it to the provided email if
-        you aren't already verified. You must provide a valid lancaster email address or
-        you will not get an authentication token.
+        """Generates an authentication token, then emails it to the provided email.
+        You must provide a valid lancaster email address or you will not get an
+        authentication token.
 
         First step on the path to Grand Master Cyber Wizard
+
         """
-        existing_user = await User.get(ctx.author.id)
+        existing_user = await User.query.where((User.discord_id == ctx.author.id) | (User.email == email)).gino.first()
+
+        if existing_user.discord_id != ctx.author.id:
+            await ctx.send("Looks like you're already registered with this email address")
+            return
+
         is_flagged = (
             existing_user is not None and existing_user.flagged_for_deletion is not None
         )
@@ -112,16 +118,16 @@ class Verification(commands.Cog):
 
         await email_tools.send_verify_email(email, auth_token)
 
-        await ctx.send(f"Noice, I've sent an email to: `{email}` with your token!")
+        await ctx.send(f"Okay, I've sent an email to: `{email}` with your token!")
 
     @commands.command(
-        name="verify_token", aliases=["auth_plz", "i_really_wanna_be_wizard"]
+        name="verify", aliases=["auth_plz", "i_really_wanna_be_wizard", "verify_token"]
     )
     async def verify_token(self, ctx, auth_token: str):
-        """Takes an authentication token, checks if it is valid and if so elevates you to Verified LUHacker.
+        """Takes an authentication token and elevates you to Verified LUHacker.
         Note that tokens expire after 30 minutes.
 
-        Second step on the path to Grand Master Cyber Wizardl.
+        Second step on the path to Grand Master Cyber Wizard.
         """
         existing_user = await User.get(ctx.author.id)
         is_flagged = (
