@@ -178,3 +178,6 @@ class ActivityChecker(commands.Cog):
 
         for member in inactive:
             await self.flag_inactive_member(member)
+
+def setup(bot):
+    bot.add_cog(ActivityChecker(bot))

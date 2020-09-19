@@ -52,7 +52,7 @@ class Writeups(commands.Cog):
 
     async def show_similar_writeups(
         self, ctx, title: str, found_message: str = "Possible writeups are:"
-    ) -> List[Writeup]:
+    ):
         """Shows similar writeups to a user."""
 
         similar = [self.format_writeup(i) for i in await self.search_writeups(title)]
@@ -147,3 +147,5 @@ class Writeups(commands.Cog):
         await ctx.author.send(
             f"Visit this link and you'll be authed for 24 hours: {url}"
         )
+def setup(bot):
+    bot.add_cog(Writeups(bot))

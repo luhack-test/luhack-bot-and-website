@@ -56,6 +56,18 @@ class Admin(commands.Cog):
         msg = f"!!!CoC Violation Detected!!!!\n{img}"
         await ctx.send(msg)
 
+    @commands.command()
+    async def reload(self, ctx, module):
+        try:
+            if module in self.bot.extensions:
+                self.bot.reload_extension(module)
+            else:
+                self.bot.load_extension(module)
+        except commands.ExtensionError as e:
+            await ctx.send(f"Failed to (re)load {module}: {e}")
+        else:
+            await ctx.send(f"(Re)Loaded {module}")
+
     @commands.command(name="eval")
     async def eval_fn(self, ctx, *, cmd):
         """Evaluates input.
@@ -103,3 +115,6 @@ class Admin(commands.Cog):
 
         result = await eval(f"{fn_name}()", env)
         await ctx.send(result)
+
+def setup(bot):
+    bot.add_cog(Admin(bot))

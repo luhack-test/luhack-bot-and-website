@@ -262,3 +262,6 @@ class Todos(commands.Cog):
         embed.colour = discord.Colour.gold()
 
         await ctx.send(embed=embed)
+
+def setup(bot):
+    bot.add_cog(Todos(bot))

@@ -8,16 +8,19 @@ import discord
 from discord.ext import commands
 
 from luhack_bot import constants
-from luhack_bot.cogs import activity_checker
-from luhack_bot.cogs import admin
-from luhack_bot.cogs import todos
-from luhack_bot.cogs import verification
-from luhack_bot.cogs import writeups
 from luhack_bot.db.helpers import init_db
 from luhack_bot.secrets import bot_client_token
 
 logger = logging.getLogger(__name__)
 
+
+COGS = ["cogs.activity_checker",
+        "cogs.admin",
+        "cogs.todos",
+        "cogs.verification",
+        "cogs.writeups",
+        "cogs.challenges"
+        ]
 
 class LUHackBot(commands.Bot):
     def __init__(self, **kwargs):
@@ -42,11 +45,12 @@ class LUHackBot(commands.Bot):
     async def load_cogs(self):
         """Register our cogs."""
         await self.wait_until_ready()
-        self.add_cog(verification.Verification(self))
-        self.add_cog(writeups.Writeups(self))
-        self.add_cog(activity_checker.ActivityChecker(self))
-        self.add_cog(todos.Todos(self))
-        self.add_cog(admin.Admin(self))
+       
+        for extension in COGS:
+            try:
+                self.load_extension("luhack_bot." + extension)
+            except Exception as e:
+                print(f'Failed to load extension {extension}: {e}')
 
     def luhack_guild(self):
         return self.get_guild(constants.luhack_guild_id)

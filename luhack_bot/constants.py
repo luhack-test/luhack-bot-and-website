@@ -26,6 +26,7 @@ trusted_role_ids = {
 bot_log_channel_id = 588443109994528816
 inner_magic_circle_id = 631618075254325257
 writeups_base_url = yarl.URL("https://scc-luhack.lancs.ac.uk/writeups")
+challenges_base_url = yarl.URL("https://scc-luhack.lancs.ac.uk/challenges")
 
 from_email_address = os.getenv("FROM_EMAIL_ADDRESS") or env_fail("FROM_EMAIL_ADDRESS")
 is_test_mode = (os.getenv("TEST_MODE") or "0") == "1"

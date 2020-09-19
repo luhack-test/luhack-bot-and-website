@@ -177,7 +177,6 @@ class Verification(commands.Cog):
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
     @commands.check(is_admin)
-    @commands.check(in_channel(constants.inner_magic_circle_id))
     @commands.command()
     async def add_user_manually(self, ctx, member: discord.Member, email: str):
         """Manually auth a member."""
@@ -227,3 +226,6 @@ class Verification(commands.Cog):
                 break
         else:
             await ctx.send("No user with that email exists.")
+
+def setup(bot):
+    bot.add_cog(Verification(bot))

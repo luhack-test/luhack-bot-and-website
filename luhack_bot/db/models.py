@@ -12,7 +12,6 @@ from luhack_bot.secrets import email_encryption_key
 
 db = Gino()
 
-
 class User(db.Model):
     """Full users, that have a lancs email."""
 
@@ -28,6 +27,9 @@ class User(db.Model):
     #: set to the time when the acc was flagged for deletion, we then delete and
     #  unverify any user that's been flagged for more than a week
     flagged_for_deletion = db.Column(db.DateTime, nullable=True)
+
+    completed_challenges = relationship("Challenge", secondary=lambda: CompletedChallenge,
+                                        back_populates="challenges")
 
 
 # class ProspectiveUser(db.Model):
@@ -48,7 +50,7 @@ class Writeup(db.Model):
         None, db.ForeignKey("users.discord_id", ondelete="SET NULL"), nullable=True
     )
     author = relationship(
-        User, backref=backref("writeups", passive_deletes=True), lazy="joined"
+        User, backref=backref("writeups"), lazy="joined"
     )
 
     title = db.Column(db.Text(), nullable=False, unique=True)
@@ -89,10 +91,10 @@ class Image(db.Model):
     id = db.Column(UUID(), primary_key=True, server_default=func.uuid_generate_v4())
 
     author_id = db.Column(
-        None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False
+        None, db.ForeignKey("users.discord_id", ondelete="SET NULL"), nullable=True
     )
     author = relationship(
-        User, backref=backref("images", passive_deletes=True), lazy="joined"
+        User, backref=backref("images"), lazy="joined"
     )
 
     filetype = db.Column(db.Text(), nullable=False)
@@ -150,3 +152,36 @@ class Todo(db.Model):
     completed = db.Column(db.DateTime, nullable=True)
 
     content = db.Column(db.Text(), nullable=False)
+
+class Challenge(db.Model):
+    __tablename__ = "challenges"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    title = db.Column(db.Text(), unique=True, nullable=False)
+    slug = db.Column(db.Text(), nullable=False, unique=True)
+
+    content = db.Column(db.Text(), nullable=False)
+    flag = db.Column(db.Text(), unique=True, nullable=False)
+
+    points = db.Column(db.Integer(), nullable=False)
+
+    completed_users = relationship(User, secondary=lambda: CompletedChallenge,
+                                   back_populates="users")
+
+    @classmethod
+    def create_auto(cls, *args, **kwargs):
+        if "slug" not in kwargs:
+            kwargs["slug"] = slug(kwargs["title"])
+        return cls.create(*args, **kwargs)
+
+    def update_auto(self, *args, **kwargs):
+        if "slug" not in kwargs:
+            kwargs["slug"] = slug(kwargs["title"])
+        return self.update(*args, **kwargs)
+
+class CompletedChallenge(db.Model):
+    __tablename__ = "completedchallenges"
+
+    discord_id = db.Column(None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False, primary_key=True)
+    challenge_id = db.Column(None, db.ForeignKey("challenges.id", ondelete="CASCADE"), nullable=False, primary_key=True)
