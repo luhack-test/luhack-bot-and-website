@@ -1,0 +1,16 @@
+{% extends "challenge/base.j2" %}
+
+{% from "challenge/date_accordion.j2" import challenge_accordion with context %}
+{% from "challenge/preview.j2" import challenge_preview with context %}
+
+{% block content %}
+    <div class="posts">
+        {% for (challenge, content) in challenge %}
+            {{ challenge_preview(challenge, content, url_for('challenge_view', slug=challenge.slug)) }}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block header_content %}
+    {{ challenge_accordion(grouped_challenges) }}
+{% endblock %}

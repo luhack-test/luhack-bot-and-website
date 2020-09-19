@@ -169,6 +169,8 @@ class Challenge(db.Model):
     completed_users = relationship(User, secondary=lambda: CompletedChallenge,
                                    back_populates="users")
 
+    creation_date = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+
     @classmethod
     def create_auto(cls, *args, **kwargs):
         if "slug" not in kwargs:

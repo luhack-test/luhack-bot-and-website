@@ -3,6 +3,8 @@ import re
 import ujson
 
 from wtforms import Form, StringField, TextAreaField, Field, validators, ValidationError
+from wtforms.fields.core import IntegerField
+from wtforms.validators import DataRequired
 from wtforms.widgets import TextInput
 
 
@@ -17,7 +19,10 @@ class TagListField(Field):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            tags = [invalid_tag_chars.sub("", tag["value"]) for tag in ujson.decode(valuelist[0])]
+            tags = [
+                invalid_tag_chars.sub("", tag["value"])
+                for tag in ujson.decode(valuelist[0])
+            ]
             data = list(set(tags))
             self.data = data
         else:
@@ -36,6 +41,19 @@ class TagListField(Field):
 
 
 class PostForm(Form):
-    title = StringField("Title", [validators.Length(min=4, max=25)])
+    title = StringField(
+        "Title", [validators.Length(min=4, max=25)]
+    )
     tags = TagListField("Tags")
     content = TextAreaField("Content")
+
+
+class ChallengeForm(Form):
+    title = StringField(
+        "Title", [validators.Length(min=4, max=25)]
+    )
+    content = TextAreaField("Content")
+    flag = StringField("Flag")
+    points = IntegerField(
+        "Points", [validators.NumberRange(min=1)]
+    )

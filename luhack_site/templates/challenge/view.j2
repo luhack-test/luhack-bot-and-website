@@ -1,0 +1,21 @@
+{% extends "challenge/base.j2" %}
+
+{% block title %}{{ challenge.title }}{% endblock title %}
+{% block og_title %}{{ challenge.title }}{% endblock %}
+
+{% block header_content %}
+    <div class="article-meta">
+        <h2>{{ challenge.title }}</h2>
+        <h4 class="date">{{ challenge.creation_date }}</h4>
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% if can_edit(request) %}
+        <a class="pure-button pure-button-primary" href="{{ url_for("EditChallenge", id=challenge.id) }}">Edit</a>
+        <a class="pure-button button-danger" href="{{ url_for("challenge_delete", id=challenge.id) }}" onclick="return confirm('are you sure?')">Delete</a>
+        <br />
+        <br />
+    {% endif %}
+    {{ rendered | safe }}
+{% endblock %}

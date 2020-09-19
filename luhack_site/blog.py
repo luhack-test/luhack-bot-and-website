@@ -1,7 +1,6 @@
 from itertools import groupby
 from textwrap import shorten
 from typing import List, Tuple
-from datetime import datetime
 import calendar
 
 import sqlalchemy as sa
@@ -11,10 +10,9 @@ from sqlalchemy_searchable import search_manager
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import HTTPConnection
-from starlette.responses import RedirectResponse
 from starlette.routing import Router
 
-from luhack_site.utils import abort
+from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
 from luhack_site.forms import PostForm
 from luhack_site.markdown import highlight_markdown, plaintext_markdown
@@ -44,7 +42,7 @@ async def blogs_grouped() -> List[Tuple[str, List[Tuple[str, List[Blog]]]]]:
 
 @router.route("/")
 async def blog_index(request: HTTPConnection):
-    latest = await Blog.query.order_by(sa.desc(Blog.creation_date)).limit(20).gino.all()
+    latest = await Blog.query.order_by(sa.desc(Blog.creation_date)).gino.all()
 
     rendered = [
         (w, shorten(plaintext_markdown(w.content), width=800, placeholder="..."))
@@ -180,9 +178,9 @@ async def blog_delete(request: HTTPConnection):
         return abort(400)
 
     await blog.delete()
-    await log_delete("blog", blog.name, request.user.username)
+    await log_delete("blog", blog.title, request.user.username)
 
-    return RedirectResponse(url=request.url_for("blog_index"))
+    return redirect_response(url=request.url_for("blog_index"))
 
 
 @router.route("/new")
@@ -227,9 +225,9 @@ class NewBlog(HTTPEndpoint):
             )
 
             url = request.url_for("blog_view", slug=blog.slug)
-            await log_create("blog", blog.name, request.user.username, url)
+            await log_create("blog", blog.title, request.user.username, url)
 
-            return RedirectResponse(url=url)
+            return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
         tags = ujson.dumps(await get_all_tags())
@@ -297,9 +295,9 @@ class EditBlog(HTTPEndpoint):
             ).apply()
 
             url = request.url_for("blog_view", slug=blog.slug)
-            await log_edit("blog", blog.name, request.user.username, url)
+            await log_edit("blog", blog.title, request.user.username, url)
 
-            return RedirectResponse(url=url)
+            return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
         tags = ujson.dumps(await get_all_tags())

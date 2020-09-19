@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 import textwrap
 from typing import List, Tuple, TypeVar
@@ -85,17 +86,6 @@ class Challenges(commands.Cog):
                 "Challenge by that title not found, similar challenges are:",
             )
             return
-
-        await ctx.send(self.format_challenge(challenge))
-
-    @challenges.command()
-    async def add_debug(self, ctx, title: str, content: str, flag: str):
-        challenge = await Challenge.create_auto(
-            title=title,
-            content=content,
-            flag=flag,
-            points=10,
-        )
 
         await ctx.send(self.format_challenge(challenge))
 
@@ -216,6 +206,18 @@ class Challenges(commands.Cog):
             f"Congrats, you've completed this challenge and have been awarded {challenge.points} points!"
             + warn_dm_message
         )
+
+        embed = discord.Embed(
+            title=f"Challenge Solved!",
+            description=f"{ctx.author.mention} just solved '{challenge.title}' and was awarded '{challenge.points}' points.",
+            color=discord.Colour.dark_teal(),
+            timestamp=datetime.utcnow(),
+            url=str(self.challenge_url(challenge.slug)),
+        )
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url_as(format="png"))
+        channel = ctx.bot.luhack_guild().get_channel(constants.challenge_log_channel_id)
+        if channel is not None:
+            await channel.send(embed=embed)
 
 
 def setup(bot):

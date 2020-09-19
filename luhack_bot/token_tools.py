@@ -38,11 +38,11 @@ def decode_writeup_edit_token(token: str) -> Optional[Tuple[str, int, bool]]:
     """Decode a writeup edit token, returns a tuple of the user id and if they are
     admin if the token was valid, None otherwise.
 
-    Writeup edit tokens have a max age of 24h.
+    Writeup edit tokens have a max age of a month.
     """
 
     try:
-        data = token_signer.loads(token, max_age=24 * 60 * 60)
+        data = token_signer.loads(token, max_age=31 * 24 * 60 * 60)
         return (data["username"], data["user_id"], data["is_admin"])
     except BadSignature:
         return None

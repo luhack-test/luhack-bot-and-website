@@ -17,6 +17,7 @@ from luhack_site.templater import templates
 from luhack_site.writeups import router as writeups_router
 from luhack_site.images import router as images_router
 from luhack_site.blog import router as blog_router
+from luhack_site.challenges import router as challenge_router
 from luhack_site.middleware import CSPMiddleware, HSTSMiddleware, WebSecMiddleware
 
 from luhack_bot.db.helpers import init_db
@@ -29,6 +30,7 @@ app = Starlette(
         Mount("/writeups", app=writeups_router),
         Mount("/images", app=images_router),
         Mount("/blog", app=blog_router),
+        Mount("/challenges", app=challenge_router),
     ]
 )
 
@@ -77,14 +79,14 @@ async def sign_out(request: HTTPConnection):
     return RedirectResponse(url=request.url_for("index"))
 
 
-@app.route("/challenge")
+@app.route("/fresher_challenge")
 async def view_challenge(request: HTTPConnection):
-    return templates.TemplateResponse("challenge/challenge.j2", {"request": request})
+    return templates.TemplateResponse("fresher_challenge/challenge.j2", {"request": request})
 
 
 @app.route("/stegoBoi")
 async def view_stego(request: HTTPConnection):
-    return templates.TemplateResponse("challenge/stegoboi.j2", {"request": request})
+    return templates.TemplateResponse("fresher_challenge/stegoboi.j2", {"request": request})
 
 
 @app.on_event("startup")

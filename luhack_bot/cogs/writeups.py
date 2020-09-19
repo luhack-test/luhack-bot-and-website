@@ -128,9 +128,9 @@ class Writeups(commands.Cog):
         await writeup.delete()
         await ctx.send(f"RIP {writeup.title}")
 
-    @writeups.command(aliases=["link"])
-    async def token(self, ctx):
-        """Generate a token allowing you to create writeups & manage those you have authority to."""
+    @commands.command(aliases=["site_link"])
+    async def site_token(self, ctx):
+        """Generate a token allowing you to create/edit writeups (and blogs/challenges for disciples)."""
 
         member_in_luhack = self.bot.luhack_guild().get_member(ctx.author.id)
 
@@ -145,7 +145,8 @@ class Writeups(commands.Cog):
         url = constants.writeups_base_url.with_query(token=token)
 
         await ctx.author.send(
-            f"Visit this link and you'll be authed for 24 hours: {url}"
+            f"Visit this link and you'll be authed for a month: {url}"
         )
+
 def setup(bot):
     bot.add_cog(Writeups(bot))

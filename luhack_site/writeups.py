@@ -1,5 +1,4 @@
 from textwrap import shorten
-from typing import List, Tuple
 
 import sqlalchemy as sa
 import ujson
@@ -8,10 +7,9 @@ from sqlalchemy_searchable import search_manager
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import HTTPConnection
-from starlette.responses import RedirectResponse
 from starlette.routing import Router
 
-from luhack_site.utils import abort
+from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
 from luhack_site.forms import PostForm
 from luhack_site.markdown import highlight_markdown, plaintext_markdown
@@ -29,7 +27,6 @@ async def writeups_index(request: HTTPConnection):
     latest = (
         await Writeup.load(author=User)
         .order_by(sa.desc(Writeup.creation_date))
-        .limit(20)
         .gino.all()
     )
 
@@ -190,7 +187,7 @@ async def writeups_delete(request: HTTPConnection):
 
     await log_delete("writeup", writeup.title, request.user.username)
 
-    return RedirectResponse(url=request.url_for("writeups_index"))
+    return redirect_response(url=request.url_for("writeups_index"))
 
 
 @router.route("/new")
@@ -240,7 +237,7 @@ class NewWriteup(HTTPEndpoint):
             url=request.url_for("writeups_view", slug=writeup.slug)
             await log_create("writeup", writeup.title, request.user.username, url)
 
-            return RedirectResponse(url=url)
+            return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
         tags = ujson.dumps(await get_all_tags())
@@ -315,7 +312,7 @@ class EditWriteup(HTTPEndpoint):
             url=request.url_for("writeups_view", slug=writeup.slug)
             await log_edit("writeup", writeup.title, request.user.username, url)
 
-            return RedirectResponse(url=url)
+            return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
         tags = ujson.dumps(await get_all_tags())

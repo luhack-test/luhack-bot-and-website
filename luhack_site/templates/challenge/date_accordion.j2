@@ -1,0 +1,15 @@
+{% macro challenge_accordion(challenges) -%}
+    {% for (year, challenges) in challenges %}
+        <details {% if loop.first %}open{% endif %}>
+            <summary>{{ year }}</summary>
+            {% for (month, challenges) in challenges %}
+                <details {% if loop.first %}open{% endif %}>
+                    <summary>{{ month }}</summary>
+                    {% for challenge in challenges %}
+                        <a href="{{ url_for('challenge_view', slug=challenge.slug) }}">{{ challenge.title }}</a>
+                    {% endfor %}
+                </details>
+            {% endfor %}
+        </details>
+    {% endfor %}
+{%- endmacro %}

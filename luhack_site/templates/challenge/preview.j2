@@ -1,0 +1,15 @@
+{% macro challenge_preview(challenge, content, url) -%}
+    <section class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="{{ url }}">{{ challenge.title }}</a></h2>
+            <p class="post-meta">
+                Posted on {{ challenge.creation_date }}
+            </p>
+        </header>
+        <div class="post-description">
+            <p>
+                {{ content | safe }}
+            </p>
+        </div>
+    </section>
+{%- endmacro %}

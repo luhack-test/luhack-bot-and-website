@@ -1,0 +1,52 @@
+{% extends "challenge/base.j2" %}
+
+{% block style %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', path="/css/tagify.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', path="/css/dropzone.min.css") }}">
+    <script defer src="{{ url_for('static', path="/js/tagify.min.js") }}"></script>
+    <script defer src="{{ url_for('static', path="/js/dropzone.min.js") }}"></script>
+    <script defer src="{{ url_for('static', path="/js/new-post.js") }}"></script>
+{% endblock %}
+
+{% block title %}Create new challenge{% endblock title %}
+
+{% block content %}
+    <form class="pure-form pure-form-aligned" method="POST" action="{{ request.url }}">
+        <fieldset>
+            <legend>{% block legend %}Create new challenge{% endblock legend %}</legend>
+
+            <div class="pure-control-group">
+                {{ form.title.label }}
+                {{ form.title() }}
+            </div>
+            <div class="pure-control-group">
+                {{ form.content.label }}
+                {{ form.content() }}
+            </div>
+            <div class="pure-control-group">
+                {{ form.flag.label }}
+                {{ form.flag() }}
+            </div>
+            <div class="pure-control-group">
+                {{ form.points.label }}
+                {{ form.points() }}
+            </div>
+            <div class="pure-controls">
+                <button type="submit" class="pure-button pure-button-primary">Submit</button>
+            </div>
+        </fieldset>
+
+        {% if form.errors %}
+            <ul class="errors">
+                {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                    {% for error in field_errors %}
+                        <li>{{ form[field_name].label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </form>
+
+    <form action="{{ url_for('image_upload') }}" class="dropzone" id="image-upload-dropzone" data-existing-images="{{ existing_images }}"></form>
+{% endblock %}

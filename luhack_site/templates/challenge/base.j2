@@ -1,0 +1,15 @@
+{% extends "base.j2" %}
+
+{% block og_title %}LUHack Challanges{% endblock %}
+{% block og_description %}CTF Challenges made by LUHack.{% endblock %}
+
+{% block title %}LUHack Challenges{% endblock %}
+
+{% block nav_cont %}
+    <br />
+    {% if request.user.is_admin %}
+        <li class="nav-item">
+            <a class="button" href="{{ url_for("NewChallenge") }}">New Challenge</a>
+        </li>
+    {% endif %}
+{% endblock %}
