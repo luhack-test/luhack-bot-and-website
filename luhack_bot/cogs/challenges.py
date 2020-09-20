@@ -227,7 +227,7 @@ class Challenges(commands.Cog):
             .cte("scores")
         )
         my_score = (
-            db.select([scores_q.c.score])
+            db.select([sa.func.coalesce(scores_q.c.score, 0)])
             .select_from(scores_q)
             .where(scores_q.c.discord_id == ctx.author.id)
         )
