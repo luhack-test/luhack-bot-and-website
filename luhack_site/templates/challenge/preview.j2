@@ -1,9 +1,12 @@
-{% macro challenge_preview(challenge, content, url) -%}
+{% macro challenge_preview(challenge, content, url, solves) -%}
     <section class="post">
         <header class="post-header">
             <h2 class="post-title"><a href="{{ url }}">{{ challenge.title }}</a></h2>
             <p class="post-meta">
                 Posted on {{ challenge.creation_date }}
+            </p>
+            <p class="post-meta">
+                Solved {{ solves }} {{ "time" if solves == 1 else "times" }}
             </p>
         </header>
         <div class="post-description">

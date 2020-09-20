@@ -171,6 +171,10 @@ class Challenge(db.Model):
 
     creation_date = db.Column(db.DateTime, server_default=func.now(), nullable=False)
 
+    search_vector = db.Column(
+        TSVectorType("title", "content", weights={"title": "A", "content": "B"})
+    )
+
     @classmethod
     def create_auto(cls, *args, **kwargs):
         if "slug" not in kwargs:

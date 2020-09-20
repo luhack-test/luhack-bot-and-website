@@ -4,6 +4,8 @@ from typing import List, Tuple
 import calendar
 
 import sqlalchemy as sa
+from gino.loader import ColumnLoader
+
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import HTTPConnection
@@ -17,7 +19,7 @@ from luhack_site.templater import templates
 from luhack_site.images import encoded_existing_images
 from luhack_site.content_logger import log_edit, log_create, log_delete
 
-from luhack_bot.db.models import Challenge
+from luhack_bot.db.models import db, Challenge, CompletedChallenge
 
 router = Router()
 
@@ -48,11 +50,24 @@ async def challenges_grouped() -> List[Tuple[str, List[Tuple[str, List[Challenge
 
 @router.route("/")
 async def challenge_index(request: HTTPConnection):
-    latest = await Challenge.query.order_by(sa.desc(Challenge.creation_date)).gino.all()
+    solves = sa.func.count(CompletedChallenge.challenge_id).label("solves")
+
+    challenges = await (
+        db.select([Challenge, solves])
+        .select_from(Challenge.outerjoin(CompletedChallenge))
+        .group_by(Challenge.id)
+        .order_by(sa.desc(Challenge.creation_date))
+        .gino.load((Challenge, ColumnLoader(solves)))
+        .all()
+    )
 
     rendered = [
-        (w, shorten(plaintext_markdown(w.content), width=800, placeholder="..."))
-        for w in latest
+        (
+            w,
+            shorten(plaintext_markdown(w.content), width=800, placeholder="..."),
+            solves,
+        )
+        for (w, solves) in challenges
     ]
 
     grouped_challenges = await challenges_grouped()
@@ -61,7 +76,7 @@ async def challenge_index(request: HTTPConnection):
         "challenge/index.j2",
         {
             "request": request,
-            "challenge": rendered,
+            "challenges": rendered,
             "grouped_challenges": grouped_challenges,
         },
     )
@@ -71,16 +86,27 @@ async def challenge_index(request: HTTPConnection):
 async def challenge_view(request: HTTPConnection):
     slug = request.path_params["slug"]
 
-    challenge = await Challenge.query.where(Challenge.slug == slug).gino.first()
+    solves = sa.func.count(CompletedChallenge.challenge_id).label("solves")
+
+    challenge = await (
+        db.select([Challenge, solves])
+        .select_from(Challenge.outerjoin(CompletedChallenge))
+        .group_by(Challenge.id)
+        .where(Challenge.slug == slug)
+        .gino.load((Challenge, ColumnLoader(solves)))
+        .first()
+    )
 
     if challenge is None:
         return abort(404, "Challenge not found")
+
+    challenge, solves = challenge
 
     rendered = highlight_markdown(challenge.content)
 
     return templates.TemplateResponse(
         "challenge/view.j2",
-        {"challenge": challenge, "request": request, "rendered": rendered},
+        {"challenge": challenge, "request": request, "rendered": rendered, "solves": solves},
     )
 
 
@@ -216,7 +242,7 @@ class EditChallenge(HTTPEndpoint):
                 title=form.title.data,
                 content=form.content.data,
                 flag=form.flag.data,
-                points=form.points.data
+                points=form.points.data,
             ).apply()
 
             url = request.url_for("challenge_view", slug=challenge.slug)

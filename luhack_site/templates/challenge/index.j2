@@ -5,8 +5,8 @@
 
 {% block content %}
     <div class="posts">
-        {% for (challenge, content) in challenge %}
-            {{ challenge_preview(challenge, content, url_for('challenge_view', slug=challenge.slug)) }}
+        {% for (challenge, content, solves) in challenges %}
+            {{ challenge_preview(challenge, content, url_for('challenge_view', slug=challenge.slug), solves) }}
         {% endfor %}
     </div>
 {% endblock %}

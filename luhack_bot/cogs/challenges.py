@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
+
 def split_on(l: List[Tuple[T, bool]]) -> Tuple[List[T], List[T]]:
     a, b = [], []
     for v, k in l:
@@ -64,6 +65,11 @@ class Challenges(commands.Cog):
 
     @commands.group(aliases=["challenge"], invoke_without_command=True)
     async def challenges(self, ctx, challenge_title: Optional[str]):
+        """LUHack challenges.
+
+        Use the `challenges` command on its own to view the latest challenge or
+        search for one.
+        """
         if challenge_title is None:
             latest_challenge = await Challenge.query.order_by(
                 Challenge.id.desc()
@@ -89,6 +95,71 @@ class Challenges(commands.Cog):
 
         await ctx.send(self.format_challenge(challenge))
 
+    @challenges.command()
+    async def stats(sellf, ctx):
+        """View the most and lest solved challenges."""
+
+        count = sa.func.count(CompletedChallenge.challenge_id).label("count")
+        rank = sa.func.rank().over(order_by=sa.desc("count")).label("rank")
+
+        q_most = (
+            db.select([Challenge.title, count])
+            .select_from(Challenge.outerjoin(CompletedChallenge))
+            .group_by(Challenge.id)
+            .alias("inner")
+        )
+
+        most = await (
+            db.select([rank, q_most.c.title, q_most.c.count])
+            .select_from(q_most)
+            .limit(5)
+            .order_by(sa.desc(q_most.c.count))
+            .gino.load((rank, q_most.c.title, ColumnLoader(q_most.c.count)))
+            .all()
+        )
+
+        q_least = (
+            db.select([Challenge, count])
+            .select_from(Challenge.outerjoin(CompletedChallenge))
+            .group_by(Challenge.id)
+            .alias("inner")
+        )
+
+        least = await (
+            db.select([rank, q_least.c.title, q_least.c.count])
+            .select_from(q_least)
+            .order_by(sa.asc(q_least.c.count))
+            .limit(5)
+            .gino.load((rank, q_least.c.title, ColumnLoader(q_least.c.count)))
+            .all()
+        )
+
+        most_table = tabulate(
+            most,
+            headers=["Rank", "Challenge Title", "Solves"],
+            tablefmt="github",
+        )
+
+        least_table = tabulate(
+            least,
+            headers=["Rank", "Challenge Title", "Solves"],
+            tablefmt="github",
+        )
+
+        msg = textwrap.dedent(
+            """
+            ```md
+            # Most Solved Challenges
+            {most_table}
+
+            # Least Solved Challenges
+            {least_table}
+            ```
+            """
+        ).format(most_table=most_table, least_table=least_table)
+
+        await ctx.send(msg)
+
     @challenges.command(aliases=["top10"])
     async def leaderboard(self, ctx):
         """View the leaderboard for completed challenges."""
@@ -101,13 +172,13 @@ class Challenges(commands.Cog):
             db.select([User.discord_id, score, count])
             .select_from(User.join(CompletedChallenge).join(Challenge))
             .group_by(User.discord_id)
-            .order_by(sa.desc("score"))
             .alias("inner")
         )
 
         scores = await (
             db.select([q.c.discord_id, q.c.score, q.c.count, rank])
             .select_from(q)
+            .order_by(sa.desc(q.c.score))
             .limit(10)
             .gino.load(
                 (
@@ -148,6 +219,24 @@ class Challenges(commands.Cog):
             .label("solved")
         )
 
+        score = sa.func.sum(Challenge.points).label("score")
+        scores_q = (
+            db.select([User.discord_id, score])
+            .select_from(User.outerjoin(CompletedChallenge).outerjoin(Challenge))
+            .group_by(User.discord_id)
+            .cte("scores")
+        )
+        my_score = (
+            db.select([scores_q.c.score])
+            .select_from(scores_q)
+            .where(scores_q.c.discord_id == ctx.author.id)
+        )
+        rank_value = await (
+            db.select([sa.func.count(sa.distinct(scores_q.c.score)) + 1])
+            .where(scores_q.c.score > my_score)
+            .gino.scalar()
+        )
+
         info = await (
             db.select([Challenge, solved])
             .gino.load((Challenge, ColumnLoader(solved)))
@@ -162,14 +251,17 @@ class Challenges(commands.Cog):
         solved_msg = ", ".join(c.title for c in solved) or "No solves"
         unsolved_msg = ", ".join(c.title for c in unsolved) or "All solved"
 
-        msg = textwrap.dedent(f"""
+        msg = textwrap.dedent(
+            f"""
             Challenge info for {ctx.author}:
 
             Solves: {count}
             Points: {points}
+            Rank: {rank_value}
             Solved: `{solved_msg}`
             Unsolved: `{unsolved_msg}`
-        """)
+        """
+        )
 
         await ctx.send(msg)
 
@@ -214,7 +306,10 @@ class Challenges(commands.Cog):
             timestamp=datetime.utcnow(),
             url=str(self.challenge_url(challenge.slug)),
         )
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url_as(format="png"))
+        embed.set_author(
+            name=ctx.author.display_name,
+            icon_url=ctx.author.avatar_url_as(format="png"),
+        )
         channel = ctx.bot.luhack_guild().get_channel(constants.challenge_log_channel_id)
         if channel is not None:
             await channel.send(embed=embed)
