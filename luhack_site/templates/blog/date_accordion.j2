@@ -5,9 +5,11 @@
             {% for (month, blogs) in blogs %}
                 <details {% if loop.first %}open{% endif %}>
                     <summary>{{ month }}</summary>
-                    {% for blog in blogs %}
-                        <a href="{{ url_for('blog_view', slug=blog.slug) }}">{{ blog.title }}</a>
-                    {% endfor %}
+                    <ul class="accordion-list">
+                        {% for blog in blogs %}
+                            <a href="{{ url_for('blog_view', slug=blog.slug) }}">{{ blog.title }}</a>
+                        {% endfor %}
+                    </ul>
                 </details>
             {% endfor %}
         </details>

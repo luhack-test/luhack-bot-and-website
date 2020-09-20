@@ -1171,3 +1171,10 @@ main {
 .logo-red {
   color: #b5111a;
 }
+
+.accordion-list {
+  list-style-type: none;
+  /* magic number time */
+  margin-top: 2px;
+  margin-bottom: 0;
+}

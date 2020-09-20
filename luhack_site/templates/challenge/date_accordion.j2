@@ -5,9 +5,11 @@
             {% for (month, challenges) in challenges %}
                 <details {% if loop.first %}open{% endif %}>
                     <summary>{{ month }}</summary>
-                    {% for challenge in challenges %}
-                        <a href="{{ url_for('challenge_view', slug=challenge.slug) }}">{{ challenge.title }}</a>
-                    {% endfor %}
+                    <ul class="accordion-list">
+                        {% for challenge in challenges %}
+                            <li><a href="{{ url_for('challenge_view', slug=challenge.slug) }}">{{ challenge.title }}</a></li>
+                        {% endfor %}
+                    </ul>
                 </details>
             {% endfor %}
         </details>
