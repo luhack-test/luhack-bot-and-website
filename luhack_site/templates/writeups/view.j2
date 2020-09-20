@@ -5,6 +5,11 @@
 {% block title %}{{ writeup.title }}{% endblock title %}
 {% block og_title %}{{ writeup.title }}{% endblock %}
 
+{% block style %}
+    {{ super() }}
+    <script defer src="{{ url_for('static', path="/js/base.js") }}"></script>
+{% endblock %}
+
 {% block header_content %}
     <div class="article-meta">
         <h2>{{ writeup.title }}</h2>
@@ -20,7 +25,7 @@
 {% block content %}
     {% if can_edit(request, writeup.author_id) %}
         <a class="pure-button pure-button-primary" href="{{ url_for("EditWriteup", id=writeup.id) }}">Edit</a>
-        <a class="pure-button button-danger" href="{{ url_for("writeups_delete", id=writeup.id) }}" onclick="return confirm('are you sure?')">Delete</a>
+        <a class="pure-button button-danger" href="{{ url_for("writeups_delete", id=writeup.id) }}" data-confirm="are you sure?">Delete</a>
         <br />
         <br />
     {% endif %}
