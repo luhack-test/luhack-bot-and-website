@@ -101,7 +101,7 @@ class Verification(commands.Cog):
         """
         existing_user = await User.query.where((User.discord_id == ctx.author.id) | (User.email == email)).gino.first()
 
-        if existing_user.discord_id != ctx.author.id:
+        if existing_user and existing_user.discord_id != ctx.author.id:
             await ctx.send("Looks like you're already registered with this email address")
             return
 

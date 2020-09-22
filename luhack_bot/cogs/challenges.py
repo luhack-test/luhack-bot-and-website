@@ -201,7 +201,7 @@ class Challenges(commands.Cog):
             tablefmt="github",
         )
 
-        await ctx.send(f"```md\n{table}\n```")
+        await ctx.send(f"```\n{table}\n```")
 
     @challenges.command()
     async def info(self, ctx):
