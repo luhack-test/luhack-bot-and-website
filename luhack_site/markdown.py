@@ -83,7 +83,9 @@ class PlaintextRenderer(mistune.Renderer):
 
 
 highlight_renderer = HighlightRenderer(escape=True)
+highlight_renderer_unsafe = HighlightRenderer(escape=False)
 plaintext_renderer = PlaintextRenderer(escape=True)
 
 highlight_markdown = mistune.Markdown(renderer=highlight_renderer)
+highlight_markdown_unsafe = mistune.Markdown(renderer=highlight_renderer_unsafe)
 plaintext_markdown = mistune.Markdown(renderer=plaintext_renderer)

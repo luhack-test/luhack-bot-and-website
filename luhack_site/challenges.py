@@ -14,7 +14,7 @@ from starlette.routing import Router
 from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
 from luhack_site.forms import ChallengeForm
-from luhack_site.markdown import highlight_markdown, plaintext_markdown
+from luhack_site.markdown import highlight_markdown_unsafe, plaintext_markdown
 from luhack_site.templater import templates
 from luhack_site.images import encoded_existing_images
 from luhack_site.content_logger import log_edit, log_create, log_delete
@@ -102,7 +102,7 @@ async def challenge_view(request: HTTPConnection):
 
     challenge, solves = challenge
 
-    rendered = highlight_markdown(challenge.content)
+    rendered = highlight_markdown_unsafe(challenge.content)
 
     return templates.TemplateResponse(
         "challenge/view.j2",
