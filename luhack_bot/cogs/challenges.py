@@ -100,7 +100,7 @@ class Challenges(commands.Cog):
         """View the most and lest solved challenges."""
 
         count = sa.func.count(CompletedChallenge.challenge_id).label("count")
-        rank = sa.func.rank().over(order_by=sa.desc("count")).label("rank")
+        rank = sa.func.dense_rank().over(order_by=sa.desc("count")).label("rank")
 
         q_most = (
             db.select([Challenge.title, count])
@@ -166,7 +166,7 @@ class Challenges(commands.Cog):
 
         score = sa.func.sum(Challenge.points).label("score")
         count = sa.func.count(Challenge.points).label("count")
-        rank = sa.func.rank().over(order_by=sa.desc("score")).label("rank")
+        rank = sa.func.dense_rank().over(order_by=sa.desc("score")).label("rank")
 
         q = (
             db.select([User.discord_id, score, count])
@@ -178,7 +178,7 @@ class Challenges(commands.Cog):
         scores = await (
             db.select([q.c.discord_id, q.c.score, q.c.count, rank])
             .select_from(q)
-            .order_by(sa.desc(q.c.score))
+            .order_by(sa.asc(q.c.score))
             .limit(10)
             .gino.load(
                 (
@@ -265,7 +265,7 @@ class Challenges(commands.Cog):
 
         await ctx.send(msg)
 
-    @challenges.command(aliases=["solve"])
+    @challenges.command(aliases=["solve", "submit"])
     async def claim(self, ctx, flag: str):
         """Claim a flag, make sure to use this in DMs."""
         warn_dm_message = ""
