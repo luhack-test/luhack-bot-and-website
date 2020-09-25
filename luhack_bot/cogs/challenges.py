@@ -178,7 +178,7 @@ class Challenges(commands.Cog):
         scores = await (
             db.select([q.c.discord_id, q.c.score, q.c.count, rank])
             .select_from(q)
-            .order_by(sa.asc(q.c.score))
+            .order_by(sa.desc(q.c.score))
             .limit(10)
             .gino.load(
                 (
