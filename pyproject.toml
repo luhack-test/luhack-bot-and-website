@@ -32,6 +32,7 @@ parsedatetime = "^2.6"
 uvicorn = "^0.11.6"
 psycopg2-binary = "^2.8.6"
 tabulate = "^0.8.7"
+aiosmtplib = "^1.1.4"
 
 [tool.poetry.dev-dependencies]
 aiomysql = "^0.0"

@@ -40,6 +40,18 @@ sa = ["sqlalchemy (>=1.0)"]
 
 [[package]]
 category = "main"
+description = "asyncio SMTP client"
+name = "aiosmtplib"
+optional = false
+python-versions = ">=3.5.2,<4.0.0"
+version = "1.1.4"
+
+[package.extras]
+docs = ["sphinx (>=2,<4)", "sphinx_autodoc_typehints (>=1.7.0,<2.0.0)"]
+uvloop = ["uvloop (>=0.13,<0.15)"]
+
+[[package]]
+category = "main"
 description = "A database migration tool for SQLAlchemy."
 name = "alembic"
 optional = false
@@ -612,7 +624,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "7e28d4c821f3c2563112465cb802d3922a789d9ef950660ba3f8ecd3fb01ce96"
+content-hash = "c29b92345882c11924165a00ae30012beb3b38f521cd6f4582eb668eb5a01481"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -637,6 +649,10 @@ aiohttp = [
 aiomysql = [
     {file = "aiomysql-0.0.20-py3-none-any.whl", hash = "sha256:5fd798481f16625b424eec765c56d712ac78a51f3bd0175a3de94107aae43307"},
     {file = "aiomysql-0.0.20.tar.gz", hash = "sha256:d89ce25d44dadb43cf2d9e4603bd67b7a0ad12d5e67208de013629ba648df2ba"},
+]
+aiosmtplib = [
+    {file = "aiosmtplib-1.1.4-py3-none-any.whl", hash = "sha256:93e53edac183f1a608bc34464efeef23902e59e949017b1682014f59ecdcd37d"},
+    {file = "aiosmtplib-1.1.4.tar.gz", hash = "sha256:8270d0a06475aa05b9276fc954fbd08a1f6c59d0452b4899413d8bca1db24541"},
 ]
 alembic = [
     {file = "alembic-1.4.3-py2.py3-none-any.whl", hash = "sha256:4e02ed2aa796bd179965041afa092c55b51fb077de19d61835673cc80672c01c"},

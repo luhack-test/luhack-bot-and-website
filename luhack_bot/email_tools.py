@@ -1,10 +1,10 @@
 import logging
 import textwrap
-import aiohttp
+from aiosmtplib import SMTP
+from email.message import EmailMessage
 
 from discord.ext.commands import BadArgument
 
-from luhack_bot.secrets import sendgrid_token
 from luhack_bot.constants import from_email_address
 
 logger = logging.getLogger(__name__)
@@ -26,21 +26,15 @@ async def send_verify_email(target_email: str, token: str):
         """
     )
 
-    async with aiohttp.ClientSession() as sess:
-        async with sess.post(
-                "https://api.sendgrid.com/v3/mail/send",
-                headers={
-                    "Authorization": f"Bearer {sendgrid_token}",
-                },
-                json={
-                    "personalizations": [{"to": [{"email": target_email}],
-                                          "subject": subject}],
-                    "content": [{"type": "text/plain", "value": body}],
-                    "from": {"email": from_email_address, "name": "LUHack Verification"},
+    message = EmailMessage()
+    message["From"] = from_email_address
+    message["To"] = target_email
+    message["Subject"] = subject
+    message.set_content(body)
 
-                }
-        ) as r:
-            assert r.status == 202, await r.read()
+    smtp_client = SMTP(hostname="smtp.lancs.ac.uk")
+    async with smtp_client:
+        await smtp_client.send_message(message)
 
     logger.info(f"Sent auth email to: {target_email}")
 
@@ -57,21 +51,15 @@ async def send_reverify_email(target_email: str):
         """
     )
 
-    async with aiohttp.ClientSession() as sess:
-        async with sess.post(
-                "https://api.sendgrid.com/v3/mail/send",
-                headers={
-                    "Authorization": f"Bearer {sendgrid_token}",
-                },
-                json={
-                    "personalizations": [{"to": [{"email": target_email}],
-                                          "subject": subject}],
-                    "content": [{"type": "text/plain", "value": body}],
-                    "from": {"email": from_email_address, "name": "LUHack Reverification"},
+    message = EmailMessage()
+    message["From"] = from_email_address
+    message["To"] = target_email
+    message["Subject"] = subject
+    message.set_content(body)
 
-                }
-        ) as r:
-            assert r.status == 202, await r.read()
+    smtp_client = SMTP(hostname="smtp.lancs.ac.uk")
+    async with smtp_client:
+        await smtp_client.send_message(message)
 
     logger.info(f"Sent reverify request email to: {target_email}")
 
