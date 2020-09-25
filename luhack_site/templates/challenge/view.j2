@@ -13,6 +13,7 @@
         <h2>{{ challenge.title }}</h2>
         <h5 class="date">{{ challenge.creation_date }}</h5>
         <h5>Solved {{ solves }} {{ "time" if solves == 1 else "times" }}</h5>
+        <h5>{{ challenge.points }} Points</h5>
     </div>
 {% endblock %}
 

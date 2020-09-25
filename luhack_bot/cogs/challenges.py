@@ -47,7 +47,7 @@ class Challenges(commands.Cog):
         return await pg_search(Challenge.query, search, sort=True).limit(3).gino.all()
 
     def format_challenge(self, challenge: Challenge) -> str:
-        return f'"{challenge.title}" ({self.challenge_url(challenge.slug)})'
+        return f'{challenge.title} [points: {challenge.points}] ({self.challenge_url(challenge.slug)})'
 
     async def show_similar_challenges(
         self, ctx, title: str, found_message: str = "Possible challenges are:"
@@ -103,46 +103,46 @@ class Challenges(commands.Cog):
         rank = sa.func.dense_rank().over(order_by=sa.desc("count")).label("rank")
 
         q_most = (
-            db.select([Challenge.title, count])
+            db.select([Challenge.title, Challenge.points, count])
             .select_from(Challenge.outerjoin(CompletedChallenge))
             .group_by(Challenge.id)
             .alias("inner")
         )
 
         most = await (
-            db.select([rank, q_most.c.title, q_most.c.count])
+            db.select([rank, q_most.c.title, q_most.c.count, q_most.c.points])
             .select_from(q_most)
             .limit(5)
             .order_by(sa.desc(q_most.c.count))
-            .gino.load((rank, q_most.c.title, ColumnLoader(q_most.c.count)))
+            .gino.load((rank, q_most.c.title, ColumnLoader(q_most.c.count), q_most.c.points))
             .all()
         )
 
         q_least = (
-            db.select([Challenge, count])
+            db.select([Challenge.title, Challenge.points, count])
             .select_from(Challenge.outerjoin(CompletedChallenge))
             .group_by(Challenge.id)
             .alias("inner")
         )
 
         least = await (
-            db.select([rank, q_least.c.title, q_least.c.count])
+            db.select([rank, q_least.c.title, q_least.c.count, q_least.c.points])
             .select_from(q_least)
             .order_by(sa.asc(q_least.c.count))
             .limit(5)
-            .gino.load((rank, q_least.c.title, ColumnLoader(q_least.c.count)))
+            .gino.load((rank, q_least.c.title, ColumnLoader(q_least.c.count), q_least.c.points))
             .all()
         )
 
         most_table = tabulate(
             most,
-            headers=["Rank", "Challenge Title", "Solves"],
+            headers=["Rank", "Challenge Title", "Solves", "Points"],
             tablefmt="github",
         )
 
         least_table = tabulate(
             least,
-            headers=["Rank", "Challenge Title", "Solves"],
+            headers=["Rank", "Challenge Title", "Solves", "Points"],
             tablefmt="github",
         )
 
@@ -301,7 +301,7 @@ class Challenges(commands.Cog):
 
         embed = discord.Embed(
             title=f"Challenge Solved!",
-            description=f"{ctx.author.mention} just solved '{challenge.title}' and was awarded '{challenge.points}' points.",
+            description=f"{ctx.author.mention} just solved '{challenge.title}' and was awarded {challenge.points} points.",
             color=discord.Colour.dark_teal(),
             timestamp=datetime.utcnow(),
             url=str(self.challenge_url(challenge.slug)),
