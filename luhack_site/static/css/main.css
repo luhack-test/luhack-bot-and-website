@@ -1172,6 +1172,10 @@ main {
   color: #b5111a;
 }
 
+.lowercase {
+  text-transform: lowercase !important;
+}
+
 .accordion-list {
   list-style-type: none;
   /* magic number time */
