@@ -31,7 +31,11 @@ class Images(HTTPEndpoint):
         if image is None or image.filetype != ext:
             return abort(404)
 
-        return Response(image.image, media_type=f"image/{image.filetype}")
+        headers = {
+            "Cache-Control": "public, max-age=604800, immutable",
+        }
+
+        return Response(image.image, media_type=f"image/{image.filetype}", headers=headers)
 
     @requires("authenticated")
     async def delete(self, request: HTTPConnection):
