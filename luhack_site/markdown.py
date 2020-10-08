@@ -5,7 +5,7 @@ from pygments.util import ClassNotFound
 from pygments.formatters import html
 
 
-class HighlightRenderer(mistune.Renderer):
+class HighlightRenderer(mistune.HTMLRenderer):
     def block_code(self, code, lang):
         def no_highlight():
             escaped = mistune.escape(code)
@@ -27,12 +27,12 @@ class HighlightRenderer(mistune.Renderer):
             link = f"mailto:{link}"
         return f'<a href="{link}" target="_blank">{text}</a>'
 
-    def link(self, link, title, text):
-        link = mistune.escape_link(link)
-        if not title:
-            return f'<a href="{link}" target="_blank">{text}</a>'
-        title = mistune.escape(title, quote=True)
-        return f'<a href="{link}" title="{title}" target="_blank">{text}</a>'
+#    def link(self, link, title, text):
+#        link = mistune.escape_link(link)
+#        if not title:
+#            return f'<a href="{link}" target="_blank">{text}</a>'
+#        title = mistune.escape(title, quote=True)
+#        return f'<a href="{link}" title="{title}" target="_blank">{text}</a>'
 
     def image(self, src, title, text):
         src = mistune.escape_link(src)
@@ -48,7 +48,7 @@ class HighlightRenderer(mistune.Renderer):
         return f"{html} >"
 
 
-class PlaintextRenderer(mistune.Renderer):
+class PlaintextRenderer(mistune.HTMLRenderer):
     def _nothing(*args, **kwargs):
         return " "
 
@@ -64,15 +64,6 @@ class PlaintextRenderer(mistune.Renderer):
     def autolink(self, link, is_email):
         return link
 
-    # def codespan(self, text):
-    #     return f"`{text}`"
-
-    # def double_emphasis(self, text):
-    #     return f"**{text}**"
-
-    # def emphasis(self, text):
-    #     return f"*{text}*"
-
     linebreak = newline = image = _nothing
 
     def link(self, link, title, text):
@@ -86,6 +77,6 @@ highlight_renderer = HighlightRenderer(escape=True)
 highlight_renderer_unsafe = HighlightRenderer(escape=False)
 plaintext_renderer = PlaintextRenderer(escape=True)
 
-highlight_markdown = mistune.Markdown(renderer=highlight_renderer)
-highlight_markdown_unsafe = mistune.Markdown(renderer=highlight_renderer_unsafe)
-plaintext_markdown = mistune.Markdown(renderer=plaintext_renderer)
+highlight_markdown = mistune.create_markdown(renderer=highlight_renderer)
+highlight_markdown_unsafe = mistune.create_markdown(renderer=highlight_renderer_unsafe)
+plaintext_markdown = mistune.create_markdown(renderer=plaintext_renderer)
