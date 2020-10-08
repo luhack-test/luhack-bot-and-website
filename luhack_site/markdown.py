@@ -23,7 +23,7 @@ class HighlightRenderer(mistune.HTMLRenderer):
 
     def image(self, src, alt="", title=None):
         src = self._safe_url(src)
-        html = f'<img class="pure-img" src="{src}" alt="{text}" title="{title}" '
+        html = f'<img class="pure-img" src="{src}" alt="{alt}" '
 
         if title:
             title = mistune.escape_html(title)
