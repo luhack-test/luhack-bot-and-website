@@ -6,7 +6,7 @@ from pygments.formatters import html
 
 
 class HighlightRenderer(mistune.HTMLRenderer):
-    def block_code(self, code, lang):
+    def block_code(self, code, lang=None):
         def no_highlight():
             escaped = mistune.escape(code)
             return f"\n<pre><code>{escaped}</code></pre>\n"
