@@ -47,8 +47,9 @@ class PlaintextRenderer(mistune.HTMLRenderer):
 
     linebreak = newline = image = _nothing
 
-    def link(self, link, title, text):
-        return f"[{link}]"
+    def link(self, link, title="", text=""):
+        contents = title or text or link
+        return f"[{contents}]"
 
     def strikethrough(self, text):
         return text
