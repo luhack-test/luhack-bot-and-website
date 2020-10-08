@@ -21,12 +21,6 @@ class HighlightRenderer(mistune.HTMLRenderer):
         except ClassNotFound:
             return no_highlight()
 
-    def autolink(self, link, is_email=False):
-        text = link = mistune.escape_link(link)
-        if is_email:
-            link = f"mailto:{link}"
-        return f'<a href="{link}" target="_blank">{text}</a>'
-
 #    def link(self, link, title, text):
 #        link = mistune.escape_link(link)
 #        if not title:
@@ -59,10 +53,7 @@ class PlaintextRenderer(mistune.HTMLRenderer):
         block_quote
     ) = (
         block_html
-    ) = header = hrule = list = list_item = table = table_row = table_cell = _nothing
-
-    def autolink(self, link, is_email):
-        return link
+    ) = heading = list = list_item = table = table_row = table_cell = _nothing
 
     linebreak = newline = image = _nothing
 
