@@ -21,25 +21,15 @@ class HighlightRenderer(mistune.HTMLRenderer):
         except ClassNotFound:
             return no_highlight()
 
-#    def link(self, link, title, text):
-#        link = mistune.escape_link(link)
-#        if not title:
-#            return f'<a href="{link}" target="_blank">{text}</a>'
-#        title = mistune.escape(title, quote=True)
-#        return f'<a href="{link}" title="{title}" target="_blank">{text}</a>'
+    def image(self, src, alt="", title=None):
+        src = self._safe_url(src)
+        html = f'<img class="pure-img" src="{src}" alt="{text}" title="{title}" '
 
-    def image(self, src, title, text):
-        src = mistune.escape_link(src)
-        text = mistune.escape(text, quote=True)
         if title:
-            title = mistune.escape(title, quote=True)
-            html = f'<img class="pure-img" src="{src}" alt="{text}" title="{title}" '
-        else:
-            html = f'<img class="pure-img" src="{src}" alt="{text}" '
+            title = mistune.escape_html(title)
+            html = f'{html} title="{title}" '
 
-        if self.options.get("use_xhtml"):
-            return f"{html} />"
-        return f"{html} >"
+        return f"{html} />"
 
 
 class PlaintextRenderer(mistune.HTMLRenderer):
