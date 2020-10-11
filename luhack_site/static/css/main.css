@@ -885,6 +885,24 @@
   display: inline-block;
 }
 
+.post-note-warning {
+  margin: 0 0.1em;
+  padding: 0.3em 1em;
+  color: #dad2d8 !important;
+  background: #b5111a;
+  font-size: 80%;
+  display: inline-block;
+}
+
+.post-note-warning-sidebar {
+  margin: 0 0.1em;
+  padding: 0.3em 1em;
+  color: #b5111a !important;
+  background: #dad2d8;
+  font-size: 80%;
+  display: inline-block;
+}
+
 main a {
   text-decoration: none;
   color: #b5111a;

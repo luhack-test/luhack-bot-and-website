@@ -4,6 +4,7 @@ from typing import List, Tuple
 import calendar
 
 import sqlalchemy as sa
+import ujson
 from gino.loader import ColumnLoader
 
 from starlette.authentication import requires
@@ -26,9 +27,11 @@ router = Router()
 
 async def challenges_grouped() -> List[Tuple[str, List[Tuple[str, List[Challenge]]]]]:
     """Return all challenges grouped by year and month in the format [(year, [(month, [challenge])])]"""
-    all_challenges = await Challenge.query.order_by(
-        sa.desc(Challenge.creation_date)
-    ).gino.all()
+    all_challenges = (
+        await Challenge.query.order_by(sa.desc(Challenge.creation_date))
+        .where(sa.not_(Challenge.hidden))
+        .gino.all()
+    )
 
     def group_monthly(challenges):
         for k, v in groupby(
@@ -46,6 +49,10 @@ async def challenges_grouped() -> List[Tuple[str, List[Tuple[str, List[Challenge
         (year, list(group_monthly(year_challenges)))
         for year, year_challenges in group_yearly(all_challenges)
     ]
+
+
+def should_skip_challenge(c: Challenge, is_admin: bool) -> bool:
+    return c.hidden and not is_admin
 
 
 @router.route("/")
@@ -68,6 +75,7 @@ async def challenge_index(request: HTTPConnection):
             solves,
         )
         for (w, solves) in challenges
+        if not should_skip_challenge(w, request.user.is_admin)
     ]
 
     grouped_challenges = await challenges_grouped()
@@ -102,11 +110,83 @@ async def challenge_view(request: HTTPConnection):
 
     challenge, solves = challenge
 
+    if should_skip_challenge(challenge, request.user.is_admin):
+        return abort(404, "Challenge not found")
+
     rendered = highlight_markdown_unsafe(challenge.content)
 
     return templates.TemplateResponse(
         "challenge/view.j2",
-        {"challenge": challenge, "request": request, "rendered": rendered, "solves": solves},
+        {
+            "challenge": challenge,
+            "request": request,
+            "rendered": rendered,
+            "solves": solves,
+        },
+    )
+
+
+@router.route("/tag/{tag}")
+async def challenge_by_tag(request: HTTPConnection):
+    tag = request.path_params["tag"]
+
+    solves = sa.func.count(CompletedChallenge.challenge_id).label("solves")
+
+    challenges = await (
+        db.select([Challenge, solves])
+        .select_from(Challenge.outerjoin(CompletedChallenge))
+        .group_by(Challenge.id)
+        .where(Challenge.tags.contains([tag]))
+        .order_by(sa.desc(Challenge.creation_date))
+        .gino.load((Challenge, ColumnLoader(solves)))
+        .all()
+    )
+
+    rendered = [
+        (
+            w,
+            shorten(plaintext_markdown(w.content), width=800, placeholder="..."),
+            solves,
+        )
+        for (w, solves) in challenges
+        if not should_skip_challenge(w, request.user.is_admin)
+    ]
+
+    grouped_challenges = await challenges_grouped()
+
+    return templates.TemplateResponse(
+        "challenge/index.j2",
+        {
+            "request": request,
+            "challenges": rendered,
+            "grouped_challenges": grouped_challenges,
+        },
+    )
+
+
+async def get_all_tags():
+    tags = (
+        await sa.select([sa.column("tag")])
+        .select_from(Challenge)
+        .select_from(sa.func.unnest(Challenge.tags).alias("tag"))
+        .where(sa.not_(Challenge.hidden))
+        .group_by(sa.column("tag"))
+        .order_by(sa.func.count())
+        .gino.all()
+    )
+
+    return [i for (i,) in tags]
+
+
+@router.route("/tags")
+async def challenge_all_tags(request: HTTPConnection):
+    tags = await get_all_tags()
+
+    grouped_challenges = await challenges_grouped()
+
+    return templates.TemplateResponse(
+        "challenge/tag_list.j2",
+        {"request": request, "tags": tags, "grouped_challenges": grouped_challenges},
     )
 
 
@@ -136,6 +216,7 @@ class NewChallenge(HTTPEndpoint):
         form = ChallengeForm()
 
         images = await encoded_existing_images(request)
+        tags = ujson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "challenge/new.j2",
@@ -143,6 +224,7 @@ class NewChallenge(HTTPEndpoint):
                 "request": request,
                 "form": form,
                 "existing_images": images,
+                "existing_tags": tags,
             },
         )
 
@@ -168,15 +250,21 @@ class NewChallenge(HTTPEndpoint):
                 title=form.title.data,
                 content=form.content.data,
                 flag=form.flag.data,
+                hidden=form.hidden.data,
+                depreciated=form.depreciated.data,
                 points=form.points.data,
+                tags=form.tags.data,
             )
 
             url = request.url_for("challenge_view", slug=challenge.slug)
-            await log_create("challenge", challenge.title, request.user.username, url)
+
+            if not challenge.hidden:
+                await log_create("challenge", challenge.title, request.user.username, url)
 
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
+        tags = ujson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "challenge/new.j2",
@@ -184,6 +272,7 @@ class NewChallenge(HTTPEndpoint):
                 "request": request,
                 "form": form,
                 "existing_images": images,
+                "existing_tags": tags,
             },
         )
 
@@ -206,10 +295,14 @@ class EditChallenge(HTTPEndpoint):
             title=challenge.title,
             content=challenge.content,
             flag=challenge.flag,
+            hidden=challenge.hidden,
+            depreciated=challenge.depreciated,
             points=challenge.points,
+            tags=challenge.tags,
         )
 
         images = await encoded_existing_images(request)
+        tags = ujson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "challenge/edit.j2",
@@ -218,6 +311,7 @@ class EditChallenge(HTTPEndpoint):
                 "form": form,
                 "challenge": challenge,
                 "existing_images": images,
+                "existing_tags": tags,
             },
         )
 
@@ -242,15 +336,20 @@ class EditChallenge(HTTPEndpoint):
                 title=form.title.data,
                 content=form.content.data,
                 flag=form.flag.data,
+                hidden=form.hidden.data,
+                depreciated=form.depreciated.data,
                 points=form.points.data,
+                tags=form.tags.data,
             ).apply()
 
             url = request.url_for("challenge_view", slug=challenge.slug)
-            await log_edit("challenge", challenge.title, request.user.username, url)
+            if not challenge.hidden:
+                await log_edit("challenge", challenge.title, request.user.username, url)
 
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
+        tags = ujson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "challenge/edit.j2",
@@ -259,5 +358,6 @@ class EditChallenge(HTTPEndpoint):
                 "form": form,
                 "challenge": challenge,
                 "existing_images": images,
+                "existing_tags": tags,
             },
         )

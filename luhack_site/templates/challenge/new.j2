@@ -29,6 +29,18 @@
                 {{ form.flag() }}
             </div>
             <div class="pure-control-group">
+                {{ form.tags.label }}
+                {{ form.tags(type="tags", data_tags_whitelist=existing_tags) }}
+            </div>
+            <div class="pure-control-group">
+                {{ form.hidden.label }}
+                {{ form.hidden() }}
+            </div>
+            <div class="pure-control-group">
+                {{ form.depreciated.label }}
+                {{ form.depreciated() }}
+            </div>
+            <div class="pure-control-group">
                 {{ form.points.label }}
                 {{ form.points() }}
             </div>

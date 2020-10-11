@@ -162,6 +162,7 @@ class Challenge(db.Model):
     slug = db.Column(db.Text(), nullable=False, unique=True)
 
     content = db.Column(db.Text(), nullable=False)
+    tags = db.Column(ARRAY(db.Text()), nullable=False)
     flag = db.Column(db.Text(), unique=True, nullable=False)
 
     points = db.Column(db.Integer(), nullable=False)
@@ -174,6 +175,11 @@ class Challenge(db.Model):
     search_vector = db.Column(
         TSVectorType("title", "content", weights={"title": "A", "content": "B"})
     )
+
+    hidden = db.Column(db.Boolean, nullable=False, default=False)
+    depreciated = db.Column(db.Boolean, nullable=False, default=False)
+
+    _tags_idx = db.Index("challenge_tags_array_idx", "tags", postgresql_using="gin")
 
     @classmethod
     def create_auto(cls, *args, **kwargs):

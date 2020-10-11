@@ -1,7 +1,7 @@
 from datetime import datetime
 import logging
 import textwrap
-from typing import List, Tuple, TypeVar
+from typing import List, Tuple, TypeVar, Literal
 from typing import Optional
 from tabulate import tabulate
 
@@ -10,10 +10,12 @@ from discord.ext import commands
 import sqlalchemy as sa
 from sqlalchemy_searchable import search as pg_search
 from gino.loader import ColumnLoader
+from discord.ext.alternatives import literal_converter
 
 from luhack_bot import constants
 from luhack_bot.db.models import User, Challenge, CompletedChallenge, db
 from luhack_bot.utils.checks import is_authed
+from luhack_bot.utils.checks import is_admin
 
 logger = logging.getLogger(__name__)
 
@@ -36,18 +38,34 @@ class Challenges(commands.Cog):
         return await is_authed(ctx)
 
     @staticmethod
+    def tag_url(tag):
+        return constants.challenges_base_url / "tag" / tag
+
+    @staticmethod
     def challenge_url(slug):
         return constants.challenges_base_url / "view" / slug
 
     async def get_challenge(self, title: str) -> Optional[Challenge]:
-        return await Challenge.query.where(Challenge.title == title).gino.first()
+        return (
+            await Challenge.query.where(Challenge.title == title)
+            .where(sa.not_(Challenge.hidden))
+            .gino.first()
+        )
 
     async def search_challenges(self, search: str) -> List[Challenge]:
         """Search for challenges, return top 3 matching."""
-        return await pg_search(Challenge.query, search, sort=True).limit(3).gino.all()
+        return (
+            await pg_search(
+                Challenge.query.where(sa.not_(Challenge.hidden)), search, sort=True
+            )
+            .limit(3)
+            .gino.all()
+        )
 
     def format_challenge(self, challenge: Challenge) -> str:
-        return f'{challenge.title} [points: {challenge.points}] ({self.challenge_url(challenge.slug)})'
+        tags = " ".join(challenge.tags)
+        tags_fmt = f" [tags: {tags}]" if tags else ""
+        return f"{challenge.title} [points: {challenge.points}] ({self.challenge_url(challenge.slug)}){tags_fmt}"
 
     async def show_similar_challenges(
         self, ctx, title: str, found_message: str = "Possible challenges are:"
@@ -63,7 +81,7 @@ class Challenges(commands.Cog):
         else:
             await ctx.send("No challenges found, sorry.")
 
-    @commands.group(aliases=["challenge"], invoke_without_command=True)
+    @commands.group(aliases=["challenge", "ch"], invoke_without_command=True)
     async def challenges(self, ctx, challenge_title: Optional[str]):
         """LUHack challenges.
 
@@ -71,9 +89,11 @@ class Challenges(commands.Cog):
         search for one.
         """
         if challenge_title is None:
-            latest_challenge = await Challenge.query.order_by(
-                Challenge.id.desc()
-            ).gino.first()
+            latest_challenge = (
+                await Challenge.query.order_by(Challenge.id.desc())
+                .where(sa.not_(Challenge.hidden))
+                .gino.first()
+            )
 
             if latest_challenge is None:
                 await ctx.send("There are no challenges currently")
@@ -95,9 +115,31 @@ class Challenges(commands.Cog):
 
         await ctx.send(self.format_challenge(challenge))
 
+    @challenges.command(aliases=["bt"])
+    async def by_tag(self, ctx, tag: str):
+        await ctx.send(self.tag_url(tag))
+
     @challenges.command()
-    async def stats(sellf, ctx):
-        """View the most and lest solved challenges."""
+    async def stats(
+        self,
+        ctx,
+        tag_condition: Optional[Literal["every", "any"]] = "every",
+        *tags: str,
+    ):
+        """View the most and lest solved challenges.
+
+        tag_condition decides whether to filter by challenges that have EVERY
+        specified tag, or ANY of the specified tags, defaults to EVERY.
+
+        Note that specifying no tags with "every" filters to all challenges,
+        while no tags with "any" filters to zero challenges!
+        """
+
+        tag_filter = (
+            Challenge.tags.contains
+            if tag_condition == "every"
+            else Challenge.tags.overlap
+        )
 
         count = sa.func.count(CompletedChallenge.challenge_id).label("count")
         rank = sa.func.dense_rank().over(order_by=sa.desc("count")).label("rank")
@@ -105,6 +147,8 @@ class Challenges(commands.Cog):
         q_most = (
             db.select([Challenge.title, Challenge.points, count])
             .select_from(Challenge.outerjoin(CompletedChallenge))
+            .where(tag_filter(tags))
+            .where(sa.not_(Challenge.hidden))
             .group_by(Challenge.id)
             .alias("inner")
         )
@@ -114,13 +158,17 @@ class Challenges(commands.Cog):
             .select_from(q_most)
             .limit(5)
             .order_by(sa.desc(q_most.c.count))
-            .gino.load((rank, q_most.c.title, ColumnLoader(q_most.c.count), q_most.c.points))
+            .gino.load(
+                (rank, q_most.c.title, ColumnLoader(q_most.c.count), q_most.c.points)
+            )
             .all()
         )
 
         q_least = (
             db.select([Challenge.title, Challenge.points, count])
             .select_from(Challenge.outerjoin(CompletedChallenge))
+            .where(sa.not_(Challenge.hidden))
+            .where(tag_filter(tags))
             .group_by(Challenge.id)
             .alias("inner")
         )
@@ -130,7 +178,9 @@ class Challenges(commands.Cog):
             .select_from(q_least)
             .order_by(sa.asc(q_least.c.count))
             .limit(5)
-            .gino.load((rank, q_least.c.title, ColumnLoader(q_least.c.count), q_least.c.points))
+            .gino.load(
+                (rank, q_least.c.title, ColumnLoader(q_least.c.count), q_least.c.points)
+            )
             .all()
         )
 
@@ -161,8 +211,26 @@ class Challenges(commands.Cog):
         await ctx.send(msg)
 
     @challenges.command(aliases=["top10"])
-    async def leaderboard(self, ctx):
-        """View the leaderboard for completed challenges."""
+    async def leaderboard(
+        self,
+        ctx,
+        tag_condition: Optional[Literal["every", "any"]] = "every",
+        *tags: str,
+    ):
+        """View the leaderboard for completed challenges.
+
+        tag_condition decides whether to filter by challenges that have EVERY
+        specified tag, or ANY of the specified tags, defaults to EVERY.
+
+        Note that specifying no tags with "every" filters to all challenges,
+        while no tags with "any" filters to zero challenges!
+        """
+
+        tag_filter = (
+            Challenge.tags.contains
+            if tag_condition == "every"
+            else Challenge.tags.overlap
+        )
 
         score = sa.func.sum(Challenge.points).label("score")
         count = sa.func.count(Challenge.points).label("count")
@@ -171,6 +239,8 @@ class Challenges(commands.Cog):
         q = (
             db.select([User.discord_id, score, count])
             .select_from(User.join(CompletedChallenge).join(Challenge))
+            .where(tag_filter(tags))
+            .where(sa.not_(Challenge.hidden))
             .group_by(User.discord_id)
             .alias("inner")
         )
@@ -223,6 +293,7 @@ class Challenges(commands.Cog):
         scores_q = (
             db.select([User.discord_id, score])
             .select_from(User.outerjoin(CompletedChallenge).outerjoin(Challenge))
+            .where(sa.not_(Challenge.hidden))
             .group_by(User.discord_id)
             .cte("scores")
         )
@@ -239,6 +310,7 @@ class Challenges(commands.Cog):
 
         info = await (
             db.select([Challenge, solved])
+            .where(sa.not_(Challenge.hidden))
             .gino.load((Challenge, ColumnLoader(solved)))
             .all()
         )
@@ -274,10 +346,26 @@ class Challenges(commands.Cog):
             await ctx.message.delete()
             warn_dm_message = "\n\nP.S. Use this command in DMs next time."
 
-        challenge = await Challenge.query.where(Challenge.flag == flag).gino.first()
+        challenge = (
+            await Challenge.query.where(Challenge.flag == flag)
+            .where(sa.not_(Challenge.hidden))
+            .gino.first()
+        )
 
         if challenge is None:
             await ctx.send("That doesn't look to be a valid flag." + warn_dm_message)
+            return
+
+        if challenge.depreciated:
+            msg = textwrap.dedent(
+                """
+                Congrats on completing the challenge!
+
+                Unfortunately you can no longer score points for this challenge because
+                a writeup has been released, or for other reasons.
+                """
+            )
+            await ctx.send(msg)
             return
 
         already_claimed = await CompletedChallenge.query.where(
@@ -313,6 +401,123 @@ class Challenges(commands.Cog):
         channel = ctx.bot.luhack_guild().get_channel(constants.challenge_log_channel_id)
         if channel is not None:
             await channel.send(embed=embed)
+
+    @commands.check(is_admin)
+    @challenges.command()
+    async def admin(
+        self,
+        ctx,
+        op: Literal["hide", "unhide", "depreciate", "undepreciate"],
+        tag_condition: Optional[Literal["every", "any"]] = "every",
+        *tags: str,
+    ):
+        """Perform admin operations on challenges.
+
+        op decides what to do:
+          - hide: set the hidden flag
+          - unhide: unset the hidden flag, also resets the creation date
+                    of the challenge to be the current time.
+          - depreciate: set the depreciated flag (challenge can no longer be solved)
+          - undepreciate: unset the depreciated flag
+
+        tag_condition decides whether to filter by challenges that have EVERY
+        specified tag, or ANY of the specified tags, defaults to EVERY.
+
+        Note that specifying no tags with "every" filters to all challenges,
+        while no tags with "any" filters to zero challenges!
+        """
+
+        tag_filter = (
+            Challenge.tags.contains
+            if tag_condition == "every"
+            else Challenge.tags.overlap
+        )
+
+        update = {
+            "hide": {"hidden": True},
+            "unhide": {"hidden": False, "creation_date": sa.func.now()},
+            "depreciate": {"depreciated": True},
+            "undepreciate": {"depreciated": False},
+        }[op]
+
+        (r, _) = (
+            await Challenge.update.values(**update)
+            .where(tag_filter(tags))
+            .gino.status()
+        )
+        r = strip_prefix(r, "UPDATE ")
+
+        await ctx.send(f"Updated {r} challenges")
+
+    @commands.check(is_admin)
+    @challenges.command()
+    async def announce(
+        self,
+        ctx,
+        op: Literal["avail", "depreciated"],
+        tag_condition: Optional[Literal["every", "any"]] = "every",
+        *tags: str,
+    ):
+        """Perform admin announcement of challenges.
+
+        op decides what to do:
+          - avail: announces that the challenge is now available to be completed
+          - depreciated: announces that the challenge can no longer be solved
+
+        tag_condition decides whether to filter by challenges that have EVERY
+        specified tag, or ANY of the specified tags, defaults to EVERY.
+
+        Note that specifying no tags with "every" filters to all challenges,
+        while no tags with "any" filters to zero challenges!
+        """
+
+        tag_filter = (
+            Challenge.tags.contains
+            if tag_condition == "every"
+            else Challenge.tags.overlap
+        )
+
+        challenges = (
+            await Challenge.query.where(sa.not_(Challenge.hidden))
+            .where(tag_filter(tags))
+            .gino.all()
+        )
+
+        data_fn = {
+            "avail": lambda c: (
+                "Challenge Available",
+                f"The challenge '{c.title}' has just been made available!",
+                discord.Colour.green(),
+            ),
+            "depreciated": lambda c: (
+                "Challenge Depreciated",
+                f"The challenge '{c.title}' has depreciated and is no longer solvable for points!",
+                discord.Colour.dark_red(),
+            ),
+        }[op]
+
+        channel = ctx.bot.luhack_guild().get_channel(constants.challenge_log_channel_id)
+
+        if channel is None:
+            await ctx.send("Couldn't find challenge log channel?")
+            return
+
+        for challenge in challenges:
+            title, desc, colour = data_fn(challenge)
+            embed = discord.Embed(
+                title=title,
+                description=desc,
+                color=colour,
+                timestamp=datetime.utcnow(),
+                url=str(self.challenge_url(challenge.slug)),
+            )
+            await channel.send(embed=embed)
+
+
+def strip_prefix(s, pre):
+    if s.startswith(pre):
+        return s[len(pre) :]
+    return s
 
 
 def setup(bot):

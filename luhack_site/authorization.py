@@ -1,9 +1,10 @@
+from functools import wraps
 from starlette.requests import HTTPConnection
 from starlette.authentication import (
     AuthenticationBackend,
     AuthenticationError,
     SimpleUser,
-    AuthCredentials,
+    AuthCredentials, UnauthenticatedUser,
 )
 
 from luhack_bot.token_tools import decode_writeup_edit_token
@@ -15,8 +16,20 @@ class User(SimpleUser):
         self.discord_id = discord_id
         self.is_admin = is_admin
 
+class LUnauthenticatedUser(UnauthenticatedUser):
+    is_admin = False
+
+def wrap_result_auth(f):
+    @wraps(f)
+    async def inner(*args, **kwargs):
+        r = await f(*args, **kwargs)
+        if r is None:
+            return AuthCredentials(), LUnauthenticatedUser()
+        return r
+    return inner
 
 class TokenAuthBackend(AuthenticationBackend):
+    @wrap_result_auth
     async def authenticate(self, request: HTTPConnection):
         token = request.query_params.get("token")
 

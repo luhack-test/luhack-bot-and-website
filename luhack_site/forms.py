@@ -3,7 +3,7 @@ import re
 import ujson
 
 from wtforms import Form, StringField, TextAreaField, Field, validators, ValidationError
-from wtforms.fields.core import IntegerField
+from wtforms.fields.core import BooleanField, IntegerField
 from wtforms.validators import DataRequired
 from wtforms.widgets import TextInput
 
@@ -37,7 +37,7 @@ class TagListField(Field):
                 )
 
         if len(self.data) > 8:
-            raise ValidationError("Writeups can have at most 8 tags")
+            raise ValidationError("Things can have at most 8 tags")
 
 
 class PostForm(Form):
@@ -54,6 +54,9 @@ class ChallengeForm(Form):
     )
     content = TextAreaField("Content")
     flag = StringField("Flag")
+    tags = TagListField("Tags")
+    hidden = BooleanField("Hidden")
+    depreciated = BooleanField("Depreciated")
     points = IntegerField(
         "Points", [validators.NumberRange(min=1)]
     )

@@ -1,5 +1,7 @@
 {% extends "challenge/base.j2" %}
 
+{% from "challenge/links.j2" import tag_link with context %}
+
 {% block title %}{{ challenge.title }}{% endblock title %}
 {% block og_title %}{{ challenge.title }}{% endblock %}
 
@@ -14,6 +16,23 @@
         <h5 class="date">{{ challenge.creation_date }}</h5>
         <h5>Solved {{ solves }} {{ "time" if solves == 1 else "times" }}</h5>
         <h5>{{ challenge.points }} Points</h5>
+        {% if challenge.hidden %}
+            <div class="tags">
+                <span class="post-note-warning-sidebar">hidden</span>
+            </div>
+            <br/>
+        {% endif %}
+        {% if challenge.depreciated %}
+            <div class="tags">
+                <span class="post-note-warning-sidebar">depreciated</span>
+            </div>
+            <br/>
+        {% endif %}
+        <div class="tags">
+            {% for tag in challenge.tags %}
+                {{ tag_link(tag) }}
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
 
