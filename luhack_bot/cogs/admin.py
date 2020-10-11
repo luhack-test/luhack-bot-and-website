@@ -57,6 +57,11 @@ class Admin(commands.Cog):
         await ctx.send(msg)
 
     @commands.command()
+    async def ben(self, ctx):
+        """Haha yes."""
+        await ctx.send("https://cdn.discordapp.com/attachments/631618075254325257/764961440524009512/9663ac02-590f-4cc0-b279-47d23c3efbb8.mp4")
+
+    @commands.command()
     async def reload(self, ctx, module):
         try:
             if module in self.bot.extensions:
