@@ -1,18 +1,18 @@
 [[package]]
-category = "main"
-description = "File support for asyncio."
 name = "aiofiles"
+version = "0.5.0"
+description = "File support for asyncio."
+category = "main"
 optional = false
 python-versions = "*"
-version = "0.5.0"
 
 [[package]]
-category = "main"
-description = "Async http client/server framework (asyncio)"
 name = "aiohttp"
+version = "3.6.2"
+description = "Async http client/server framework (asyncio)"
+category = "main"
 optional = false
 python-versions = ">=3.5.3"
-version = "3.6.2"
 
 [package.dependencies]
 async-timeout = ">=3.0,<4.0"
@@ -25,12 +25,12 @@ yarl = ">=1.0,<2.0"
 speedups = ["aiodns", "brotlipy", "cchardet"]
 
 [[package]]
-category = "dev"
-description = "MySQL driver for asyncio."
 name = "aiomysql"
+version = "0.0.20"
+description = "MySQL driver for asyncio."
+category = "dev"
 optional = false
 python-versions = "*"
-version = "0.0.20"
 
 [package.dependencies]
 PyMySQL = ">=0.9,<=0.9.2"
@@ -39,46 +39,46 @@ PyMySQL = ">=0.9,<=0.9.2"
 sa = ["sqlalchemy (>=1.0)"]
 
 [[package]]
-category = "main"
-description = "asyncio SMTP client"
 name = "aiosmtplib"
+version = "1.1.4"
+description = "asyncio SMTP client"
+category = "main"
 optional = false
 python-versions = ">=3.5.2,<4.0.0"
-version = "1.1.4"
 
 [package.extras]
-docs = ["sphinx (>=2,<4)", "sphinx_autodoc_typehints (>=1.7.0,<2.0.0)"]
 uvloop = ["uvloop (>=0.13,<0.15)"]
+docs = ["sphinx (>=2,<4)", "sphinx_autodoc_typehints (>=1.7.0,<2.0.0)"]
 
 [[package]]
-category = "main"
-description = "A database migration tool for SQLAlchemy."
 name = "alembic"
+version = "1.4.3"
+description = "A database migration tool for SQLAlchemy."
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "1.4.3"
 
 [package.dependencies]
 Mako = "*"
-SQLAlchemy = ">=1.1.0"
 python-dateutil = "*"
 python-editor = ">=0.3"
+SQLAlchemy = ">=1.1.0"
 
 [[package]]
-category = "main"
-description = "Timeout context manager for asyncio programs"
 name = "async-timeout"
+version = "3.0.1"
+description = "Timeout context manager for asyncio programs"
+category = "main"
 optional = false
 python-versions = ">=3.5.3"
-version = "3.0.1"
 
 [[package]]
-category = "main"
-description = "An asyncio PostgreSQL driver"
 name = "asyncpg"
+version = "0.21.0"
+description = "An asyncio PostgreSQL driver"
+category = "main"
 optional = false
 python-versions = ">=3.5.0"
-version = "0.21.0"
 
 [package.extras]
 dev = ["Cython (0.29.20)", "pytest (>=3.6.0)", "Sphinx (>=1.7.3,<1.8.0)", "sphinxcontrib-asyncio (>=0.2.0,<0.3.0)", "sphinx-rtd-theme (>=0.2.4,<0.3.0)", "pycodestyle (>=2.5.0,<2.6.0)", "flake8 (>=3.7.9,<3.8.0)", "uvloop (>=0.14.0,<0.15.0)"]
@@ -86,53 +86,53 @@ docs = ["Sphinx (>=1.7.3,<1.8.0)", "sphinxcontrib-asyncio (>=0.2.0,<0.3.0)", "sp
 test = ["pycodestyle (>=2.5.0,<2.6.0)", "flake8 (>=3.7.9,<3.8.0)", "uvloop (>=0.14.0,<0.15.0)"]
 
 [[package]]
-category = "main"
-description = "Classes Without Boilerplate"
 name = "attrs"
+version = "20.2.0"
+description = "Classes Without Boilerplate"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "20.2.0"
 
 [package.extras]
-dev = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "sphinx-rtd-theme", "pre-commit"]
+dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "sphinx-rtd-theme", "pre-commit"]
 docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
-tests = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
-tests_no_zope = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
+tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
+tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
 [[package]]
-category = "main"
-description = "Foreign Function Interface for Python calling C code."
 name = "cffi"
+version = "1.14.3"
+description = "Foreign Function Interface for Python calling C code."
+category = "main"
 optional = false
 python-versions = "*"
-version = "1.14.3"
 
 [package.dependencies]
 pycparser = "*"
 
 [[package]]
-category = "main"
-description = "Universal encoding detector for Python 2 and 3"
 name = "chardet"
+version = "3.0.4"
+description = "Universal encoding detector for Python 2 and 3"
+category = "main"
 optional = false
 python-versions = "*"
-version = "3.0.4"
 
 [[package]]
-category = "main"
-description = "Composable command line interface toolkit"
 name = "click"
+version = "7.1.2"
+description = "Composable command line interface toolkit"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "7.1.2"
 
 [[package]]
-category = "main"
-description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
 name = "cryptography"
+version = "3.1.1"
+description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
+category = "main"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*"
-version = "3.1.1"
 
 [package.dependencies]
 cffi = ">=1.8,<1.11.3 || >1.11.3"
@@ -146,35 +146,36 @@ ssh = ["bcrypt (>=3.1.5)"]
 test = ["pytest (>=3.6.0,<3.9.0 || >3.9.0,<3.9.1 || >3.9.1,<3.9.2 || >3.9.2)", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,<3.79.2 || >3.79.2)"]
 
 [[package]]
-category = "main"
-description = "Decorators for Humans"
 name = "decorator"
+version = "4.4.2"
+description = "Decorators for Humans"
+category = "main"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*"
-version = "4.4.2"
 
 [[package]]
-category = "main"
-description = "Patches some additional/alternative features into discord.py."
 name = "discord-ext-alternatives"
+version = "2020.10.11"
+description = "Patches some additional/alternative features into discord.py."
+category = "main"
 optional = false
 python-versions = ">=3.5.3"
-version = "2020.10.11"
 
 [package.dependencies]
 "discord.py" = ">=1.3.4"
 
 [package.source]
-reference = "01b1ec7f4bf4eed821271ee7b062964670af44c6"
 type = "git"
 url = "https://github.com/Ext-Creators/discord-ext-alternatives"
+reference = "01b1ec7f4bf4eed821271ee7b062964670af44c6"
+
 [[package]]
-category = "main"
-description = "A Python wrapper for the Discord API"
 name = "discord.py"
+version = "1.5.0"
+description = "A Python wrapper for the Discord API"
+category = "main"
 optional = false
 python-versions = ">=3.5.3"
-version = "1.5.0"
 
 [package.dependencies]
 aiohttp = ">=3.6.0,<3.7.0"
@@ -184,34 +185,31 @@ docs = ["sphinx (1.8.5)", "sphinxcontrib-trio (1.1.1)", "sphinxcontrib-websuppor
 voice = ["PyNaCl (1.3.0)"]
 
 [[package]]
-category = "main"
-description = "GINO Is Not ORM - a Python asyncio ORM on SQLAlchemy core."
 name = "gino"
+version = "1.0.1"
+description = "GINO Is Not ORM - a Python asyncio ORM on SQLAlchemy core."
+category = "main"
 optional = false
 python-versions = ">=3.5,<4.0"
-version = "1.0.1"
 
 [package.dependencies]
-SQLAlchemy = ">=1.2.16,<1.4"
 asyncpg = ">=0.18,<1.0"
+SQLAlchemy = ">=1.2.16,<1.4"
 
 [package.extras]
-aiohttp = ["gino-aiohttp (>=0.1.0,<0.2.0)"]
-quart = ["gino-quart (>=0.1.0,<0.2.0)"]
-sanic = ["gino-sanic (>=0.1.0,<0.2.0)"]
 starlette = ["gino-starlette (>=0.1.1,<0.2.0)"]
+aiohttp = ["gino-aiohttp (>=0.1.0,<0.2.0)"]
 tornado = ["gino-tornado (>=0.1.0,<0.2.0)"]
+sanic = ["gino-sanic (>=0.1.0,<0.2.0)"]
+quart = ["gino-quart (>=0.1.0,<0.2.0)"]
 
 [[package]]
-category = "main"
-description = "WSGI HTTP Server for UNIX"
 name = "gunicorn"
+version = "20.0.4"
+description = "WSGI HTTP Server for UNIX"
+category = "main"
 optional = false
 python-versions = ">=3.4"
-version = "20.0.4"
-
-[package.dependencies]
-setuptools = ">=3.0"
 
 [package.extras]
 eventlet = ["eventlet (>=0.9.7)"]
@@ -220,36 +218,36 @@ setproctitle = ["setproctitle"]
 tornado = ["tornado (>=0.2)"]
 
 [[package]]
-category = "main"
-description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 name = "h11"
+version = "0.11.0"
+description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
+category = "main"
 optional = false
 python-versions = "*"
-version = "0.11.0"
 
 [[package]]
-category = "main"
-description = "Internationalized Domain Names in Applications (IDNA)"
 name = "idna"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "2.10"
-
-[[package]]
+description = "Internationalized Domain Names in Applications (IDNA)"
 category = "main"
-description = "Various helpers to pass data to untrusted environments and back."
-name = "itsdangerous"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "1.1.0"
 
 [[package]]
+name = "itsdangerous"
+version = "1.1.0"
+description = "Various helpers to pass data to untrusted environments and back."
 category = "main"
-description = "A very fast and expressive template engine."
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[[package]]
 name = "jinja2"
+version = "2.11.2"
+description = "A very fast and expressive template engine."
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "2.11.2"
 
 [package.dependencies]
 MarkupSafe = ">=0.23"
@@ -258,12 +256,12 @@ MarkupSafe = ">=0.23"
 i18n = ["Babel (>=0.8)"]
 
 [[package]]
-category = "main"
-description = "A super-fast templating language that borrows the  best ideas from the existing templating languages."
 name = "mako"
+version = "1.1.3"
+description = "A super-fast templating language that borrows the  best ideas from the existing templating languages."
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "1.1.3"
 
 [package.dependencies]
 MarkupSafe = ">=0.9.2"
@@ -273,144 +271,144 @@ babel = ["babel"]
 lingua = ["lingua"]
 
 [[package]]
-category = "main"
-description = "Safely add untrusted strings to HTML/XML markup."
 name = "markupsafe"
+version = "1.1.1"
+description = "Safely add untrusted strings to HTML/XML markup."
+category = "main"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
-version = "1.1.1"
 
 [[package]]
-category = "main"
-description = "A sane Markdown parser with useful plugins and renderers"
 name = "mistune"
+version = "2.0.0a5"
+description = "A sane Markdown parser with useful plugins and renderers"
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.0.0a5"
 
 [[package]]
-category = "main"
-description = "multidict implementation"
 name = "multidict"
+version = "4.7.6"
+description = "multidict implementation"
+category = "main"
 optional = false
 python-versions = ">=3.5"
-version = "4.7.6"
 
 [[package]]
-category = "main"
-description = "Parse human-readable date/time text."
 name = "parsedatetime"
+version = "2.6"
+description = "Parse human-readable date/time text."
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.6"
 
 [[package]]
-category = "main"
-description = "psycopg2 - Python-PostgreSQL Database Adapter"
 name = "psycopg2-binary"
+version = "2.8.6"
+description = "psycopg2 - Python-PostgreSQL Database Adapter"
+category = "main"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
-version = "2.8.6"
 
 [[package]]
-category = "main"
-description = "C parser in Python"
 name = "pycparser"
+version = "2.20"
+description = "C parser in Python"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "2.20"
 
 [[package]]
-category = "main"
-description = "Cryptographic modules for Python."
 name = "pycrypto"
+version = "2.6.1"
+description = "Cryptographic modules for Python."
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.6.1"
 
 [[package]]
-category = "main"
-description = "Pygments is a syntax highlighting package written in Python."
 name = "pygments"
+version = "2.7.1"
+description = "Pygments is a syntax highlighting package written in Python."
+category = "main"
 optional = false
 python-versions = ">=3.5"
-version = "2.7.1"
 
 [[package]]
-category = "dev"
-description = "Pure Python MySQL Driver"
 name = "pymysql"
+version = "0.9.2"
+description = "Pure Python MySQL Driver"
+category = "dev"
 optional = false
 python-versions = "*"
-version = "0.9.2"
 
 [package.dependencies]
 cryptography = "*"
 
 [[package]]
-category = "main"
-description = "Extensions to the standard Python datetime module"
 name = "python-dateutil"
+version = "2.8.1"
+description = "Extensions to the standard Python datetime module"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
-version = "2.8.1"
 
 [package.dependencies]
 six = ">=1.5"
 
 [[package]]
-category = "main"
-description = "Add .env support to your django/flask apps in development and deployments"
 name = "python-dotenv"
+version = "0.14.0"
+description = "Add .env support to your django/flask apps in development and deployments"
+category = "main"
 optional = false
 python-versions = "*"
-version = "0.14.0"
 
 [package.extras]
 cli = ["click (>=5.0)"]
 
 [[package]]
-category = "main"
-description = "Programmatically open an editor, capture the result."
 name = "python-editor"
+version = "1.0.4"
+description = "Programmatically open an editor, capture the result."
+category = "main"
 optional = false
 python-versions = "*"
-version = "1.0.4"
 
 [[package]]
-category = "main"
-description = "A streaming multipart parser for Python"
 name = "python-multipart"
+version = "0.0.5"
+description = "A streaming multipart parser for Python"
+category = "main"
 optional = false
 python-versions = "*"
-version = "0.0.5"
 
 [package.dependencies]
 six = ">=1.4.0"
 
 [[package]]
-category = "main"
-description = "Python 2 and 3 compatibility utilities"
 name = "six"
+version = "1.15.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
-version = "1.15.0"
 
 [[package]]
-category = "main"
-description = "Python module to convert str to slug"
 name = "slug"
+version = "2.0"
+description = "Python module to convert str to slug"
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.0"
 
 [[package]]
-category = "main"
-description = "Database Abstraction Library"
 name = "sqlalchemy"
+version = "1.3.19"
+description = "Database Abstraction Library"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "1.3.19"
 
 [package.extras]
 mssql = ["pyodbc"]
@@ -425,12 +423,12 @@ postgresql_psycopg2cffi = ["psycopg2cffi"]
 pymysql = ["pymysql"]
 
 [[package]]
-category = "main"
-description = "Provides fulltext search capabilities for declarative SQLAlchemy models."
 name = "sqlalchemy-searchable"
+version = "1.1.1"
+description = "Provides fulltext search capabilities for declarative SQLAlchemy models."
+category = "main"
 optional = false
 python-versions = "*"
-version = "1.1.1"
 
 [package.dependencies]
 SQLAlchemy = ">=0.9.0"
@@ -441,20 +439,21 @@ validators = ">=0.3.0"
 test = ["pytest (>=2.2.3)", "psycopg2 (>=2.4.6)", "flake8 (>=2.4.0)", "isort (>=3.9.6)"]
 
 [package.source]
-reference = "9195a593725beb457524b009606efae87ab57c53"
 type = "git"
 url = "https://github.com/nitros12/sqlalchemy-searchable"
+reference = "9195a593725beb457524b009606efae87ab57c53"
+
 [[package]]
-category = "main"
-description = "Various utility functions for SQLAlchemy."
 name = "sqlalchemy-utils"
+version = "0.36.8"
+description = "Various utility functions for SQLAlchemy."
+category = "main"
 optional = false
 python-versions = "*"
-version = "0.36.8"
 
 [package.dependencies]
-SQLAlchemy = ">=1.0"
 six = "*"
+SQLAlchemy = ">=1.0"
 
 [package.extras]
 anyjson = ["anyjson (>=0.3.3)"]
@@ -472,42 +471,42 @@ timezone = ["python-dateutil"]
 url = ["furl (>=0.4.1)"]
 
 [[package]]
-category = "main"
-description = "The little ASGI library that shines."
 name = "starlette"
+version = "0.13.8"
+description = "The little ASGI library that shines."
+category = "main"
 optional = false
 python-versions = ">=3.6"
-version = "0.13.8"
 
 [package.extras]
 full = ["aiofiles", "graphene", "itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests", "ujson"]
 
 [[package]]
-category = "main"
-description = "Pretty-print tabular data"
 name = "tabulate"
+version = "0.8.7"
+description = "Pretty-print tabular data"
+category = "main"
 optional = false
 python-versions = "*"
-version = "0.8.7"
 
 [package.extras]
 widechars = ["wcwidth"]
 
 [[package]]
-category = "main"
-description = "Ultra fast JSON encoder and decoder for Python"
 name = "ujson"
+version = "4.0.1"
+description = "Ultra fast JSON encoder and decoder for Python"
+category = "main"
 optional = false
 python-versions = ">=3.6"
-version = "4.0.1"
 
 [[package]]
-category = "main"
-description = "The lightning-fast ASGI server."
 name = "uvicorn"
+version = "0.12.1"
+description = "The lightning-fast ASGI server."
+category = "main"
 optional = false
 python-versions = "*"
-version = "0.12.1"
 
 [package.dependencies]
 click = ">=7.0.0,<8.0.0"
@@ -517,12 +516,12 @@ h11 = ">=0.8"
 standard = ["websockets (>=8.0.0,<9.0.0)", "watchgod (>=0.6,<0.7)", "python-dotenv (>=0.13)", "PyYAML (>=5.1)", "httptools (>=0.1.0,<0.2.0)", "uvloop (>=0.14.0)", "colorama (>=0.4)"]
 
 [[package]]
-category = "main"
-description = "Python Data Validation for Humans™."
 name = "validators"
+version = "0.18.1"
+description = "Python Data Validation for Humans™."
+category = "main"
 optional = false
 python-versions = ">=3.4"
-version = "0.18.1"
 
 [package.dependencies]
 decorator = ">=3.4.0"
@@ -532,12 +531,12 @@ six = ">=1.4.0"
 test = ["pytest (>=2.2.3)", "flake8 (>=2.4.0)", "isort (>=4.2.2)"]
 
 [[package]]
-category = "main"
-description = "A flexible forms validation and rendering library for Python web development."
 name = "wtforms"
+version = "2.3.3"
+description = "A flexible forms validation and rendering library for Python web development."
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.3.3"
 
 [package.dependencies]
 MarkupSafe = "*"
@@ -548,20 +547,21 @@ ipaddress = ["ipaddress"]
 locale = ["Babel (>=1.3)"]
 
 [[package]]
-category = "main"
-description = "Yet another URL library"
 name = "yarl"
+version = "1.6.1"
+description = "Yet another URL library"
+category = "main"
 optional = false
-python-versions = ">=3.5"
-version = "1.6.0"
+python-versions = ">=3.6"
 
 [package.dependencies]
 idna = ">=2.0"
 multidict = ">=4.0"
 
 [metadata]
-content-hash = "be38f8ab08618701426bf10c5d18f17e8d5a9df9b763661a6deca2d50c001347"
+lock-version = "1.1"
 python-versions = "^3.8"
+content-hash = "be38f8ab08618701426bf10c5d18f17e8d5a9df9b763661a6deca2d50c001347"
 
 [metadata.files]
 aiofiles = [
@@ -954,21 +954,37 @@ wtforms = [
     {file = "WTForms-2.3.3.tar.gz", hash = "sha256:81195de0ac94fbc8368abbaf9197b88c4f3ffd6c2719b5bf5fc9da744f3d829c"},
 ]
 yarl = [
-    {file = "yarl-1.6.0-cp35-cp35m-macosx_10_14_x86_64.whl", hash = "sha256:db9eb8307219d7e09b33bcb43287222ef35cbcf1586ba9472b0a4b833666ada1"},
-    {file = "yarl-1.6.0-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:e31fef4e7b68184545c3d68baec7074532e077bd1906b040ecfba659737df188"},
-    {file = "yarl-1.6.0-cp35-cp35m-win32.whl", hash = "sha256:5d84cc36981eb5a8533be79d6c43454c8e6a39ee3118ceaadbd3c029ab2ee580"},
-    {file = "yarl-1.6.0-cp35-cp35m-win_amd64.whl", hash = "sha256:5e447e7f3780f44f890360ea973418025e8c0cdcd7d6a1b221d952600fd945dc"},
-    {file = "yarl-1.6.0-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:6f6898429ec3c4cfbef12907047136fd7b9e81a6ee9f105b45505e633427330a"},
-    {file = "yarl-1.6.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:d088ea9319e49273f25b1c96a3763bf19a882cff774d1792ae6fba34bd40550a"},
-    {file = "yarl-1.6.0-cp36-cp36m-win32.whl", hash = "sha256:b7c199d2cbaf892ba0f91ed36d12ff41ecd0dde46cbf64ff4bfe997a3ebc925e"},
-    {file = "yarl-1.6.0-cp36-cp36m-win_amd64.whl", hash = "sha256:67c5ea0970da882eaf9efcf65b66792557c526f8e55f752194eff8ec722c75c2"},
-    {file = "yarl-1.6.0-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:04a54f126a0732af75e5edc9addeaa2113e2ca7c6fce8974a63549a70a25e50e"},
-    {file = "yarl-1.6.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:fcbe419805c9b20db9a51d33b942feddbf6e7fb468cb20686fd7089d4164c12a"},
-    {file = "yarl-1.6.0-cp37-cp37m-win32.whl", hash = "sha256:c604998ab8115db802cc55cb1b91619b2831a6128a62ca7eea577fc8ea4d3131"},
-    {file = "yarl-1.6.0-cp37-cp37m-win_amd64.whl", hash = "sha256:c22607421f49c0cb6ff3ed593a49b6a99c6ffdeaaa6c944cdda83c2393c8864d"},
-    {file = "yarl-1.6.0-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:7ce35944e8e61927a8f4eb78f5bc5d1e6da6d40eadd77e3f79d4e9399e263921"},
-    {file = "yarl-1.6.0-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:c15d71a640fb1f8e98a1423f9c64d7f1f6a3a168f803042eaf3a5b5022fde0c1"},
-    {file = "yarl-1.6.0-cp38-cp38-win32.whl", hash = "sha256:3cc860d72ed989f3b1f3abbd6ecf38e412de722fb38b8f1b1a086315cf0d69c5"},
-    {file = "yarl-1.6.0-cp38-cp38-win_amd64.whl", hash = "sha256:e32f0fb443afcfe7f01f95172b66f279938fbc6bdaebe294b0ff6747fb6db020"},
-    {file = "yarl-1.6.0.tar.gz", hash = "sha256:61d3ea3c175fe45f1498af868879c6ffeb989d4143ac542163c45538ba5ec21b"},
+    {file = "yarl-1.6.1-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:dfe45d7b0badbd8ca2af3bc0e2207ef930e2fc835a6ea743b1acf0e75b784eb6"},
+    {file = "yarl-1.6.1-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:28bc2d357e858447402d5a85a38e21b4f7628a3d02e3aab142463565112aa0ce"},
+    {file = "yarl-1.6.1-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:5404e53a84d4acbf0b30c50494434cde3ca208e61394ae9c4e157bd3b2c24af0"},
+    {file = "yarl-1.6.1-cp36-cp36m-manylinux2014_i686.whl", hash = "sha256:2bf09f4ac2b195e87b2256a1707d146442516c7fa1abaadeffb75a3ba59ca56e"},
+    {file = "yarl-1.6.1-cp36-cp36m-manylinux2014_ppc64le.whl", hash = "sha256:5784a23a4488d64fd51bbd487cda036b1482098fc81563e8c8ea845500ba38c3"},
+    {file = "yarl-1.6.1-cp36-cp36m-manylinux2014_s390x.whl", hash = "sha256:35412c4aa59df28be2d019f4a399a82098e9b4a99f9b00bbe996adcc2b7f4ad5"},
+    {file = "yarl-1.6.1-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:3061b26843c82082d8fb4edb611044c7881d5e76dfdb98bc22854ec9bb88b6dd"},
+    {file = "yarl-1.6.1-cp36-cp36m-win_amd64.whl", hash = "sha256:8a6efc6fb080083bbd0f691f06647555d68bd636440f7c3c3b98c4653ff8ee6e"},
+    {file = "yarl-1.6.1-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:5003559955af4d45142c6503f8cb4603ecf6a5005a416170b4f9ebcc0ff02743"},
+    {file = "yarl-1.6.1-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:5267cbbfe1cc336dbe34784660fbcb7767ef313f2783177167af316412526c0f"},
+    {file = "yarl-1.6.1-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:c6c441b3b21fbff6de1b7886b3c9225e3285204d53bc16520436d94fd9652fbd"},
+    {file = "yarl-1.6.1-cp37-cp37m-manylinux2014_i686.whl", hash = "sha256:e10aabd1ed18a2e3900f02b7bef24b0e5023e0ff7b20691e17e6219d825d0579"},
+    {file = "yarl-1.6.1-cp37-cp37m-manylinux2014_ppc64le.whl", hash = "sha256:123330c32e02c537ba8af23e6edaa55593f14606c1c061f227e2778b3b25c74f"},
+    {file = "yarl-1.6.1-cp37-cp37m-manylinux2014_s390x.whl", hash = "sha256:9f70abf8ccfbb6724891c449a4f8d95205769691f2f2e416b95f9d3706b8b902"},
+    {file = "yarl-1.6.1-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:c630433d37c518799c5bf59afee141688db940193623965b702086ab95cdf67b"},
+    {file = "yarl-1.6.1-cp37-cp37m-win_amd64.whl", hash = "sha256:352730f09a55264f91b598e7a61154fe747671f9b6ab6483e666d31a57890972"},
+    {file = "yarl-1.6.1-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:43bdba752ebbd1f6c6fb367ab1a5a0ca0de163911ec756e3f79e0bc2008ff6f9"},
+    {file = "yarl-1.6.1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:05293ee62072969725a54323151c1e9612e147cb8ae05f41bd0318f916aff8ce"},
+    {file = "yarl-1.6.1-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:6687765b69ac6ca968d118fb4bcb4e0b03f58de36e49695e03a29bc2dbad19c5"},
+    {file = "yarl-1.6.1-cp38-cp38-manylinux2014_i686.whl", hash = "sha256:f36909b7c55c5a2376272d5b9967b4be77b12080da4cca6a2cbe0fe54a694ea8"},
+    {file = "yarl-1.6.1-cp38-cp38-manylinux2014_ppc64le.whl", hash = "sha256:c3ada6eff1edab6bf7c52b0c1af14370f7d4a42ae48492f3587545fbc6e0f218"},
+    {file = "yarl-1.6.1-cp38-cp38-manylinux2014_s390x.whl", hash = "sha256:565551d13885cd870af13366e569d92cfd48a38df74e69c052eb87b1ba729a4d"},
+    {file = "yarl-1.6.1-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:762b4ff439bb79917098ba1bd98328a4d4dba7500ebe90406e3c4b19b75d7b6c"},
+    {file = "yarl-1.6.1-cp38-cp38-win_amd64.whl", hash = "sha256:ff144aa4f95d41d304b190e775fa3f9bf949a400d0d780f70c5f76bff44e5c38"},
+    {file = "yarl-1.6.1-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:731fa2751c0cf30b3ba635b8f66869dc1493eb2ca52832f34499de19e1f4f1a5"},
+    {file = "yarl-1.6.1-cp39-cp39-manylinux1_i686.whl", hash = "sha256:57453e2b568f8c9a5ee9d5f24e1387d19b4b5a5be5d447f7197457fdaf5ec24f"},
+    {file = "yarl-1.6.1-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:7e0345cff8a141d894838e2764ce9aa53925958b958ac954226565a484dacb9e"},
+    {file = "yarl-1.6.1-cp39-cp39-manylinux2014_i686.whl", hash = "sha256:cd4ff04cd075372ace72c4da3893a417d88024a5ee75d3edc182bc5714a7b7f0"},
+    {file = "yarl-1.6.1-cp39-cp39-manylinux2014_ppc64le.whl", hash = "sha256:4ecf1b0663afcb254a0aca2fd93d85ddd235e60da1d0bee746b335e85af375a6"},
+    {file = "yarl-1.6.1-cp39-cp39-manylinux2014_s390x.whl", hash = "sha256:e29d9b337bce2aed1f9b1e608398327581f1f66c98400bf746fdb81a28e43cf8"},
+    {file = "yarl-1.6.1-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:9d68716ffcddd02c9b7878d916eb0bc66a9b656ac9ae72dc7c314fa82e4476fa"},
+    {file = "yarl-1.6.1-cp39-cp39-win_amd64.whl", hash = "sha256:9c8a5ec2364cdce2766a69c7dfef3d4fc5c9bf7ad3b35f2b12e4d8459379944f"},
+    {file = "yarl-1.6.1.tar.gz", hash = "sha256:f7702b27b4069b1ae8816b68287ee0b32e2973c3497acd28ef047d8f1754e73e"},
 ]
