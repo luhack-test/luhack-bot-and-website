@@ -25,8 +25,12 @@
                 {{ form.content() }}
             </div>
             <div class="pure-control-group">
-                {{ form.flag.label }}
-                {{ form.flag() }}
+                {{ form.flag_or_answer.label }}
+                {{ form.flag_or_answer() }}
+            </div>
+            <div class="pure-control-group">
+                {{ form.is_flag.label }}
+                {{ form.is_flag() }}
             </div>
             <div class="pure-control-group">
                 {{ form.tags.label }}

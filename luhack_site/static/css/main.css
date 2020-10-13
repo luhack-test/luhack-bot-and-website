@@ -1200,3 +1200,18 @@ main {
   margin-top: 2px;
   margin-bottom: 0;
 }
+
+.codeline {
+  padding: .2em;
+  margin: -.2em 0;
+  border-radius: 3px;
+  font-size: 85%;
+  text-indent: 0;
+  border: none;
+  white-space: pre-wrap;
+  background: #343a40;
+}
+
+.selectall {
+  user-select: all;
+}

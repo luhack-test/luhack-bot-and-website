@@ -10,4 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return true;
         });
     });
+
+    const selectOtherElements = document.querySelectorAll("[data-select-other-content]");
+
+    selectOtherElements.forEach(e => {
+        console.log(e);
+
+        e.addEventListener("click", _evt => {
+            window.getSelection().selectAllChildren(document.getElementById(e.dataset.selectOtherContent));
+        })
+    })
 });

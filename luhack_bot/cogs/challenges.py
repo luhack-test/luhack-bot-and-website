@@ -30,6 +30,20 @@ def split_on(l: List[Tuple[T, bool]]) -> Tuple[List[T], List[T]]:
     return a, b
 
 
+class ChallengeName(commands.Converter):
+    async def convert(self, ctx, arg: str):
+        r = (
+            await Challenge.query.where(Challenge.slug == arg)
+            .where(sa.not_(Challenge.hidden))
+            .gino.first()
+        )
+
+        if r is None:
+            raise commands.BadArgument(f"{arg} is not a challenge")
+
+        return r
+
+
 class Challenges(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -338,22 +352,34 @@ class Challenges(commands.Cog):
         await ctx.send(msg)
 
     @challenges.command(aliases=["solve", "submit"])
-    async def claim(self, ctx, flag: str):
+    async def claim(self, ctx, challenge: Optional[ChallengeName] = None, *, flag: str):
         """Claim a flag, make sure to use this in DMs."""
         warn_dm_message = ""
+
+        flag = flag.strip()
 
         if ctx.guild:
             await ctx.message.delete()
             warn_dm_message = "\n\nP.S. Use this command in DMs next time."
 
-        challenge = (
-            await Challenge.query.where(Challenge.flag == flag)
-            .where(sa.not_(Challenge.hidden))
-            .gino.first()
-        )
-
         if challenge is None:
-            await ctx.send("That doesn't look to be a valid flag." + warn_dm_message)
+            # if this is a flag solve
+
+            challenge = (
+                await Challenge.query.where(Challenge.flag == flag)
+                .where(sa.not_(Challenge.hidden))
+                .gino.first()
+            )
+
+            if challenge is None:
+                await ctx.send(
+                    "That doesn't look to be a valid flag." + warn_dm_message
+                )
+                return
+
+        elif challenge.answer != flag:
+            # if this is an answer solve
+            await ctx.send("That isn't the correct answer, sorry.")
             return
 
         if challenge.depreciated:

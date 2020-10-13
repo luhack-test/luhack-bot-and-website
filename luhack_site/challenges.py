@@ -246,10 +246,14 @@ class NewChallenge(HTTPEndpoint):
             )
 
         if is_valid:
+            f_a = form.flag_or_answer.data
+            flag, answer = (f_a, None) if form.is_flag.data else (None, f_a)
+
             challenge = await Challenge.create_auto(
                 title=form.title.data,
                 content=form.content.data,
-                flag=form.flag.data,
+                flag=flag,
+                answer=answer,
                 hidden=form.hidden.data,
                 depreciated=form.depreciated.data,
                 points=form.points.data,
@@ -294,7 +298,8 @@ class EditChallenge(HTTPEndpoint):
         form = ChallengeForm(
             title=challenge.title,
             content=challenge.content,
-            flag=challenge.flag,
+            flag_or_answer=challenge.flag or challenge.answer,
+            is_flag=challenge.flag is not None,
             hidden=challenge.hidden,
             depreciated=challenge.depreciated,
             points=challenge.points,
@@ -332,10 +337,14 @@ class EditChallenge(HTTPEndpoint):
         form = ChallengeForm(form)
 
         if form.validate():
+            f_a = form.flag_or_answer.data
+            flag, answer = (f_a, None) if form.is_flag.data else (None, f_a)
+
             await challenge.update_auto(
                 title=form.title.data,
                 content=form.content.data,
-                flag=form.flag.data,
+                flag=flag,
+                answer=answer,
                 hidden=form.hidden.data,
                 depreciated=form.depreciated.data,
                 points=form.points.data,

@@ -163,7 +163,11 @@ class Challenge(db.Model):
 
     content = db.Column(db.Text(), nullable=False)
     tags = db.Column(ARRAY(db.Text()), nullable=False)
-    flag = db.Column(db.Text(), unique=True, nullable=False)
+
+    flag = db.Column(db.Text(), unique=True, nullable=True)
+    answer = db.Column(db.Text(), nullable=True)
+
+    _flag_answer_distinct = db.CheckConstraint("(flag IS NULL) != (answer IS NULL)")
 
     points = db.Column(db.Integer(), nullable=False)
 

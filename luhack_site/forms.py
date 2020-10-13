@@ -53,7 +53,8 @@ class ChallengeForm(Form):
         "Title", [validators.Length(min=4, max=25)]
     )
     content = TextAreaField("Content")
-    flag = StringField("Flag")
+    flag_or_answer = StringField("Flag/Answer")
+    is_flag = BooleanField("Is Flag")
     tags = TagListField("Tags")
     hidden = BooleanField("Hidden")
     depreciated = BooleanField("Depreciated")
