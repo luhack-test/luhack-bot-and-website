@@ -104,7 +104,9 @@ class Challenges(commands.Cog):
         """
         if challenge_title is None:
             latest_challenge = (
-                await Challenge.query.order_by(Challenge.id.desc())
+                await Challenge.query
+                .order_by(Challenge.creation_date.desc(),
+                          Challenge.id.desc())
                 .where(sa.not_(Challenge.hidden))
                 .gino.first()
             )
@@ -506,6 +508,8 @@ class Challenges(commands.Cog):
         challenges = (
             await Challenge.query.where(sa.not_(Challenge.hidden))
             .where(tag_filter(tags))
+            .order_by(Challenge.creation_date.desc(),
+                      Challenge.id.desc())
             .gino.all()
         )
 

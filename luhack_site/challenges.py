@@ -28,7 +28,9 @@ router = Router()
 async def challenges_grouped() -> List[Tuple[str, List[Tuple[str, List[Challenge]]]]]:
     """Return all challenges grouped by year and month in the format [(year, [(month, [challenge])])]"""
     all_challenges = (
-        await Challenge.query.order_by(sa.desc(Challenge.creation_date))
+        await Challenge.query.order_by(
+            Challenge.creation_date.desc(), Challenge.id.desc()
+        )
         .where(sa.not_(Challenge.hidden))
         .gino.all()
     )
@@ -63,7 +65,7 @@ async def challenge_index(request: HTTPConnection):
         db.select([Challenge, solves])
         .select_from(Challenge.outerjoin(CompletedChallenge))
         .group_by(Challenge.id)
-        .order_by(sa.desc(Challenge.creation_date))
+        .order_by(Challenge.creation_date.desc(), Challenge.id.desc())
         .gino.load((Challenge, ColumnLoader(solves)))
         .all()
     )
@@ -137,7 +139,7 @@ async def challenge_by_tag(request: HTTPConnection):
         .select_from(Challenge.outerjoin(CompletedChallenge))
         .group_by(Challenge.id)
         .where(Challenge.tags.contains([tag]))
-        .order_by(sa.desc(Challenge.creation_date))
+        .order_by(Challenge.creation_date.desc(), Challenge.id.desc())
         .gino.load((Challenge, ColumnLoader(solves)))
         .all()
     )
@@ -263,7 +265,9 @@ class NewChallenge(HTTPEndpoint):
             url = request.url_for("challenge_view", slug=challenge.slug)
 
             if not challenge.hidden:
-                await log_create("challenge", challenge.title, request.user.username, url)
+                await log_create(
+                    "challenge", challenge.title, request.user.username, url
+                )
 
             return redirect_response(url=url)
 

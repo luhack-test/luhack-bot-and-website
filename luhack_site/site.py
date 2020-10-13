@@ -50,7 +50,15 @@ app.add_middleware(
 app.add_middleware(AuthenticationMiddleware, backend=TokenAuthBackend())
 app.add_middleware(SessionMiddleware, secret_key=getenv("TOKEN_SECRET"))
 
-statics = StaticFiles(directory=str(root_dir / "static"))
+class CacheHeaderStaticFiles(StaticFiles):
+    async def get_response(self, path, scope):
+        r = await super().get_response(path, scope)
+        r.headers.append("Cache-Control", "public")
+        r.headers.append("Cache-Control", "must-revalidate")
+
+        return r
+
+statics = CacheHeaderStaticFiles(directory=str(root_dir / "static"))
 app.mount("/static", statics, name="static")
 
 
