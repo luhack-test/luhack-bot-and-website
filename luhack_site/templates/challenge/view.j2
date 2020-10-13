@@ -39,6 +39,12 @@
                 <br />
                 <span class="codeline"><span id="claim-command" class="selectall">!ch claim {{ challenge.slug }} </span><span data-select-other-content="claim-command">{{ "<answer>" }}</span></span>
             </h5>
+        {% else %}
+            <h5>
+                <span data-select-other-content="claim-command">Claim Command: </span>
+                <br />
+                <span class="codeline"><span id="claim-command" class="selectall">!ch claim </span><span data-select-other-content="claim-command">{{ "<flag>" }}</span></span>
+            </h5>
         {% endif %}
     </div>
 {% endblock %}
