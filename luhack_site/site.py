@@ -1,4 +1,3 @@
-from os import getenv
 from pathlib import Path
 from typing import List, Tuple
 
@@ -10,15 +9,17 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.routing import Mount
 from starlette.requests import HTTPConnection
 from starlette.staticfiles import StaticFiles
+from starlette.config import Config
 
-from luhack_site import load_env
 from luhack_site.authorization import TokenAuthBackend, can_edit
 from luhack_site.templater import templates
 from luhack_site.writeups import router as writeups_router
 from luhack_site.images import router as images_router
 from luhack_site.blog import router as blog_router
+from luhack_site.oauth import router as oauth_router
 from luhack_site.challenges import router as challenge_router
 from luhack_site.middleware import CSPMiddleware, HSTSMiddleware, WebSecMiddleware
+from luhack_site import settings
 
 from luhack_bot.db.helpers import init_db
 
@@ -31,6 +32,7 @@ app = Starlette(
         Mount("/images", app=images_router),
         Mount("/blog", app=blog_router),
         Mount("/challenges", app=challenge_router),
+        Mount("/oauth", app=oauth_router),
     ]
 )
 
@@ -48,7 +50,7 @@ app.add_middleware(
     style_src=("'self'", "use.fontawesome.com", "unpkg.com", "fonts.googleapis.com"),
 )
 app.add_middleware(AuthenticationMiddleware, backend=TokenAuthBackend())
-app.add_middleware(SessionMiddleware, secret_key=getenv("TOKEN_SECRET"))
+app.add_middleware(SessionMiddleware, secret_key=settings.TOKEN_SECRET)
 
 class CacheHeaderStaticFiles(StaticFiles):
     async def get_response(self, path, scope):
@@ -78,13 +80,6 @@ async def need_auth(request: HTTPConnection):
 @app.route("/baka")
 async def not_admin(request: HTTPConnection):
     return templates.TemplateResponse("baka.j2", {"request": request})
-
-
-@app.route("/sign_out")
-async def sign_out(request: HTTPConnection):
-    request.session.pop("token", None)
-
-    return RedirectResponse(url=request.url_for("index"))
 
 
 @app.route("/fresher_challenge")

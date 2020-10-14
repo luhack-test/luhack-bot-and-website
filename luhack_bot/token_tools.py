@@ -13,14 +13,6 @@ def generate_auth_token(user_id: int, email: str) -> str:
     """Generate an auth token for a user and an email."""
     return token_signer.dumps({"user_id": user_id, "email": email})
 
-
-def generate_writeup_edit_token(username: str, user_id: int, is_admin: bool) -> str:
-    """Generate an auth token for editing/ creating writeups."""
-    return token_signer.dumps(
-        {"username": username, "user_id": user_id, "is_admin": is_admin}
-    )
-
-
 def decode_auth_token(token: str) -> Optional[Tuple[int, str]]:
     """Decode an auth token, returns either a tuple of the user id and email after decoding a valid token, None otherwise.
 

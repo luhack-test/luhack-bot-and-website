@@ -1,4 +1,3 @@
-from os import getenv
 from datetime import datetime
 
 import aiohttp
@@ -7,9 +6,9 @@ from discord.colour import Colour
 from discord.embeds import Embed
 from discord.webhook import Webhook, AsyncWebhookAdapter
 
-from luhack_site import load_env
+from luhack_site import settings
 
-webhook_url = getenv("LOG_WEBHOOK")
+webhook_url = settings.LOG_WEBHOOK
 
 
 async def log_to_webhook(*, content=None, embed=None):

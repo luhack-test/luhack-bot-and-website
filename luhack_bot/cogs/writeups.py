@@ -8,7 +8,6 @@ from sqlalchemy_searchable import search as pg_search
 
 from luhack_bot import constants
 from luhack_bot.db.models import Writeup
-from luhack_bot.token_tools import generate_writeup_edit_token
 from luhack_bot.utils.checks import is_authed
 
 logger = logging.getLogger(__name__)
@@ -91,25 +90,6 @@ class Writeups(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    # @writeups.command(aliases=["create"])
-    # async def new(
-    #     self,
-    #     ctx,
-    #     title: commands.clean_content,
-    #     tags: commands.clean_content,
-    #     *,
-    #     content: commands.clean_content,
-    # ):
-    #     """Create a new writeup."""
-    #     await Writeup.create_auto(
-    #         author_id=ctx.author.id,
-    #         title=title,
-    #         tags=tags.split(),
-    #         content=content,
-    #     )
-
-    #     await ctx.send("Created your writeup.")
-
     @writeups.command()
     async def delete(self, ctx, *, title: str):
         """Delet a writeup"""
@@ -130,23 +110,9 @@ class Writeups(commands.Cog):
 
     @commands.command(aliases=["site_link"])
     async def site_token(self, ctx):
-        """Generate a token allowing you to create/edit writeups (and blogs/challenges for disciples)."""
+        """Deprecated, sign in to the site via OAuth now."""
 
-        member_in_luhack = self.bot.luhack_guild().get_member(ctx.author.id)
-
-        is_disciple = (
-            discord.utils.get(member_in_luhack.roles, id=constants.disciple_role_id)
-            is not None
-        )
-        is_admin = member_in_luhack.guild_permissions.administrator or is_disciple
-
-        token = generate_writeup_edit_token(ctx.author.name, ctx.author.id, is_admin)
-
-        url = constants.writeups_base_url.with_query(token=token)
-
-        await ctx.author.send(
-            f"Visit this link and you'll be authed for a month: {url}"
-        )
+        await ctx.send("Sign in to the site using OAuth now!")
 
 def setup(bot):
     bot.add_cog(Writeups(bot))

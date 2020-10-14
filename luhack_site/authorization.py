@@ -4,10 +4,11 @@ from starlette.authentication import (
     AuthenticationBackend,
     AuthenticationError,
     SimpleUser,
-    AuthCredentials, UnauthenticatedUser,
+    AuthCredentials,
+    UnauthenticatedUser,
 )
 
-from luhack_bot.token_tools import decode_writeup_edit_token
+from luhack_bot.db.models import User as DBUser
 
 
 class User(SimpleUser):
@@ -16,8 +17,10 @@ class User(SimpleUser):
         self.discord_id = discord_id
         self.is_admin = is_admin
 
+
 class LUnauthenticatedUser(UnauthenticatedUser):
     is_admin = False
+
 
 def wrap_result_auth(f):
     @wraps(f)
@@ -26,31 +29,41 @@ def wrap_result_auth(f):
         if r is None:
             return AuthCredentials(), LUnauthenticatedUser()
         return r
+
     return inner
+
 
 class TokenAuthBackend(AuthenticationBackend):
     @wrap_result_auth
     async def authenticate(self, request: HTTPConnection):
-        token = request.query_params.get("token")
-
-        if token is None:
-            if "token" not in request.session:
-                return
-            token = request.session["token"]
-
-        decoded = decode_writeup_edit_token(token)
-        if decoded is None:
+        if "discord_id" not in request.session:
+            request.session.pop("user", None)
             return
 
-        request.session["token"] = token
+        user = request.session.get("user")
+        if not user:
+            db_user = await DBUser.get(request.session["discord_id"])
+            if db_user is None:
+                request.session.pop("discord_id", None)
+                return
+            user = {
+                "discord_id": db_user.discord_id,
+                "is_admin": db_user.is_admin,
+                "username": db_user.username,
+            }
+            request.session["user"] = user
 
-        username, user_id, is_admin = decoded
+        username, discord_id, is_admin = (
+            user["username"],
+            user["discord_id"],
+            user["is_admin"],
+        )
 
         creds = ["authenticated"]
         if is_admin:
             creds.append("admin")
 
-        return AuthCredentials(creds), User(username, user_id, is_admin)
+        return AuthCredentials(creds), User(username, discord_id, is_admin)
 
 
 def can_edit(request, author_id=None):

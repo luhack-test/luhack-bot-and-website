@@ -72,7 +72,13 @@ class Verification(commands.Cog):
                 else:
                     self.members_flagged_as_left.add(user.discord_id)
             else:
-                await user.update(username=member.name).apply()
+                is_disciple = (
+                    discord.utils.get(member.roles, id=constants.disciple_role_id)
+                    is not None
+                )
+                is_admin = member.guild_permissions.administrator or is_disciple
+
+                await user.update(username=member.name, is_admin=is_admin).apply()
 
     @commands.command()
     async def become_prospective(self, ctx, token: str):
