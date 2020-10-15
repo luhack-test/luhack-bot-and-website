@@ -894,6 +894,15 @@
   display: inline-block;
 }
 
+.post-note-good {
+  margin: 0 0.1em;
+  padding: 0.3em 1em;
+  color: #ffffff !important;
+  background: #11b51a;
+  font-size: 80%;
+  display: inline-block;
+}
+
 .post-note-warning-sidebar {
   margin: 0 0.1em;
   padding: 0.3em 1em;

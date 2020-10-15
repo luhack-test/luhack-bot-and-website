@@ -1,6 +1,6 @@
 {% from "challenge/links.j2" import tag_link with context %}
 
-{% macro challenge_preview(challenge, content, url, solves) -%}
+{% macro challenge_preview(challenge, content, url, solves, did_solve) -%}
     <section class="post">
         <header class="post-header">
             <h2 class="post-title"><a href="{{ url }}">{{ challenge.title }}</a></h2>
@@ -13,6 +13,9 @@
                 {% endif %}
                 {% if challenge.depreciated %}
                     <span class="post-note-warning">depreciated</span>
+                {% endif %}
+                {% if did_solve %}
+                    <span class="post-note-good">solved</span>
                 {% endif %}
                 Solved {{ solves }} {{ "time" if solves == 1 else "times" }} | {{ challenge.points }} Points
                 {% for tag in challenge.tags -%}

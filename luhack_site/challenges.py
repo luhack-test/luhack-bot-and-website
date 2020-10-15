@@ -61,12 +61,31 @@ def should_skip_challenge(c: Challenge, is_admin: bool) -> bool:
 async def challenge_index(request: HTTPConnection):
     solves = sa.func.count(CompletedChallenge.challenge_id).label("solves")
 
+    select = [Challenge, solves]
+    columns = (Challenge, ColumnLoader(solves))
+
+    if request.user.is_authenticated:
+        solved_challenges = (
+            db.select([CompletedChallenge.challenge_id])
+            .where(CompletedChallenge.discord_id == request.user.discord_id)
+            .cte("solved_challenges")
+        )
+
+        solved = (
+            sa.exists()
+            .where(solved_challenges.c.challenge_id == Challenge.id)
+            .label("solved")
+        )
+
+        select.append(solved)
+        columns = (*columns, ColumnLoader(solved))
+
     challenges = await (
-        db.select([Challenge, solves])
+        db.select(select)
         .select_from(Challenge.outerjoin(CompletedChallenge))
         .group_by(Challenge.id)
         .order_by(Challenge.creation_date.desc(), Challenge.id.desc())
-        .gino.load((Challenge, ColumnLoader(solves)))
+        .gino.load(columns)
         .all()
     )
 
@@ -75,8 +94,9 @@ async def challenge_index(request: HTTPConnection):
             w,
             shorten(plaintext_markdown(w.content), width=800, placeholder="..."),
             solves,
+            did_solve and did_solve[0],
         )
-        for (w, solves) in challenges
+        for (w, solves, *did_solve) in challenges
         if not should_skip_challenge(w, request.user.is_admin)
     ]
 
