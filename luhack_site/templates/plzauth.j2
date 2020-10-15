@@ -1,5 +1,5 @@
 {% extends "base.j2" %}
 
 {% block content %}
-    <p>You're not authed, use the `!site_token` command of the luhack bot to get an auth link!</p>
+    <p><a href="{{ url_for("sign_in") }}" title="Sign in">You're not authed, sign in with discord by clicking here</a></p>
 {% endblock %}

@@ -1050,9 +1050,6 @@ details[open] > summary:after {
   margin: 0;
 }
 
-.footer {
-  padding: 1em 0;
-}
 .footer a {
   color: #cccccc;
   font-size: 80%;
@@ -1087,7 +1084,7 @@ details[open] > summary:after {
   }
 
   .footer {
-    margin-left: 16.666%;
+    width: 16.666%;
   }
 
   .search-bar {
@@ -1120,10 +1117,11 @@ input {
 }
 
 .footer {
+  padding: 1em 0;
+  bottom: 0;
+  position: fixed;
   font-size: 87.5%;
-  border-top: 1px solid #dad2d8;
   padding: 1em;
-  background: rgb(250, 250, 250);
 }
 
 .legal {
