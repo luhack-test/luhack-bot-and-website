@@ -115,10 +115,13 @@ async def challenge_view(request: HTTPConnection):
     if should_skip_challenge(challenge, request.user.is_admin):
         return abort(404, "Challenge not found")
 
-    solved_challenge = await CompletedChallenge.query.where(
-        (CompletedChallenge.discord_id == request.user.discord_id)
-        & (CompletedChallenge.challenge_id == challenge.id)
-    ).gino.first()
+    if request.user.is_authenticated:
+        solved_challenge = await CompletedChallenge.query.where(
+            (CompletedChallenge.discord_id == request.user.discord_id)
+            & (CompletedChallenge.challenge_id == challenge.id)
+        ).gino.first()
+    else:
+        solved_challenge = False
 
     rendered = highlight_markdown_unsafe(challenge.content)
 
