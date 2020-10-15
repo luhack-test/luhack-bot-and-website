@@ -1,6 +1,7 @@
 {% extends "challenge/base.j2" %}
 
 {% from "challenge/links.j2" import tag_link with context %}
+{% from "macros.j2" import with_errors %}
 
 {% block title %}{{ challenge.title }}{% endblock title %}
 {% block og_title %}{{ challenge.title }}{% endblock %}
@@ -33,6 +34,16 @@
                 {{ tag_link(tag) }}
             {% endfor %}
         </div>
+
+        {% if not solved_challenge %}
+            <br />
+            <form class="pure-form" method="POST" action="{{ url_for("challenge_submit_answer", id=challenge.id) }}">
+                {{ with_errors(submit_form.answer, class="search-bar", placeholder="Flag/Answer") }}
+            </form>
+        {% else %}
+            <h4>Solved!</h4>
+        {% endif %}
+
         {% if challenge.answer %}
             <h5>
                 <span data-select-other-content="claim-command">Claim Command: </span>

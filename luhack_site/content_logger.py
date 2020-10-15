@@ -16,7 +16,6 @@ async def log_to_webhook(*, content=None, embed=None):
         webhook = Webhook.from_url(webhook_url, adapter=AsyncWebhookAdapter(sess))
         await webhook.send(content=content, embed=embed)
 
-
 async def log_edit(type_: str, name: str, author: str, url: str):
     embed = Embed(
         title=f"Edited {type_}: {name}", color=Colour.blue(), timestamp=datetime.utcnow(), url=url

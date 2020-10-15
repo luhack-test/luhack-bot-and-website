@@ -29,6 +29,9 @@ class TagListField(Field):
             self.data = []
 
     def post_validate(self, form, validation_stopped):
+        if not self.data:
+            return
+
         for i in self.data:
             l = len(i)
             if l < 3 or l > 20:
@@ -61,3 +64,6 @@ class ChallengeForm(Form):
     points = IntegerField(
         "Points", [validators.NumberRange(min=1)]
     )
+
+class AnswerForm(Form):
+    answer = StringField("Flag/Answer")

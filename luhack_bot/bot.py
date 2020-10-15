@@ -19,7 +19,8 @@ COGS = ["cogs.activity_checker",
         "cogs.todos",
         "cogs.verification",
         "cogs.writeups",
-        "cogs.challenges"
+        "cogs.challenges",
+        "cogs.notifier",
         ]
 
 class LUHackBot(commands.Bot):

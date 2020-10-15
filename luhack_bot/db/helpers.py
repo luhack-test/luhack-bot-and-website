@@ -1,3 +1,5 @@
+import ujson
+
 from luhack_bot.db.models import db
 from luhack_bot.secrets import db_url
 

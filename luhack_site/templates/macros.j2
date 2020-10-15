@@ -1,0 +1,8 @@
+{% macro with_errors(field) %}
+    {% if field.errors %}
+        {{ field(invalid=True, **kwargs) }}
+        <span class="pure-form-message-inline">{{ ", ".join(field.errors)|e }}</span>
+    {% else %}
+        {{ field(**kwargs) }}
+    {% endif %}
+{% endmacro %}

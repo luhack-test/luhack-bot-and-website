@@ -14,7 +14,7 @@ from starlette.routing import Router
 
 from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
-from luhack_site.forms import ChallengeForm
+from luhack_site.forms import ChallengeForm, AnswerForm
 from luhack_site.markdown import highlight_markdown_unsafe, plaintext_markdown
 from luhack_site.templater import templates
 from luhack_site.images import encoded_existing_images
@@ -115,6 +115,11 @@ async def challenge_view(request: HTTPConnection):
     if should_skip_challenge(challenge, request.user.is_admin):
         return abort(404, "Challenge not found")
 
+    solved_challenge = await CompletedChallenge.query.where(
+        (CompletedChallenge.discord_id == request.user.discord_id)
+        & (CompletedChallenge.challenge_id == challenge.id)
+    ).gino.first()
+
     rendered = highlight_markdown_unsafe(challenge.content)
 
     return templates.TemplateResponse(
@@ -124,6 +129,8 @@ async def challenge_view(request: HTTPConnection):
             "request": request,
             "rendered": rendered,
             "solves": solves,
+            "submit_form": AnswerForm(),
+            "solved_challenge": solved_challenge,
         },
     )
 
@@ -211,6 +218,77 @@ async def challenge_delete(request: HTTPConnection):
     return redirect_response(url=request.url_for("challenge_index"))
 
 
+@router.route("/submit/{id:int}", methods=["POST"])
+@requires("authenticated", redirect="need_auth")
+async def challenge_submit_answer(request: HTTPConnection):
+    id = request.path_params["id"]
+
+    form = await request.form()
+    form = AnswerForm(form)
+
+    is_valid = form.validate()
+
+    answer = form.answer.data
+
+    solves = sa.func.count(CompletedChallenge.challenge_id).label("solves")
+
+    challenge = await (
+        db.select([Challenge, solves])
+        .select_from(Challenge.outerjoin(CompletedChallenge))
+        .group_by(Challenge.id)
+        .where(Challenge.id == id)
+        .gino.load((Challenge, ColumnLoader(solves)))
+        .first()
+    )
+
+    if challenge is None:
+        return abort(404, "Challenge not found")
+
+    challenge, solves = challenge
+
+    if should_skip_challenge(challenge, request.user.is_admin):
+        return abort(404, "Challenge not found")
+
+    if (challenge.answer or challenge.flag) != answer:
+        is_valid = False
+        form.answer.errors.append("Incorrect answer.")
+
+    # TODO? change this to a flash message
+    if challenge.depreciated:
+        is_valid = False
+        form.answer.errors.append("Correct, but this challenge is depreciated sorry.")
+
+    already_claimed = await CompletedChallenge.query.where(
+        (CompletedChallenge.discord_id == request.user.discord_id)
+        & (CompletedChallenge.challenge_id == challenge.id)
+    ).gino.first()
+
+    if already_claimed is not None:
+        # shouldn't see the form anyway
+        is_valid = False
+        form.answer.errors.append("You've already solved this challenge.")
+
+    if is_valid:
+        await CompletedChallenge.create(
+            discord_id=request.user.discord_id, challenge_id=challenge.id
+        )
+
+        return redirect_response(url=request.url_for("challenge_view", slug=challenge.slug))
+
+    rendered = highlight_markdown_unsafe(challenge.content)
+
+    return templates.TemplateResponse(
+        "challenge/view.j2",
+        {
+            "challenge": challenge,
+            "request": request,
+            "rendered": rendered,
+            "solves": solves,
+            "submit_form": form,
+        },
+    )
+
+
 @router.route("/new")
 class NewChallenge(HTTPEndpoint):
     @requires("admin", redirect="not_admin")
@@ -243,7 +321,7 @@ class NewChallenge(HTTPEndpoint):
             is not None
         ):
             is_valid = False
-            form.errors.setdefault("title", []).append(
+            form.title.errors.append(
                 f"A challenge with the title '{form.title.data}' already exists."
             )
 

@@ -965,6 +965,10 @@ details[open] > summary:after {
   color: #ffffff;
 }
 
+.sidebar .pure-form-message-inline {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .brand-title,
 .brand-tagline {
   margin: 0;
@@ -1049,7 +1053,7 @@ details[open] > summary:after {
   background: none;
 }
 
-#search-bar {
+.search-bar {
   width: 80%;
 }
 
@@ -1077,7 +1081,7 @@ details[open] > summary:after {
     margin-left: 16.666%;
   }
 
-  #search-bar {
+  .search-bar {
     width: 100%;
   }
 }

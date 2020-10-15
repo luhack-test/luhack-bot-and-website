@@ -1,5 +1,7 @@
 {% extends "blog/base.j2" %}
 
+{% from "macros.j2" import with_errors %}
+
 {% block style %}
     {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', path="/css/tagify.min.css") }}">
@@ -18,15 +20,15 @@
 
             <div class="pure-control-group">
                 {{ form.title.label }}
-                {{ form.title() }}
+                {{ with_errors(form.title, ) }}
             </div>
             <div class="pure-control-group">
                 {{ form.tags.label }}
-                {{ form.tags(type="tags", data_tags_whitelist=existing_tags) }}
+                {{ with_errors(form.tags, type="tags", data_tags_whitelist=existing_tags) }}
             </div>
             <div class="pure-control-group">
                 {{ form.content.label }}
-                {{ form.content() }}
+                {{ with_errors(form.content, ) }}
             </div>
             <div class="pure-controls">
                 <button type="submit" class="pure-button pure-button-primary">Submit</button>

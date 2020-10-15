@@ -415,20 +415,6 @@ class Challenges(commands.Cog):
             + warn_dm_message
         )
 
-        embed = discord.Embed(
-            title=f"Challenge Solved!",
-            description=f"{ctx.author.mention} just solved '{challenge.title}' and was awarded {challenge.points} points.",
-            color=discord.Colour.dark_teal(),
-            timestamp=datetime.utcnow(),
-            url=str(self.challenge_url(challenge.slug)),
-        )
-        embed.set_author(
-            name=ctx.author.display_name,
-            icon_url=ctx.author.avatar_url_as(format="png"),
-        )
-        channel = ctx.bot.luhack_guild().get_channel(constants.challenge_log_channel_id)
-        if channel is not None:
-            await channel.send(embed=embed)
 
     @commands.check(is_admin)
     @challenges.command()

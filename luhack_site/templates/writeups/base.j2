@@ -17,6 +17,6 @@
 
 {% block search_bar %}
     <form class="pure-form" method="GET" action="{{ url_for("writeups_search") }}">
-        <input name="search" id="search-bar" type="search" autocomplete="off" placeholder="Search writeups" value="{{ query }}">
+        <input name="search" class="search-bar" id="search-bar" type="search" autocomplete="off" placeholder="Search writeups" value="{{ query }}">
     </form>
 {% endblock %}

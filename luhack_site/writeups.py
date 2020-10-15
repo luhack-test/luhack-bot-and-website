@@ -222,7 +222,7 @@ class NewWriteup(HTTPEndpoint):
             is not None
         ):
             is_valid = False
-            form.errors.setdefault("title", []).append(
+            form.title.errors.append(
                 f"A writeup with the title '{form.title.data}' already exists."
             )
 
