@@ -18,7 +18,7 @@ class TagListField(Field):
         return ", ".join(self.data or ())
 
     def process_formdata(self, valuelist):
-        if valuelist:
+        if valuelist and valuelist[0]:
             tags = [
                 invalid_tag_chars.sub("", tag["value"])
                 for tag in ujson.decode(valuelist[0])
