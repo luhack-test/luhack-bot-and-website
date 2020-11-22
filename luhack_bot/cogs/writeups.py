@@ -155,7 +155,7 @@ class Writeups(commands.Cog):
                 f.writestr(f"{writeup.slug}.md", writeup.content)
 
             for image in images:
-                f.write(f"images/{image.id}.{image.filetype}", image.image)
+                f.writestr(f"images/{image.id}.{image.filetype}", image.image)
 
         zip_data.seek(0)
 
