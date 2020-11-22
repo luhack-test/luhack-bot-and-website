@@ -50,6 +50,13 @@ class PostForm(Form):
     tags = TagListField("Tags")
     content = TextAreaField("Content")
 
+class WriteupForm(Form):
+    title = StringField(
+        "Title", [validators.Length(min=4, max=25)]
+    )
+    tags = TagListField("Tags")
+    private = BooleanField("Private")
+    content = TextAreaField("Content")
 
 class ChallengeForm(Form):
     title = StringField(

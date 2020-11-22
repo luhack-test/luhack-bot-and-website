@@ -73,6 +73,8 @@ class Writeup(db.Model):
         TSVectorType("title", "content", weights={"title": "A", "content": "B"})
     )
 
+    private = db.Column(db.Boolean, nullable=False, default=False)
+
     _tags_idx = db.Index("writeups_tags_array_idx", "tags", postgresql_using="gin")
 
     @classmethod

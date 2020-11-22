@@ -12,6 +12,8 @@ from luhack_bot.db.models import User as DBUser
 
 
 class User(SimpleUser):
+    is_authed = True
+
     def __init__(self, username: str, discord_id: int, is_admin: bool):
         super().__init__(username)
         self.discord_id = discord_id
@@ -19,6 +21,7 @@ class User(SimpleUser):
 
 
 class LUnauthenticatedUser(UnauthenticatedUser):
+    is_authed = False
     is_admin = False
 
 

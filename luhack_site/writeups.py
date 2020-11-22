@@ -11,7 +11,7 @@ from starlette.routing import Router
 
 from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
-from luhack_site.forms import PostForm
+from luhack_site.forms import WriteupForm
 from luhack_site.markdown import highlight_markdown, plaintext_markdown
 from luhack_site.templater import templates
 from luhack_site.images import encoded_existing_images
@@ -21,6 +21,8 @@ from luhack_bot.db.models import User, Writeup, db
 
 router = Router()
 
+def should_skip_writeup(w: Writeup, is_authed: bool) -> bool:
+    return w.private and not is_authed
 
 @router.route("/")
 async def writeups_index(request: HTTPConnection):
@@ -33,6 +35,7 @@ async def writeups_index(request: HTTPConnection):
     rendered = [
         (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
         for w in latest
+        if not should_skip_writeup(w, request.user.is_authed)
     ]
 
     return templates.TemplateResponse(
@@ -46,7 +49,7 @@ async def writeups_view(request: HTTPConnection):
 
     writeup = await Writeup.load(author=User).where(Writeup.slug == slug).gino.first()
 
-    if writeup is None:
+    if writeup is None or should_skip_writeup(writeup, request.user.is_authed):
         return abort(404, "Writeup not found")
 
     rendered = highlight_markdown(writeup.content)
@@ -71,6 +74,7 @@ async def writeups_by_tag(request: HTTPConnection):
     rendered = [
         (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
         for w in writeups
+        if not should_skip_writeup(w, request.user.is_authed)
     ]
 
     return templates.TemplateResponse(
@@ -92,6 +96,7 @@ async def writeups_by_user(request: HTTPConnection):
     rendered = [
         (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
         for w in writeups
+        if not should_skip_writeup(w, request.user.is_authed)
     ]
 
     return templates.TemplateResponse(
@@ -104,6 +109,7 @@ async def get_all_tags():
         await sa.select([sa.column("tag")])
         .select_from(Writeup)
         .select_from(sa.func.unnest(Writeup.tags).alias("tag"))
+        .where(sa.not_(Writeup.private))
         .group_by(sa.column("tag"))
         .order_by(sa.func.count())
         .gino.all()
@@ -157,7 +163,10 @@ async def writeups_search(request: HTTPConnection):
         writeup.author = author
         return writeup
 
-    writeups = [(build_writeup(r), r.headline) for r in writeups]
+    writeups = [(build_writeup(w), r.headline)
+                for w in writeups
+                if not should_skip_writeup(w, request.user.is_authed)
+                ]
 
     rendered = [
         (w, shorten(plaintext_markdown(headline), width=300, placeholder="..."))
@@ -194,7 +203,7 @@ async def writeups_delete(request: HTTPConnection):
 class NewWriteup(HTTPEndpoint):
     @requires("authenticated", redirect="need_auth")
     async def get(self, request: HTTPConnection):
-        form = PostForm()
+        form = WriteupForm()
 
         images = await encoded_existing_images(request)
         tags = ujson.dumps(await get_all_tags())
@@ -213,7 +222,7 @@ class NewWriteup(HTTPEndpoint):
     async def post(self, request: HTTPConnection):
         form = await request.form()
 
-        form = PostForm(form)
+        form = WriteupForm(form)
 
         is_valid = form.validate()
 
@@ -232,6 +241,7 @@ class NewWriteup(HTTPEndpoint):
                 title=form.title.data,
                 tags=form.tags.data,
                 content=form.content.data,
+                private=form.private.data
             )
 
             url=request.url_for("writeups_view", slug=writeup.slug)
@@ -267,8 +277,9 @@ class EditWriteup(HTTPEndpoint):
         if not can_edit(request, writeup.author_id):
             return abort(400)
 
-        form = PostForm(
-            title=writeup.title, tags=writeup.tags, content=writeup.content
+        form = WriteupForm(
+            title=writeup.title, tags=writeup.tags, content=writeup.content,
+            private=writeup.private
         )
 
         images = await encoded_existing_images(request)
@@ -299,7 +310,7 @@ class EditWriteup(HTTPEndpoint):
 
         form = await request.form()
 
-        form = PostForm(form)
+        form = WriteupForm(form)
 
         if form.validate():
             await writeup.update_auto(
@@ -307,6 +318,7 @@ class EditWriteup(HTTPEndpoint):
                 title=form.title.data,
                 tags=form.tags.data,
                 content=form.content.data,
+                private=form.private.data
             ).apply()
 
             url=request.url_for("writeups_view", slug=writeup.slug)
