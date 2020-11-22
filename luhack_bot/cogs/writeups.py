@@ -1,13 +1,17 @@
 import logging
-from typing import List
-from typing import Optional
+from typing import List, Literal, Optional, Tuple
+import re
+from io import BytesIO
+import zipfile
 
 import discord
+import sqlalchemy as sa
 from discord.ext import commands
 from sqlalchemy_searchable import search as pg_search
+from discord.ext.alternatives import literal_converter
 
 from luhack_bot import constants
-from luhack_bot.db.models import Writeup
+from luhack_bot.db.models import Image, Writeup
 from luhack_bot.utils.checks import is_authed
 
 logger = logging.getLogger(__name__)
@@ -90,6 +94,74 @@ class Writeups(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @staticmethod
+    def extract_and_update_images_for_export(content: str) -> Tuple[str, List[str]]:
+        images = []
+
+        def repl(m):
+            images.append(m.group(2))
+            return f"(.{m.group(1)})"
+
+        new_content = re.sub(r"\((/images/([A-z0-9\-]+)\.png)\)",
+                             repl, content)
+
+        return new_content, images
+
+    @staticmethod
+    def preprocess_writeups_for_export(writeups: List[Writeup]) -> List[str]:
+        images = []
+
+        for writeup in writeups:
+            (w, i) = Writeups.extract_and_update_images_for_export(writeup.content)
+            images.extend(i)
+            writeup.content = w
+
+        return images
+
+    @staticmethod
+    async def fetch_images_for_export(images: List[str]) -> List[Image]:
+        return await Image.query.where(Image.id.in_(images)).gino.all()
+
+    @writeups.command()
+    async def export(self, ctx, op: Optional[Literal["slugs", "tags"]] = "slugs", *tags_or_slugs: str):
+        """Export writeups into a zip containing their markdown content and their images.
+
+        op decides what writeups to get:
+          - slugs: export all writeups from the given list of writeup slugs
+          - tags: export all writeups that have all of the given tags
+        """
+
+        writeup_filter = (
+            Writeup.tags.contains
+            if op == "tags"
+            else Writeup.slug.in_
+        )
+
+        writeups = (
+            await Writeup.query.where(writeup_filter(tags_or_slugs))
+            .order_by(sa.desc(Writeup.creation_date))
+            .gino.all()
+        )
+
+        image_ids = self.preprocess_writeups_for_export(writeups)
+
+        images = await self.fetch_images_for_export(image_ids)
+
+        zip_data = BytesIO()
+
+        with zipfile.ZipFile(zip_data, mode="w",
+                             compression=zipfile.ZIP_DEFLATED) as f:
+            for writeup in writeups:
+                f.writestr(f"{writeup.slug}.md", writeup.content)
+
+            for image in images:
+                f.write(f"images/{image.id}.{image.filetype}", image.image)
+
+        zip_data.seek(0)
+
+        await ctx.send("Here you go", file=discord.File(zip_data, "writeups.zip"))
+
+
     @writeups.command()
     async def delete(self, ctx, *, title: str):
         """Delet a writeup"""
@@ -113,6 +185,7 @@ class Writeups(commands.Cog):
         """Deprecated, sign in to the site via OAuth now."""
 
         await ctx.send("Sign in to the site using OAuth now!")
+
 
 def setup(bot):
     bot.add_cog(Writeups(bot))

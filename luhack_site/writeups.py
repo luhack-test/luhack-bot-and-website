@@ -49,8 +49,11 @@ async def writeups_view(request: HTTPConnection):
 
     writeup = await Writeup.load(author=User).where(Writeup.slug == slug).gino.first()
 
-    if writeup is None or should_skip_writeup(writeup, request.user.is_authed):
+    if writeup is None:
         return abort(404, "Writeup not found")
+
+    if should_skip_writeup(writeup, request.user.is_authed):
+        return abort(404, "This writeup is hidden, auth to view it!")
 
     rendered = highlight_markdown(writeup.content)
 

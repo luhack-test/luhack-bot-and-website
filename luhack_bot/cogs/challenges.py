@@ -1,21 +1,19 @@
-from datetime import datetime
 import logging
 import textwrap
-from typing import List, Tuple, TypeVar, Literal
-from typing import Optional
-from tabulate import tabulate
+from datetime import datetime
+from typing import List, Literal, Optional, Tuple, TypeVar
 
 import discord
-from discord.ext import commands
 import sqlalchemy as sa
-from sqlalchemy_searchable import search as pg_search
+from discord.ext import commands
 from gino.loader import ColumnLoader
+from sqlalchemy_searchable import search as pg_search
 from discord.ext.alternatives import literal_converter
+from tabulate import tabulate
 
 from luhack_bot import constants
-from luhack_bot.db.models import User, Challenge, CompletedChallenge, db
-from luhack_bot.utils.checks import is_authed
-from luhack_bot.utils.checks import is_admin
+from luhack_bot.db.models import Challenge, CompletedChallenge, User, db
+from luhack_bot.utils.checks import is_admin, is_authed
 
 logger = logging.getLogger(__name__)
 
