@@ -69,9 +69,10 @@ h3 {
 }
 
 .header {
+  position: sticky;
+  top: 0;
   text-align: center;
-  top: auto;
-  margin: 3em auto;
+  padding: 2em 0;
 }
 
 .sidebar details {
@@ -202,7 +203,7 @@ details[open] > summary:after {
   }
 
   .header {
-    margin: 2em 2em 0;
+    margin: 0 2em 0;
   }
 
   .search-bar {
@@ -339,9 +340,9 @@ main {
   user-select: all;
 }
 
-.with-sidebar {
-  overflow: hidden;
-}
+/* .with-sidebar { */
+/*   overflow: hidden; */
+/* } */
 
 .with-sidebar > * {
   display: flex;
