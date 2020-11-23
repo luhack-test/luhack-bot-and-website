@@ -53,7 +53,7 @@ async def writeups_view(request: HTTPConnection):
         return abort(404, "Writeup not found")
 
     if should_skip_writeup(writeup, request.user.is_authed):
-        return abort(404, "This writeup is hidden, auth to view it!")
+        return redirect_response(url=request.url_for("need_auth"))
 
     rendered = highlight_markdown(writeup.content)
 
