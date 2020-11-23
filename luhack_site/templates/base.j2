@@ -4,7 +4,7 @@
         {%- block head %}
             {%- block meta %}
                 <meta charset="utf-8">
-                <meta name="viewport" content="width=device=width, initial-scale=1.0">
+                <meta name="viewport" content="width=device=width, initial-scale=1">
                 <meta property="og:title" content="{% block og_title %}LUHack{% endblock %}">
                 <meta property="og:type" content="{% block og_type %}website{% endblock %}">
                 <meta property="og:image" content="{{ url_for("static", path="/images/logo_small.png") }}">
@@ -17,74 +17,71 @@
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/brands.css" integrity="sha384-n9+6/aSqa9lBidZMRCQHTHKJscPq6NW4pCQBiMmHdUCvPN8ZOg2zJJTkC7WIezWv" crossorigin="anonymous">
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/solid.css" integrity="sha384-QokYePQSOwpBDuhlHOsX0ymF6R/vLk/UQVz3WHa6wygxI5oGTmDTv8wahFOSspdm" crossorigin="anonymous">
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/fontawesome.css" integrity="sha384-vd1e11sR28tEK9YANUtpIOdjGW14pS87bUBuOIoBILVWLFnS+MCX9T6MMf0VdPGq" crossorigin="anonymous">
-                <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" crossorigin="anonymous">
+                <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
                 <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
-
-                <!--[if lte IE 8]>
-                    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-old-ie-min.css" crossorigin="anonymous">
-                <![endif]-->
-                <!--[if gt IE 8]><!-->
-                <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css" crossorigin="anonymous">
-                <!--<![endif]-->
                 <link rel="stylesheet" href="{{ url_for('static', path="/css/main.css") }}">
                 <link rel="stylesheet" href="{{ url_for('static', path="/css/highlight.min.css") }}">
             {%- endblock style %}
         {%- endblock head %}
     </head>
     <body>
-        <div id="layout" class="pure-g">
+        <div class="with-sidebar">
             {%- block body %}
-                <div id="menu" class="sidebar pure-u-1 pure-u-md-1-6">
-                    <div class="header">
-                        <h1 class="brand-title">
-                            <a class="logo" href="{{ url_for("index") }}">
-                                <img src="{{ url_for('static', path="/images/luhack_logo.png") }}" alt="LUHack logo" width="100%" />
-                                <!-- <span class="logo-a">LU</span> <span class="logo-b">Hack</span> -->
-                            </a>
-                        </h1>
-                        <nav class="nav">
-                            {% block nav %}
-                                <ul class="nav-list">
-                                    <li class="nav-item">
-                                        <a class="button" href="{{ url_for("index") }}">Home</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="button" href="{{ url_for("writeups_index") }}">Writeups</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="button" href="{{ url_for("blog_index") }}">Blog Posts</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="button" href="{{ url_for("challenge_index") }}">Challenges</a>
-                                    </li>
-                                    {% block nav_cont %}{% endblock nav_cont %}
-                                </ul>
-                            {% endblock nav %}
-                        </nav>
+                <div class="fill-height">
+                    <div id="menu" class="sidebar">
+                        <div class="header">
+                            <h1 class="brand-title">
+                                <a class="logo" href="{{ url_for("index") }}">
+                                    <img src="{{ url_for('static', path="/images/luhack_logo.png") }}" alt="LUHack logo" width="100%" />
+                                    <!-- <span class="logo-a">LU</span> <span class="logo-b">Hack</span> -->
+                                </a>
+                            </h1>
+                            <nav class="nav">
+                                {% block nav %}
+                                    <ul class="nav-list">
+                                        <li class="nav-item">
+                                            <a class="button" href="{{ url_for("index") }}">Home</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="button" href="{{ url_for("writeups_index") }}">Writeups</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="button" href="{{ url_for("blog_index") }}">Blog Posts</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="button" href="{{ url_for("challenge_index") }}">Challenges</a>
+                                        </li>
+                                        {% block nav_cont %}{% endblock nav_cont %}
+                                    </ul>
+                                {% endblock nav %}
+                            </nav>
 
-                        <br />
+                            <br />
 
-                        {% block search_bar %}{% endblock search_bar %}
+                            {% block search_bar %}{% endblock search_bar %}
 
-                        <div class="header-content">
-                            {%- block header_content %}{% endblock header_content %}
+                            <div class="header-content">
+                                {%- block header_content %}{% endblock header_content %}
+                            </div>
                         </div>
-                    </div>
-                    <div class="footer">
-                        <div class="legal pure-g">
-                            <div class="pure-u-1 u-sm-1-1">
-                                {% if request.user.is_authenticated %}
-                                    <a href="{{ url_for("logout") }}" title="Log Out">Authed as: {{ request.user.username }}</a>
-                                {% else %}
-                                    <a href="{{ url_for("sign_in") }}" title="Sign In">Sign In</a>
-                                {% endif %}
+                        <div class="footer">
+                            <div class="legal">
+                                <div class="">
+                                    {% if request.user.is_authenticated %}
+                                        <a href="{{ url_for("logout") }}" title="Log Out">Authed as: {{ request.user.username }}</a>
+                                    {% else %}
+                                        <a href="{{ url_for("sign_in") }}" title="Sign In">Sign In</a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="not-sidebar">
+                        <main>
+                            {%- block content %}{% endblock content %}
+                        </main>
+                    </div>
                 </div>
-                <main class="content pure-u-1 pure-u-md-5-6">
-                    {%- block content %}{% endblock content %}
-                </main>
                 {%- block script %}{% endblock script %}
             {%- endblock body %}
         </div>
