@@ -147,26 +147,26 @@ async def writeups_search(request: HTTPConnection):
 
     writeups = await query.as_scalar().gino.all()
 
-    def build_writeup(r):
+    def build_writeup(w):
         """we get back a RowProxy so manually construct the writeup from it."""
 
-        author = User(discord_id=r.discord_id, username=r.username, email=r.email)
+        author = User(discord_id=w.discord_id, username=w.username, email=w.email)
 
         writeup = Writeup(
-            id=r.id,
-            author_id=r.author_id,
-            title=r.title,
-            slug=r.slug,
-            tags=r.tags,
-            content=r.content,
-            creation_date=r.creation_date,
-            edit_date=r.edit_date,
+            id=w.id,
+            author_id=w.author_id,
+            title=w.title,
+            slug=w.slug,
+            tags=w.tags,
+            content=w.content,
+            creation_date=w.creation_date,
+            edit_date=w.edit_date,
         )
 
         writeup.author = author
         return writeup
 
-    writeups = [(build_writeup(w), r.headline)
+    writeups = [(build_writeup(w), w.headline)
                 for w in writeups
                 if not should_skip_writeup(w, request.user.is_authed)
                 ]
