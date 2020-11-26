@@ -4,12 +4,12 @@ body {
 
 .header a {
   text-decoration: none;
-  color: #93B7BE;
+  color: #93b7be;
 }
 
 .header a:hover,
 .header a:focus {
-  color: #80A4AB;
+  color: #80a4ab;
 }
 
 .post-category {
@@ -80,25 +80,25 @@ h3 {
 }
 
 summary {
-    outline: none;
+  outline: none;
 }
 
 summary::-webkit-details-marker {
-    display: none
+  display: none;
 }
 
 summary:after {
-    content: "+";
-    color: #fff;
-    float: left;
-    font-size: 1em;
-    margin: -2px 10px 0 0;
-    padding: 1px 0 3px 0;
-    width: 1em;
+  content: "+";
+  color: #fff;
+  float: left;
+  font-size: 1em;
+  margin: -2px 10px 0 0;
+  padding: 1px 0 3px 0;
+  width: 1em;
 }
 
 details[open] > summary:after {
-    content: "-";
+  content: "-";
 }
 
 .sidebar {
@@ -229,7 +229,6 @@ input {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-
 .button-danger {
   color: white;
   background: rgb(202, 60, 60);
@@ -325,9 +324,20 @@ main {
   margin-bottom: 0;
 }
 
+code {
+  padding: 0.03em;
+  margin: -0.2em 0;
+  border-radius: 3px;
+  font-size: 85%;
+  text-indent: 0;
+  border: 1px solid #f2f3f5;
+  white-space: pre-wrap;
+  background: #e3e5e8;
+}
+
 .codeline {
-  padding: .2em;
-  margin: -.2em 0;
+  padding: 0.2em;
+  margin: -0.2em 0;
   border-radius: 3px;
   font-size: 85%;
   text-indent: 0;
