@@ -57,7 +57,7 @@ class CacheHeaderStaticFiles(StaticFiles):
         r = await super().get_response(path, scope)
         r.headers.append("Cache-Control", "public")
         r.headers.append("Cache-Control", "must-revalidate")
-        r.headers.append("Cache-Control", "max-age=31536000")
+        r.headers.append("Cache-Control", "max-age=360")
 
         return r
 
