@@ -21,8 +21,10 @@ from luhack_bot.db.models import User, Writeup, db
 
 router = Router()
 
+
 def should_skip_writeup(w: Writeup, is_authed: bool) -> bool:
     return w.private and not is_authed
+
 
 @router.route("/")
 async def writeups_index(request: HTTPConnection):
@@ -107,12 +109,21 @@ async def writeups_by_user(request: HTTPConnection):
     )
 
 
-async def get_all_tags():
+async def get_all_tags(allow_private: bool=False):
+    private_filt = True if allow_private else sa.not_(Writeup.private)
+
+    print(sa.select([sa.column("tag")])
+        .select_from(Writeup)
+        .select_from(sa.func.unnest(Writeup.tags).alias("tag"))
+        .where(private_filt)
+        .group_by(sa.column("tag"))
+        .order_by(sa.func.count()))
+
     tags = (
         await sa.select([sa.column("tag")])
         .select_from(Writeup)
         .select_from(sa.func.unnest(Writeup.tags).alias("tag"))
-        .where(sa.not_(Writeup.private))
+        .where(private_filt)
         .group_by(sa.column("tag"))
         .order_by(sa.func.count())
         .gino.all()
@@ -166,10 +177,11 @@ async def writeups_search(request: HTTPConnection):
         writeup.author = author
         return writeup
 
-    writeups = [(build_writeup(w), w.headline)
-                for w in writeups
-                if not should_skip_writeup(w, request.user.is_authed)
-                ]
+    writeups = [
+        (build_writeup(w), w.headline)
+        for w in writeups
+        if not should_skip_writeup(w, request.user.is_authed)
+    ]
 
     rendered = [
         (w, shorten(plaintext_markdown(headline), width=300, placeholder="..."))
@@ -209,7 +221,7 @@ class NewWriteup(HTTPEndpoint):
         form = WriteupForm()
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = ujson.dumps(await get_all_tags(True))
 
         return templates.TemplateResponse(
             "writeups/new.j2",
@@ -244,16 +256,16 @@ class NewWriteup(HTTPEndpoint):
                 title=form.title.data,
                 tags=form.tags.data,
                 content=form.content.data,
-                private=form.private.data
+                private=form.private.data,
             )
 
-            url=request.url_for("writeups_view", slug=writeup.slug)
+            url = request.url_for("writeups_view", slug=writeup.slug)
             await log_create("writeup", writeup.title, request.user.username, url)
 
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = ujson.dumps(await get_all_tags(True))
 
         return templates.TemplateResponse(
             "writeups/new.j2",
@@ -281,12 +293,14 @@ class EditWriteup(HTTPEndpoint):
             return abort(400)
 
         form = WriteupForm(
-            title=writeup.title, tags=writeup.tags, content=writeup.content,
-            private=writeup.private
+            title=writeup.title,
+            tags=writeup.tags,
+            content=writeup.content,
+            private=writeup.private,
         )
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = ujson.dumps(await get_all_tags(True))
 
         return templates.TemplateResponse(
             "writeups/edit.j2",
@@ -321,16 +335,16 @@ class EditWriteup(HTTPEndpoint):
                 title=form.title.data,
                 tags=form.tags.data,
                 content=form.content.data,
-                private=form.private.data
+                private=form.private.data,
             ).apply()
 
-            url=request.url_for("writeups_view", slug=writeup.slug)
+            url = request.url_for("writeups_view", slug=writeup.slug)
             await log_edit("writeup", writeup.title, request.user.username, url)
 
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = ujson.dumps(await get_all_tags(True))
 
         return templates.TemplateResponse(
             "writeups/edit.j2",
