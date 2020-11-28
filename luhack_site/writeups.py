@@ -322,7 +322,6 @@ class EditWriteup(HTTPEndpoint):
 
         if form.validate():
             await writeup.update_auto(
-                author_id=request.user.discord_id,
                 title=form.title.data,
                 tags=form.tags.data,
                 content=form.content.data,
