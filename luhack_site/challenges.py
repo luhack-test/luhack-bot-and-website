@@ -28,34 +28,6 @@ from luhack_bot.db.models import db, Challenge, CompletedChallenge
 router = Router()
 
 
-async def challenges_grouped() -> List[Tuple[str, List[Tuple[str, List[Challenge]]]]]:
-    """Return all challenges grouped by year and month in the format [(year, [(month, [challenge])])]"""
-    all_challenges = (
-        await Challenge.query.order_by(
-            Challenge.creation_date.desc(), Challenge.id.desc()
-        )
-        .where(sa.not_(Challenge.hidden))
-        .gino.all()
-    )
-
-    def group_monthly(challenges):
-        for k, v in groupby(
-            challenges, key=lambda challenge: challenge.creation_date.month
-        ):
-            yield (calendar.month_name[k], list(v))
-
-    def group_yearly(challenges):
-        for k, v in groupby(
-            challenges, key=lambda challenge: challenge.creation_date.year
-        ):
-            yield (str(k), list(v))
-
-    return [
-        (year, list(group_monthly(year_challenges)))
-        for year, year_challenges in group_yearly(all_challenges)
-    ]
-
-
 def should_skip_challenge(c: Challenge, is_admin: bool) -> bool:
     return c.hidden and not is_admin
 
@@ -103,14 +75,11 @@ async def challenge_index(request: HTTPConnection):
         if not should_skip_challenge(w, request.user.is_admin)
     ]
 
-    grouped_challenges = await challenges_grouped()
-
     return templates.TemplateResponse(
         "challenge/index.j2",
         {
             "request": request,
             "challenges": rendered,
-            "grouped_challenges": grouped_challenges,
         },
     )
 
@@ -207,14 +176,11 @@ async def challenge_by_tag(request: HTTPConnection):
         if not should_skip_challenge(w, request.user.is_admin)
     ]
 
-    grouped_challenges = await challenges_grouped()
-
     return templates.TemplateResponse(
         "challenge/index.j2",
         {
             "request": request,
             "challenges": rendered,
-            "grouped_challenges": grouped_challenges,
         },
     )
 
@@ -237,11 +203,9 @@ async def get_all_tags():
 async def challenge_all_tags(request: HTTPConnection):
     tags = await get_all_tags()
 
-    grouped_challenges = await challenges_grouped()
-
     return templates.TemplateResponse(
         "challenge/tag_list.j2",
-        {"request": request, "tags": tags, "grouped_challenges": grouped_challenges},
+        {"request": request, "tags": tags},
     )
 
 

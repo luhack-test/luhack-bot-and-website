@@ -10,7 +10,10 @@ from starlette.routing import Router
 from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
 from luhack_site.forms import WriteupForm
-from luhack_site.markdown import highlight_markdown, length_constrained_plaintext_markdown
+from luhack_site.markdown import (
+    highlight_markdown,
+    length_constrained_plaintext_markdown,
+)
 from luhack_site.templater import templates
 from luhack_site.images import encoded_existing_images
 from luhack_site.content_logger import log_edit, log_create, log_delete
@@ -107,7 +110,7 @@ async def writeups_by_user(request: HTTPConnection):
     )
 
 
-async def get_all_tags(allow_private: bool=False):
+async def get_all_tags(allow_private: bool = False):
     private_filt = True if allow_private else sa.not_(Writeup.private)
 
     tags = (

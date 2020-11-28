@@ -1,14 +1,9 @@
 {% extends "challenge/base.j2" %}
 
-{% from "challenge/date_accordion.j2" import challenge_accordion with context %}
 {% from "challenge/links.j2" import tag_link with context %}
 
 {% block content %}
     {% for tag in tags -%}
         {{ tag_link(tag)  }}
     {%- endfor %}
-{% endblock %}
-
-{% block header_content %}
-    {{ challenge_accordion(grouped_challenges) }}
 {% endblock %}
