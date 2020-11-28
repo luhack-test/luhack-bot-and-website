@@ -34,16 +34,6 @@
                 <button type="submit" class="pure-button pure-button-primary">Submit</button>
             </div>
         </fieldset>
-
-        {% if form.errors %}
-            <ul class="errors">
-                {% for field_name, field_errors in form.errors|dictsort if field_errors %}
-                    {% for error in field_errors %}
-                        <li>{{ form[field_name].label }}: {{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
-            </ul>
-        {% endif %}
     </form>
 
     <form action="{{ url_for('image_upload') }}" class="dropzone" id="image-upload-dropzone" data-existing-images="{{ existing_images }}"></form>

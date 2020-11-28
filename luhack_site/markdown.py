@@ -1,3 +1,4 @@
+import textwrap
 from functools import wraps
 
 import mistune
@@ -34,22 +35,12 @@ class HighlightRenderer(mistune.HTMLRenderer):
         return f"{html} />"
 
 
-def limit_length(f):
-    @wraps(f)
-    def inner(self, *args, **kwargs):
-        if self.current_length > self.max_length:
-            return ""
-        return f(self, *args, **kwargs)
-
-    return inner
-
-
 class PlaintextRenderer(mistune.HTMLRenderer):
     def _nothing(*args, **kwargs):
         return " "
 
     def paragraph(self, text):
-        return f"{text}"
+        return f"{text}\n"
 
     block_code = (
         block_quote
@@ -81,7 +72,7 @@ uncounted_tokens = {"block_code", "block_quote", "block_html", "heading",
                     }
 
 def len_limit_hook(self, tokens, state):
-    limit = 400
+    limit = 500
     current = 0
     out = []
 
@@ -92,12 +83,17 @@ def len_limit_hook(self, tokens, state):
         if "text" not in tok:
             continue
 
-        current += len(tok["text"])
+        length = len(tok["text"])
 
-        if current >= limit:
-            out.append({"type": "text", "text": "..."})
+        if (current + length) >= limit:
+            if tok["type"] in {"paragraph", "text"}:
+                tok["text"] = textwrap.shorten(tok["text"], limit - current, placeholder="...")
+                out.append(tok)
+            else:
+                out.append({"type": "text", "text": "..."})
             break
 
+        current += length
         out.append(tok)
 
     return out

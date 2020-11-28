@@ -1,5 +1,6 @@
 import sqlalchemy as sa
 import ujson
+from slug import slug
 from sqlalchemy_searchable import search as pg_search
 from sqlalchemy_searchable import search_manager
 from starlette.authentication import requires
@@ -236,12 +237,17 @@ class NewWriteup(HTTPEndpoint):
         is_valid = form.validate()
 
         if (
-            await Writeup.query.where(Writeup.title == form.title.data).gino.first()
+            await Writeup.query.where(
+                sa.or_(
+                    Writeup.title == form.title.data,
+                    Writeup.slug == slug(form.title.data),
+                )
+            ).gino.first()
             is not None
         ):
             is_valid = False
             form.title.errors.append(
-                f"A writeup with the title '{form.title.data}' already exists."
+                f"A writeup with the title conflicting with '{form.title.data}' already exists."
             )
 
         if is_valid:

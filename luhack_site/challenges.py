@@ -1,5 +1,6 @@
 from itertools import groupby
 from textwrap import shorten
+from slug import slug
 from typing import List, Tuple
 import calendar
 
@@ -329,12 +330,17 @@ class NewChallenge(HTTPEndpoint):
         is_valid = form.validate()
 
         if (
-            await Challenge.query.where(Challenge.title == form.title.data).gino.first()
+            await Challenge.query.where(
+                sa.or_(
+                    Challenge.title == form.title.data,
+                    Challenge.slug == slug(form.title.data),
+                )
+            ).gino.first()
             is not None
         ):
             is_valid = False
             form.title.errors.append(
-                f"A challenge with the title '{form.title.data}' already exists."
+                f"A challenge with the title conflicting with '{form.title.data}' already exists."
             )
 
         if is_valid:
