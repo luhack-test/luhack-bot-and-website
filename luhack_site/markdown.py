@@ -1,3 +1,5 @@
+from functools import wraps
+
 import mistune
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
@@ -32,12 +34,22 @@ class HighlightRenderer(mistune.HTMLRenderer):
         return f"{html} />"
 
 
+def limit_length(f):
+    @wraps(f)
+    def inner(self, *args, **kwargs):
+        if self.current_length > self.max_length:
+            return ""
+        return f(self, *args, **kwargs)
+
+    return inner
+
+
 class PlaintextRenderer(mistune.HTMLRenderer):
     def _nothing(*args, **kwargs):
         return " "
 
     def paragraph(self, text):
-        return f"{text}\n"
+        return f"{text}"
 
     block_code = (
         block_quote
@@ -61,4 +73,34 @@ plaintext_renderer = PlaintextRenderer(escape=True)
 
 highlight_markdown = mistune.create_markdown(renderer=highlight_renderer, plugins=['url'])
 highlight_markdown_unsafe = mistune.create_markdown(renderer=highlight_renderer_unsafe, plugins=['url'])
-plaintext_markdown = mistune.create_markdown(renderer=plaintext_renderer, plugins=['url'])
+length_constrained_plaintext_markdown = mistune.create_markdown(renderer=plaintext_renderer, plugins=['url'])
+
+uncounted_tokens = {"block_code", "block_quote", "block_html", "heading",
+                    "list", "list_item", "table", "table_row", "table_cell",
+                    "linebreak", "newline", "image"
+                    }
+
+def len_limit_hook(self, tokens, state):
+    limit = 400
+    current = 0
+    out = []
+
+    for tok in tokens:
+        if tok["type"] in uncounted_tokens:
+            continue
+
+        if "text" not in tok:
+            continue
+
+        current += len(tok["text"])
+
+        if current >= limit:
+            out.append({"type": "text", "text": "..."})
+            break
+
+        out.append(tok)
+
+    return out
+
+length_constrained_plaintext_markdown.before_render_hooks.append(len_limit_hook)
+length_constrained_plaintext_markdown.after_render_hooks.append(lambda s, result, st: result.replace("\n", " "))

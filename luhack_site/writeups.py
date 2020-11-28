@@ -1,5 +1,3 @@
-from textwrap import shorten
-
 import sqlalchemy as sa
 import ujson
 from sqlalchemy_searchable import search as pg_search
@@ -12,7 +10,7 @@ from starlette.routing import Router
 from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
 from luhack_site.forms import WriteupForm
-from luhack_site.markdown import highlight_markdown, plaintext_markdown
+from luhack_site.markdown import highlight_markdown, length_constrained_plaintext_markdown
 from luhack_site.templater import templates
 from luhack_site.images import encoded_existing_images
 from luhack_site.content_logger import log_edit, log_create, log_delete
@@ -35,7 +33,7 @@ async def writeups_index(request: HTTPConnection):
     )
 
     rendered = [
-        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
+        (w, length_constrained_plaintext_markdown(w.content))
         for w in latest
         if not should_skip_writeup(w, request.user.is_authed)
     ]
@@ -77,7 +75,7 @@ async def writeups_by_tag(request: HTTPConnection):
     )
 
     rendered = [
-        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
+        (w, length_constrained_plaintext_markdown(w.content))
         for w in writeups
         if not should_skip_writeup(w, request.user.is_authed)
     ]
@@ -99,7 +97,7 @@ async def writeups_by_user(request: HTTPConnection):
     )
 
     rendered = [
-        (w, shorten(plaintext_markdown(w.content), width=300, placeholder="..."))
+        (w, length_constrained_plaintext_markdown(w.content))
         for w in writeups
         if not should_skip_writeup(w, request.user.is_authed)
     ]
@@ -111,13 +109,6 @@ async def writeups_by_user(request: HTTPConnection):
 
 async def get_all_tags(allow_private: bool=False):
     private_filt = True if allow_private else sa.not_(Writeup.private)
-
-    print(sa.select([sa.column("tag")])
-        .select_from(Writeup)
-        .select_from(sa.func.unnest(Writeup.tags).alias("tag"))
-        .where(private_filt)
-        .group_by(sa.column("tag"))
-        .order_by(sa.func.count()))
 
     tags = (
         await sa.select([sa.column("tag")])
@@ -184,7 +175,7 @@ async def writeups_search(request: HTTPConnection):
     ]
 
     rendered = [
-        (w, shorten(plaintext_markdown(headline), width=300, placeholder="..."))
+        (w, length_constrained_plaintext_markdown(headline))
         for (w, headline) in writeups
     ]
 

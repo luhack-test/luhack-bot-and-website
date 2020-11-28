@@ -15,7 +15,7 @@ from starlette.routing import Router
 from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
 from luhack_site.forms import PostForm
-from luhack_site.markdown import highlight_markdown, plaintext_markdown
+from luhack_site.markdown import highlight_markdown, length_constrained_plaintext_markdown
 from luhack_site.templater import templates
 from luhack_site.images import encoded_existing_images
 from luhack_site.content_logger import log_edit, log_create, log_delete
@@ -45,7 +45,7 @@ async def blog_index(request: HTTPConnection):
     latest = await Blog.query.order_by(sa.desc(Blog.creation_date)).gino.all()
 
     rendered = [
-        (w, shorten(plaintext_markdown(w.content), width=800, placeholder="..."))
+        (w, length_constrained_plaintext_markdown(w.content))
         for w in latest
     ]
 
@@ -83,7 +83,7 @@ async def blog_by_tag(request: HTTPConnection):
     )
 
     rendered = [
-        (w, shorten(plaintext_markdown(w.content), width=800, placeholder="..."))
+        (w, length_constrained_plaintext_markdown(w.content))
         for w in blog
     ]
 
@@ -153,7 +153,7 @@ async def blog_search(request: HTTPConnection):
     blog = [(build_blog(r), r.headline) for r in blog]
 
     rendered = [
-        (w, shorten(plaintext_markdown(headline), width=800, placeholder="..."))
+        (w, length_constrained_plaintext_markdown(headline))
         for (w, headline) in blog
     ]
 
