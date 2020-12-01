@@ -62,8 +62,8 @@ highlight_renderer = HighlightRenderer(escape=True)
 highlight_renderer_unsafe = HighlightRenderer(escape=False)
 plaintext_renderer = PlaintextRenderer(escape=True)
 
-highlight_markdown = mistune.create_markdown(renderer=highlight_renderer, plugins=['url'])
-highlight_markdown_unsafe = mistune.create_markdown(renderer=highlight_renderer_unsafe, plugins=['url'])
+highlight_markdown = mistune.create_markdown(renderer=highlight_renderer, plugins=['url', 'table'])
+highlight_markdown_unsafe = mistune.create_markdown(renderer=highlight_renderer_unsafe, plugins=['url', 'table'])
 length_constrained_plaintext_markdown = mistune.create_markdown(renderer=plaintext_renderer, plugins=['url'])
 
 uncounted_tokens = {"block_code", "block_quote", "block_html", "heading",
