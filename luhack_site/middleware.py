@@ -1,8 +1,12 @@
 import typing
 import functools
+from typing import Callable, List
 
 from starlette.datastructures import Headers, MutableHeaders
+from starlette.requests import Request
+from starlette.responses import Response
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
 
 class HeaderMiddleware:
@@ -37,6 +41,18 @@ class HeaderMiddleware:
 
         await send(message)
 
+
+class BlockerMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app: ASGIApp, checks: List[Callable[[Headers], bool]], fail: Response) -> None:
+        super().__init__(app)
+        self.__checks = checks
+        self.__fail = fail
+
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        for f in self.__checks:
+            if not f(request.headers):
+                return self.__fail
+        return await call_next(request)
 
 class WebSecMiddleware(HeaderMiddleware):
     def __init__(self, app: ASGIApp):

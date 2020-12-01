@@ -8,6 +8,7 @@ from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
 from starlette.routing import Mount
 from starlette.requests import HTTPConnection
+from starlette.responses import Response
 from starlette.staticfiles import StaticFiles
 from starlette.config import Config
 
@@ -18,7 +19,7 @@ from luhack_site.images import router as images_router
 from luhack_site.blog import router as blog_router
 from luhack_site.oauth import router as oauth_router
 from luhack_site.challenges import router as challenge_router
-from luhack_site.middleware import CSPMiddleware, HSTSMiddleware, WebSecMiddleware
+from luhack_site.middleware import BlockerMiddleware, CSPMiddleware, HSTSMiddleware, WebSecMiddleware
 from luhack_site import settings
 
 from luhack_bot.db.helpers import init_db
@@ -51,6 +52,7 @@ app.add_middleware(
 )
 app.add_middleware(AuthenticationMiddleware, backend=TokenAuthBackend())
 app.add_middleware(SessionMiddleware, secret_key=settings.TOKEN_SECRET)
+app.add_middleware(BlockerMiddleware, checks=[lambda h: "httrack" not in h["user-agent"].lower()], fail=Response("who thought this was a good idea?", 418))
 
 class CacheHeaderStaticFiles(StaticFiles):
     async def get_response(self, path, scope):
