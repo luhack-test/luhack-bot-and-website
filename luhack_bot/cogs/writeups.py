@@ -102,7 +102,7 @@ class Writeups(commands.Cog):
             images.append(m.group(2))
             return f"(.{m.group(1)})"
 
-        new_content = re.sub(r"\((/images/([A-z0-9\-]+)\.png)\)",
+        new_content = re.sub(r"\((/images/([A-z0-9\-]+)\.\w+)\)",
                              repl, content)
 
         return new_content, images
