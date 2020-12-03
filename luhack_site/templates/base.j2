@@ -6,12 +6,13 @@
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device=width, initial-scale=1">
                 <meta name="google-site-verification" content="KxBie6T6uw1Iexm0-tldr4zEIM4zAUdDLF9N_t97cIE" />
+                <meta name="description" content="{% block og_description %}A group of Lancaster University Students interested in all things Computer Security.LUHack's Website.{% endblock %}">
                 <meta property="og:title" content="{% block og_title %}LUHack{% endblock %}">
                 <meta property="og:type" content="{% block og_type %}website{% endblock %}">
                 <meta property="og:image" content="{{ url_for("static", path="/images/logo_small.png") }}">
                 <meta property="og:url" content="{{ request.get_full_path }}">
                 <meta property="og:site_name" content="LUHack">
-                <meta property="og:description" content="{% block og_description %}LUHack's Website.{% endblock %}">
+                <meta property="og:description" content="{% block og_description %}A group of Lancaster University Students interested in all things Computer Security.LUHack's Website.{% endblock %}">
                 <link rel="canonical" href="https://luhack.lancs.ac.uk/">
                 <script type="application/ld+json">
                  {
@@ -25,6 +26,13 @@
                      }
                  }
                 </script>
+                <!-- Google Tag Manager -->
+                <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','GTM-KH9FV5M');</script>
+                <!-- End Google Tag Manager -->
             {%- endblock meta %}
             <title>{% block title %}LUHack{% endblock title %}</title>
             {%- block style %}
