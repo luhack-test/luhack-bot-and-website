@@ -44,6 +44,7 @@ app.add_middleware(
     script_src=(
         "'self'",
         "www.googletagmanager.com",
+        "www.google-analytics.com",
         "'sha256-gUOO8cVce0Qg1lxrPgv8NIo//GS1rTLlhFvALeuQ3kg='"
     ),
     default_src=(
