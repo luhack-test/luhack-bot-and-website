@@ -47,6 +47,10 @@ app.add_middleware(
         "www.google-analytics.com",
         "'sha256-gUOO8cVce0Qg1lxrPgv8NIo//GS1rTLlhFvALeuQ3kg='"
     ),
+    connect_src=(
+        "'self'",
+        "www.google-analytics.com"
+    ),
     default_src=(
         "'self'",
         "use.fontawesome.com",
