@@ -2,7 +2,7 @@
 name = "luhack_bot"
 version = "0.1.0"
 description = "LUHack's discord bot"
-authors = [""]
+authors = ["Ben Simms <ben@bensimms.moe>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"

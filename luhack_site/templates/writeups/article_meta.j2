@@ -1,0 +1,11 @@
+{% macro article_meta(headline, datePublished, dateModified) -%}
+    <script type="application/ld+json">
+     {
+         "@context": "https://schema.org",
+         "@type": "NewsArticle",
+         "headline": "{{ headline }}",
+         "datePublished": "{{ datePublished.isoformat() }}",
+         "dateModified": "{{ dateModified.isoformat() }}"
+     }
+    </script>
+{%- endmacro %}
