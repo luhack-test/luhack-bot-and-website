@@ -41,6 +41,11 @@ app.add_middleware(HSTSMiddleware)
 app.add_middleware(WebSecMiddleware)
 app.add_middleware(
     CSPMiddleware,
+    script_src=(
+        "'self'",
+        "www.googletagmanager.com",
+        "'sha256-gUOO8cVce0Qg1lxrPgv8NIo//GS1rTLlhFvALeuQ3kg='"
+    ),
     default_src=(
         "'self'",
         "use.fontawesome.com",
