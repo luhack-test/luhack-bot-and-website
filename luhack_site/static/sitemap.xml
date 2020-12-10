@@ -2,792 +2,947 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/</loc>
-    <lastmod>2020-12-03</lastmod>
+    <lastmod>2020-12-10</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/</loc>
-    <lastmod>2020-12-03</lastmod>
+    <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/blog/</loc>
-    <lastmod>2020-12-03</lastmod>
+    <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/</loc>
-    <lastmod>2020-12-03</lastmod>
+    <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/tags</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/dive_monkey-challenge</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/pink</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/steganography</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/zsteg</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/vigenere</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/wireshark</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/borderlands</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/plug</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Pantsu</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/pivoting</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/sqli</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/hackback2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/checks</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/reverse-engineering</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/qr-codes</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Henry</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/hecc</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/qr-codes</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/kittykoinz</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Mysterypotatoguy</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/exploit</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/panad-ctf</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/matroyshka</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/misc</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/smart-steganography</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/stego</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/stadiums</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/web</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/aegypius-monachus</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/ciphers</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/rail-fence-cipher</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/hotel</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/drb</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/lfi</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/pcap</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/fish-n-chips</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/snapshots</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/file-recovery</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/htbctf</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/forensics</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/welcome-to-manchester</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/htbxuni-ai</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/manchester-encoding</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Collina</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/rolling-printer</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/misc</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/mic</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/welcome</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/trailer</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Mysterypotatoguy</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/hidden-file</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/sharp-look</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Mr%20Cat</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/sharp-look</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/flag-calculator</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/dot-net</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/secret-service-online</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/angr</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/pwn</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/kangaroo-jack</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/kindergarten</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/buffer-overflows</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/pwn</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/reverse-engineering</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/weak-rsa</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Henry</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/crypto</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/nuclear-disaster</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/warren-buffer</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/exfil</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/steganography</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/gunship</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/web</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/cache</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/kapkan</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/WILLANATOR</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/block</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/hardware</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/ircware</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/patch-of-the-ninja</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/moneyheist</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/IncognitoJam</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/blockchain</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/my-name-is-what</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/buggy-time-machine</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/vvvv8</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/dive_monkey-challenge</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/pink</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/zsteg</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/vigenere</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/wireshark</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/borderlands</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/pivoting</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/sqli</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/hackback2</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/checks</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/qr-codes</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/hecc</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/qr-codes</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/kittykoinz</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/exploit</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/panad-ctf</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/matroyshka</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/smart-steganography</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/stego</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/stadiums</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/aegypius-monachus</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/ciphers</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/rail-fence-cipher</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/hotel</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/drb</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/lfi</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/pcap</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/fish-n-chips</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/snapshots</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/file-recovery</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/welcome-to-manchester</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/manchester-encoding</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/rolling-printer</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/mic</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/trailer</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/hidden-file</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/sharp-look</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Mr%20Cat</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/sharp-look</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/flag-calculator</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/dot-net</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/secret-service-online</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/angr</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/writeups/view/kangaroo-jack</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/blog/tags</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/blog/view/example-blog-post</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/blog/tag/test</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/challenges/view/re-5</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/session9</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/challenges/view/re-4</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/challenges/view/re-3</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/challenges/view/re-2</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/challenges/view/re-1</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/phishing-4</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/phishing</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/session7</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/phishing-3</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/phishing-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/phishing-1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/privesc-8</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/session6</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/privesc-7</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/privesc-6</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/privesc-5</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/privesc-4</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/privesc-3</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/privesc-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/privesc-1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-box-6-albums</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/session5</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-box-5-csgo-skins</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-box-4-ricflix</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-box-3-fbs</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-box-2-login</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-box-1-pin</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-7</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-6</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-5</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-4</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-3</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/web-1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/infra-4</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/session4</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/infra-3</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/infra-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/infra-1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/infra-challenge-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/challenges/view/infra-challenge-1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/hard</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://scc-luhack.lancs.ac.uk/challenges/view/infra-challenge-1</loc>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-12</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/session3</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-11</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-10</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-9</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-challenge-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-challenge-1b</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-challenge-1a</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-8</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-7</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-6</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-5</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-4</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-3</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/crypto-1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-14</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/session2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-13</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-12</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-11</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-10</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-9</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-8</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-7</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-6</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-5</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-4</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-3</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/enum-1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-14</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/session1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-13</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-12</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-11</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-10</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-9</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-8</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-7</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-6</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-5</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-4</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-3</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/recon-1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/some-dumb-re-challenge</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/freshers-challenge-9</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/freshers-challenge</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/freshers-challenge-8</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/freshers-challenge-7</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/freshers-challenge-6</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/freshers-challenge-5</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/freshers-challenge-4</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/freshers-challenge-3</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/tag/ezpz</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/freshers-challenge-2</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/challenges/view/freshers-challenge-1</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/plzauth</loc>
-    <lastmod>2020-12-03</lastmod>
-    <priority>0.4</priority>
+    <lastmod>2020-12-10</lastmod>
+    <priority>0.8</priority>
   </url>
 </urlset>
