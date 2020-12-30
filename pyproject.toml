@@ -7,45 +7,42 @@ authors = ["Ben Simms <ben@bensimms.moe>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 itsdangerous = "^1.1"
-cryptography = "^3.1"
+cryptography = "^3.3"
 gino = "^1.0"
-python-dotenv = "^0.14"
+python-dotenv = "^0.15"
 sqlalchemy_utils = "^0.36"
 asyncpg = "^0.21"
 alembic = "^1.4"
 "sqlalchemy-searchable" = { tag = "1.1.2", git = "https://github.com/nitros12/sqlalchemy-searchable" }
-starlette = "^0.13"
+starlette = "^0.14"
 jinja2 = "^2.11"
 python-multipart = "^0.0"
 pygments = "^2.6"
-aiofiles = "^0.5"
+aiofiles = "^0.6"
 slug = "^2.0"
 WTForms = "^2.3"
 yarl = "^1.6"
 gunicorn = "^20.0"
 PyCrypto = "^2.6"
-ujson = "^4.0"
 python-dateutil = "^2.8"
 parsedatetime = "^2.6"
 "discord.py" = "^1.3"
-uvicorn = "^0.12"
+uvicorn = "^0.13"
 psycopg2-binary = "^2.8.6"
 tabulate = "^0.8.7"
 aiosmtplib = "^1.1.4"
-mistune = "2.0.0a5"
+mistune = "2.0.0a6"
 discord-ext-alternatives = { git = "https://github.com/Ext-Creators/discord-ext-alternatives", branch = "dev" }
 authlib = {git = "https://github.com/lepture/authlib.git"}
 httpx = "^0.16.1"
+orjson = "^3.4.6"
 
 [tool.poetry.dev-dependencies]
-aiomysql = "^0.0"
 psycopg2-binary = "^2.8"
 
 [tool.poetry.scripts]
 start_bot = 'luhack_bot:run'
 gen_tokens = 'luhack_bot:gen_tokens'
-export_users = 'luhack_bot:export_users'
-ingest_users = 'luhack_bot:ingest_users'
 export_content = 'luhack_bot:export_writeups_and_blog_posts'
 
 [build-system]

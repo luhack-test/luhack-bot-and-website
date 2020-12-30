@@ -5,7 +5,7 @@ from typing import List, Tuple
 import calendar
 
 import sqlalchemy as sa
-import ujson
+import orjson
 from gino.loader import ColumnLoader
 
 from starlette.authentication import requires
@@ -267,7 +267,7 @@ async def challenge_submit_answer(request: HTTPConnection):
     # TODO? change this to a flash message
     if challenge.depreciated:
         is_valid = False
-        form.answer.errors.append("Correct, but this challenge is depreciated sorry.")
+        form.answer.errors.append("Correct, but this challenge is depreciated, sorry.")
 
     already_claimed = await CompletedChallenge.query.where(
         (CompletedChallenge.discord_id == request.user.discord_id)
@@ -309,7 +309,7 @@ class NewChallenge(HTTPEndpoint):
         form = ChallengeForm()
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "challenge/new.j2",
@@ -368,7 +368,7 @@ class NewChallenge(HTTPEndpoint):
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "challenge/new.j2",
@@ -407,7 +407,7 @@ class EditChallenge(HTTPEndpoint):
         )
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "challenge/edit.j2",
@@ -458,7 +458,7 @@ class EditChallenge(HTTPEndpoint):
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "challenge/edit.j2",

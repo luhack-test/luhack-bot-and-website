@@ -1,11 +1,11 @@
 import imghdr
 from typing import List, Tuple
 
-import ujson
+import orjson
 import sqlalchemy as sa
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import HTTPConnection
-from starlette.responses import Response, UJSONResponse
+from starlette.responses import Response, JSONResponse
 from starlette.authentication import requires
 from starlette.routing import Router
 
@@ -19,6 +19,11 @@ from luhack_site import converters
 converters.inject()
 
 router = Router()
+
+
+class ORJSONResponse(JSONResponse):
+    def render(self, content) -> bytes:
+        return orjson.dumps(content)
 
 
 @router.route("/{file_name:file}", name="images")
@@ -69,7 +74,7 @@ async def image_upload(request: HTTPConnection):
         author_id=request.user.discord_id, filetype=filetype, image=file_contents
     )
 
-    return UJSONResponse({"filename": f"{file.id}.{filetype}"})
+    return ORJSONResponse({"filename": f"{file.id}.{filetype}"})
 
 
 async def get_existing_images(author_id: int) -> List[Tuple[str, str]]:
@@ -80,7 +85,7 @@ async def get_existing_images(author_id: int) -> List[Tuple[str, str]]:
     )
 
 
-async def encoded_existing_images(request: HTTPConnection) -> str:
+async def encoded_existing_images(request: HTTPConnection) -> bytes:
     images = await get_existing_images(request.user.discord_id)
     images = [
         {
@@ -89,4 +94,4 @@ async def encoded_existing_images(request: HTTPConnection) -> str:
         }
         for (id, ext) in images
     ]
-    return ujson.dumps(images)
+    return orjson.dumps(images)

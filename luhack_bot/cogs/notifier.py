@@ -1,24 +1,13 @@
 from datetime import datetime
 import asyncio
-import logging
-import textwrap
-from typing import List, Tuple, TypeVar, Literal
-from typing import Optional
-from tabulate import tabulate
 
 import discord
 from discord.ext import commands
-import sqlalchemy as sa
-from sqlalchemy_searchable import search as pg_search
-from gino.loader import ColumnLoader
-from discord.ext.alternatives import literal_converter
-import ujson
+import orjson
 
 from luhack_bot import constants
 from luhack_bot.cogs.challenges import Challenges
-from luhack_bot.db.models import db, User, Challenge, CompletedChallenge, db
-from luhack_bot.utils.checks import is_authed
-from luhack_bot.utils.checks import is_admin
+from luhack_bot.db.models import db, Challenge, db
 
 
 class Notifier(commands.Cog):
@@ -32,7 +21,7 @@ class Notifier(commands.Cog):
         await self.raw_conn.add_listener("bot_notification", self.handle_message)
 
     def handle_message(self, conn, pid, chan, msg):
-        msg = ujson.decode(msg)
+        msg = orjson.loads(msg)
 
         coro = {"challenge_complete": self.handle_challenge_complete}[msg["type"]](msg)
 

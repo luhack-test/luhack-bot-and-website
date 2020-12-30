@@ -1,10 +1,9 @@
 import re
 
-import ujson
+import orjson
 
 from wtforms import Form, StringField, TextAreaField, Field, validators, ValidationError
 from wtforms.fields.core import BooleanField, IntegerField
-from wtforms.validators import DataRequired
 from wtforms.widgets import TextInput
 
 
@@ -21,7 +20,7 @@ class TagListField(Field):
         if valuelist and valuelist[0]:
             tags = [
                 invalid_tag_chars.sub("", tag["value"])
-                for tag in ujson.decode(valuelist[0])
+                for tag in orjson.loads(valuelist[0])
             ]
             data = list(set(tags))
             self.data = data

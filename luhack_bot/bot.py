@@ -85,23 +85,23 @@ class LUHackBot(commands.Bot):
             await cmd.prepare_help_command(ctx, ctx.command.qualified_name)
             prepared_help = cmd.get_command_signature(ctx.command)
 
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.send("This command cannot be used in private messages")
-            return
+            if isinstance(error, commands.NoPrivateMessage):
+                await ctx.send("This command cannot be used in private messages")
+                return
 
-        elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(
-                f"Command missing required argument: {error}\nUsage: `{prepared_help}`"
-            )
-            return
+            elif isinstance(error, commands.MissingRequiredArgument):
+                await ctx.send(
+                    f"Command missing required argument: {error}\nUsage: `{prepared_help}`"
+                )
+                return
 
-        elif isinstance(error, commands.BadArgument):
-            await ctx.send(f"{error}\nUsage: `{prepared_help}`")
-            return
+            elif isinstance(error, commands.BadArgument):
+                await ctx.send(f"{error}\nUsage: `{prepared_help}`")
+                return
 
-        elif isinstance(error, (commands.CommandOnCooldown, commands.CheckFailure)):
-            await ctx.send(error)
-            return
+            elif isinstance(error, (commands.CommandOnCooldown, commands.CheckFailure)):
+                await ctx.send(error)
+                return
 
         elif isinstance(error, commands.CommandNotFound):
             return

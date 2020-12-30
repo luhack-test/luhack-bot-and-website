@@ -4,7 +4,7 @@ from typing import List, Tuple
 import calendar
 
 import sqlalchemy as sa
-import ujson
+import orjson
 from sqlalchemy_searchable import search as pg_search
 from sqlalchemy_searchable import search_manager
 from starlette.authentication import requires
@@ -163,7 +163,7 @@ class NewBlog(HTTPEndpoint):
         form = PostForm()
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "blog/new.j2",
@@ -203,7 +203,7 @@ class NewBlog(HTTPEndpoint):
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "blog/new.j2",
@@ -233,7 +233,7 @@ class EditBlog(HTTPEndpoint):
         form = PostForm(title=blog.title, tags=blog.tags, content=blog.content)
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "blog/edit.j2",
@@ -273,7 +273,7 @@ class EditBlog(HTTPEndpoint):
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags())
 
         return templates.TemplateResponse(
             "blog/edit.j2",

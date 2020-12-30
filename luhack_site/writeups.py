@@ -1,5 +1,5 @@
 import sqlalchemy as sa
-import ujson
+import orjson
 from slug import slug
 from sqlalchemy_searchable import search as pg_search
 from sqlalchemy_searchable import search_manager
@@ -216,7 +216,7 @@ class NewWriteup(HTTPEndpoint):
         form = WriteupForm()
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags(True))
+        tags = orjson.dumps(await get_all_tags(True))
 
         return templates.TemplateResponse(
             "writeups/new.j2",
@@ -265,7 +265,7 @@ class NewWriteup(HTTPEndpoint):
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags(True))
+        tags = orjson.dumps(await get_all_tags(True))
 
         return templates.TemplateResponse(
             "writeups/new.j2",
@@ -300,7 +300,7 @@ class EditWriteup(HTTPEndpoint):
         )
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags(True))
+        tags = orjson.dumps(await get_all_tags(True))
 
         return templates.TemplateResponse(
             "writeups/edit.j2",
@@ -343,7 +343,7 @@ class EditWriteup(HTTPEndpoint):
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = ujson.dumps(await get_all_tags(True))
+        tags = orjson.dumps(await get_all_tags(True))
 
         return templates.TemplateResponse(
             "writeups/edit.j2",

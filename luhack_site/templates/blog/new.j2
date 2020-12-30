@@ -24,7 +24,7 @@
             </div>
             <div class="pure-control-group">
                 {{ form.tags.label }}
-                {{ with_errors(form.tags, type="tags", data_tags_whitelist=existing_tags) }}
+                {{ with_errors(form.tags, type="tags", data_tags_whitelist=existing_tags.decode()) }}
             </div>
             <div class="pure-control-group">
                 {{ form.content.label }}
