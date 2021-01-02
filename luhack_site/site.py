@@ -104,6 +104,13 @@ async def view_challenge(request: HTTPConnection):
 async def view_stego(request: HTTPConnection):
     return templates.TemplateResponse("fresher_challenge/stegoboi.j2", {"request": request})
 
+@app.route("/robots.txt")
+async def view_robots(request: HTTPConnection):
+    return await statics.get_response("robots.txt", request.scope)
+
+@app.route("/sitemap.xml")
+async def view_sitemap(request: HTTPConnection):
+    return await statics.get_response("sitemap.xml", request.scope)
 
 @app.on_event("startup")
 async def startup():

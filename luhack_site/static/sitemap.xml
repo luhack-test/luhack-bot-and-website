@@ -21,17 +21,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/tags</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/view/plug</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Pantsu</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
   </url>
@@ -51,22 +41,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Collina</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/misc</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/view/welcome</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Mysterypotatoguy</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
   </url>
@@ -92,11 +72,6 @@
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/view/weak-rsa</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Henry</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
   </url>
@@ -146,11 +121,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/WILLANATOR</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/view/block</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
@@ -176,11 +146,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/IncognitoJam</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/blockchain</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
@@ -202,11 +167,6 @@
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/view/dive_monkey-challenge</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/pink</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
   </url>
@@ -321,11 +281,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/drb</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/lfi</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
@@ -386,11 +341,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://scc-luhack.lancs.ac.uk/writeups/user/Mr%20Cat</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/tag/sharp-look</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
@@ -417,11 +367,6 @@
   </url>
   <url>
     <loc>https://scc-luhack.lancs.ac.uk/writeups/view/kangaroo-jack</loc>
-    <lastmod>2020-12-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://scc-luhack.lancs.ac.uk/blog/tags</loc>
     <lastmod>2020-12-10</lastmod>
     <priority>0.8</priority>
   </url>
