@@ -56,5 +56,5 @@
         </fieldset>
     </form>
 
-    <form action="{{ url_for('image_upload') }}" class="dropzone" id="image-upload-dropzone" data-existing-images="{{ existing_images }}"></form>
+    <form action="{{ url_for('image_upload') }}" class="dropzone" id="image-upload-dropzone" data-existing-images="{{ existing_images.decode() }}"></form>
 {% endblock %}
