@@ -29,7 +29,7 @@ parsedatetime = "^2.6"
 "discord.py" = "^1.3"
 uvicorn = "^0.13"
 psycopg2-binary = "^2.8.6"
-tabulate = "^0.8.7"
+tabulate = "^0.8.8"
 aiosmtplib = "^1.1.4"
 mistune = "2.0.0a6"
 discord-ext-alternatives = { git = "https://github.com/Ext-Creators/discord-ext-alternatives", branch = "dev" }
