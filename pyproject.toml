@@ -35,7 +35,7 @@ mistune = "2.0.0a6"
 discord-ext-alternatives = { git = "https://github.com/Ext-Creators/discord-ext-alternatives", branch = "dev" }
 authlib = {git = "https://github.com/lepture/authlib.git"}
 httpx = "^0.16.1"
-orjson = "^3.4.6"
+orjson = "^3.5.0"
 
 [tool.poetry.dev-dependencies]
 psycopg2-binary = "^2.8"
