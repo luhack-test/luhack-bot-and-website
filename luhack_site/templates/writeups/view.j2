@@ -19,7 +19,9 @@
 {% block header_content %}
     <div class="article-meta">
         <h2>{{ writeup.title }}</h2>
-        <h4 class="author">By: {{ user_link(writeup.author.username) }}</h4>
+        {% if writeup.author_id %}
+            <h4 class="author">By: {{ user_link(writeup.author.username) }}</h4>
+        {% endif %}
         <h4 class="date">{{ writeup.creation_date }}</h4>
         <div class="tags">
             {% for tag in writeup.tags %}

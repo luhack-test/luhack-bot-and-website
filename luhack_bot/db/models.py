@@ -1,14 +1,11 @@
 from gino import Gino
+from luhack_bot.secrets import email_encryption_key
 from slug import slug
 from sqlalchemy import func
-from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import backref
-from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
+from sqlalchemy.orm import backref, relationship
 from sqlalchemy_utils import EncryptedType
 from sqlalchemy_utils.types import TSVectorType
-
-from luhack_bot.secrets import email_encryption_key
 
 db = Gino()
 
@@ -56,7 +53,9 @@ class Writeup(db.Model):
     )
 
     title = db.Column(db.Text(), nullable=False, unique=True)
+
     slug = db.Column(db.Text(), nullable=False, unique=True)
+    _slug_nonempty = db.CheckConstraint('slug!=""'),
 
     tags = db.Column(ARRAY(db.Text()), nullable=False)
     content = db.Column(db.Text(), nullable=False)
@@ -109,9 +108,17 @@ class Blog(db.Model):
     __tablename__ = "blogs"
 
     id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(
+        None, db.ForeignKey("users.discord_id", ondelete="SET NULL"), nullable=True
+    )
+    author = relationship(
+        User, backref=backref("writeups"), lazy="joined"
+    )
 
     title = db.Column(db.Text(), nullable=False, unique=True)
+
     slug = db.Column(db.Text(), nullable=False, unique=True)
+    _slug_nonempty = db.CheckConstraint('slug!=""'),
 
     tags = db.Column(ARRAY(db.Text()), nullable=False)
     content = db.Column(db.Text(), nullable=False)
@@ -164,6 +171,7 @@ class Challenge(db.Model):
 
     title = db.Column(db.Text(), unique=True, nullable=False)
     slug = db.Column(db.Text(), nullable=False, unique=True)
+    _slug_nonempty = db.CheckConstraint('slug!=""'),
 
     content = db.Column(db.Text(), nullable=False)
     tags = db.Column(ARRAY(db.Text()), nullable=False)

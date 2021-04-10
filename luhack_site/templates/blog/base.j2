@@ -10,11 +10,9 @@
     <li class="nav-item">
         <a class="button" href="{{ url_for("blog_all_tags") }}">Tag List</a>
     </li>
-    {% if request.user.is_admin %}
-        <li class="nav-item">
-            <a class="button" href="{{ url_for("NewBlog") }}">New Blog Post</a>
-        </li>
-    {% endif %}
+    <li class="nav-item">
+        <a class="button" href="{{ url_for("NewBlog") }}">New Blog Post</a>
+    </li>
 {% endblock %}
 
 {% block search_bar %}

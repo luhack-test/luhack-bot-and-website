@@ -1,30 +1,28 @@
+import calendar
 from itertools import groupby
 from textwrap import shorten
-from slug import slug
 from typing import List, Tuple
-import calendar
 
-import sqlalchemy as sa
 import orjson
+import sqlalchemy as sa
 from gino.loader import ColumnLoader
-
+from luhack_bot.db.models import Challenge, CompletedChallenge, db
+from slug import slug
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import HTTPConnection
 from starlette.routing import Router
 
-from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
-from luhack_site.forms import ChallengeForm, AnswerForm
+from luhack_site.content_logger import log_create, log_delete, log_edit
+from luhack_site.forms import AnswerForm, ChallengeForm
+from luhack_site.images import encoded_existing_images
 from luhack_site.markdown import (
     highlight_markdown_unsafe,
     length_constrained_plaintext_markdown,
 )
 from luhack_site.templater import templates
-from luhack_site.images import encoded_existing_images
-from luhack_site.content_logger import log_edit, log_create, log_delete
-
-from luhack_bot.db.models import db, Challenge, CompletedChallenge
+from luhack_site.utils import abort, redirect_response
 
 router = Router()
 
@@ -329,6 +327,12 @@ class NewChallenge(HTTPEndpoint):
 
         is_valid = form.validate()
 
+        if not slug(form.title.data):
+            is_valid = False
+            form.title.errors.append(
+                "A valid url-safe name cannot be generated for this title."
+            )
+
         if (
             await Challenge.query.where(
                 sa.or_(
@@ -436,7 +440,30 @@ class EditChallenge(HTTPEndpoint):
 
         form = ChallengeForm(form)
 
-        if form.validate():
+        is_valid = form.validate()
+
+        if not slug(form.title.data):
+            is_valid = False
+            form.title.errors.append(
+                "A valid url-safe name cannot be generated for this title."
+            )
+
+        if challenge.title != form.title.data:
+            if (
+                await Challenge.query.where(
+                    sa.or_(
+                        Challenge.title == form.title.data,
+                        Challenge.slug == slug(form.title.data),
+                    )
+                ).gino.first()
+                is not None
+            ):
+                is_valid = False
+                form.title.errors.append(
+                    f"A challenge with the title conflicting with '{form.title.data}' already exists."
+                )
+
+        if is_valid:
             f_a = form.flag_or_answer.data
             flag, answer = (f_a, None) if form.is_flag.data else (None, f_a)
 

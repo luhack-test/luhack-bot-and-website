@@ -1,5 +1,6 @@
-import sqlalchemy as sa
 import orjson
+import sqlalchemy as sa
+from luhack_bot.db.models import User, Writeup, db
 from slug import slug
 from sqlalchemy_searchable import search as pg_search
 from sqlalchemy_searchable import search_manager
@@ -8,18 +9,16 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.requests import HTTPConnection
 from starlette.routing import Router
 
-from luhack_site.utils import abort, redirect_response
 from luhack_site.authorization import can_edit
+from luhack_site.content_logger import log_create, log_delete, log_edit
 from luhack_site.forms import WriteupForm
+from luhack_site.images import encoded_existing_images
 from luhack_site.markdown import (
     highlight_markdown,
     length_constrained_plaintext_markdown,
 )
 from luhack_site.templater import templates
-from luhack_site.images import encoded_existing_images
-from luhack_site.content_logger import log_edit, log_create, log_delete
-
-from luhack_bot.db.models import User, Writeup, db
+from luhack_site.utils import abort, redirect_response
 
 router = Router()
 
@@ -236,6 +235,12 @@ class NewWriteup(HTTPEndpoint):
 
         is_valid = form.validate()
 
+        if not slug(form.title.data):
+            is_valid = False
+            form.title.errors.append(
+                "A valid url-safe name cannot be generated for this title."
+            )
+
         if (
             await Writeup.query.where(
                 sa.or_(
@@ -329,7 +334,30 @@ class EditWriteup(HTTPEndpoint):
 
         form = WriteupForm(form)
 
-        if form.validate():
+        is_valid = form.validate()
+
+        if not slug(form.title.data):
+            is_valid = False
+            form.title.errors.append(
+                "A valid url-safe name cannot be generated for this title."
+            )
+
+        if writeup.title != form.title.data:
+            if (
+                await Writeup.query.where(
+                    sa.or_(
+                        Writeup.title == form.title.data,
+                        Writeup.slug == slug(form.title.data),
+                    )
+                ).gino.first()
+                is not None
+            ):
+                is_valid = False
+                form.title.errors.append(
+                    f"A writeup with the title conflicting with '{form.title.data}' already exists."
+                )
+
+        if is_valid:
             await writeup.update_auto(
                 title=form.title.data,
                 tags=form.tags.data,

@@ -5,7 +5,11 @@
         <header class="post-header">
             <h2 class="post-title"><a href="{{ url }}">{{ writeup.title }}</a></h2>
             <p class="post-meta">
-                By {{ user_link(writeup.author.username) }}
+                {% if writeup.author_id %}
+                    Posted by {{ user_link(writeup.author.username) }} on {{ writeup.creation_date }}
+                {% else %}
+                    Posted on {{ writeup.creation_date }}
+                {% endif %}
                 {% for tag in writeup.tags -%}
                     {% if loop.first %}
                         under

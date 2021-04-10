@@ -1,11 +1,15 @@
-{% from "blog/links.j2" import tag_link with context %}
+{% from "blog/links.j2" import tag_link, user_link with context %}
 
 {% macro blog_preview(blog, content, url) -%}
     <section class="post">
         <header class="post-header">
             <h2 class="post-title"><a href="{{ url }}">{{ blog.title }}</a></h2>
             <p class="post-meta">
-                Posted on {{ blog.creation_date }}
+                {% if blog.author_id %}
+                    Posted by {{ user_link(blog.author.username) }} on {{ blog.creation_date }}
+                {% else %}
+                    Posted on {{ blog.creation_date }}
+                {% endif %}
                 {% for tag in blog.tags -%}
                     {% if loop.first %}
                         under
