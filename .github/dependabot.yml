@@ -1,0 +1,46 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: alembic
+    versions:
+    - 1.5.2
+    - 1.5.3
+    - 1.5.4
+    - 1.5.5
+    - 1.5.6
+    - 1.5.7
+    - 1.5.8
+  - dependency-name: orjson
+    versions:
+    - 3.4.7
+    - 3.4.8
+    - 3.5.0
+    - 3.5.1
+  - dependency-name: pygments
+    versions:
+    - 2.7.4
+    - 2.8.0
+    - 2.8.1
+  - dependency-name: aiohttp
+    versions:
+    - 3.7.4
+  - dependency-name: uvicorn
+    versions:
+    - 0.13.4
+  - dependency-name: tabulate
+    versions:
+    - 0.8.8
+    - 0.8.9
+  - dependency-name: cryptography
+    versions:
+    - 3.3.2
+    - 3.4.1
+    - 3.4.3
+  - dependency-name: starlette
+    versions:
+    - 0.14.2
