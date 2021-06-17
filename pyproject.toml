@@ -33,7 +33,7 @@ tabulate = "^0.8.7"
 aiosmtplib = "^1.1.4"
 mistune = "2.0.0a6"
 authlib = {git = "https://github.com/lepture/authlib.git"}
-httpx = "^0.18.1"
+httpx = "^0.18.2"
 orjson = "^3.4.6"
 discord-ext-alternatives = "^2021.4.13"
 
