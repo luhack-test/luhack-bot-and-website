@@ -14,7 +14,7 @@ sqlalchemy_utils = "^0.37"
 asyncpg = "^0.23"
 alembic = "^1.4"
 "sqlalchemy-searchable" = { tag = "1.1.2", git = "https://github.com/nitros12/sqlalchemy-searchable" }
-starlette = "^0.14"
+starlette = "^0.16"
 jinja2 = "^3.0.1"
 python-multipart = "^0.0"
 pygments = "^2.6"
