@@ -1,5 +1,4 @@
-
-FROM python:3.8.5-slim
+FROM python:3.9.6-slim
 
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
@@ -12,7 +11,7 @@ ENV PYTHONUNBUFFERED=1 \
     \
     # poetry
     # https://python-poetry.org/docs/configuration/#using-environment-variables
-    POETRY_VERSION=1.1.4 \
+    POETRY_VERSION=1.1.7 \
     # make poetry install to this location
     POETRY_HOME="/opt/poetry" \
     # make poetry create the virtual environment in the project's root
@@ -36,7 +35,7 @@ RUN apt-get update \
         # deps for building python deps
         build-essential
 
-RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
 
 # copy project requirement files here to ensure they will be cached.
 WORKDIR /app

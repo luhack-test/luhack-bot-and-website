@@ -1,11 +1,19 @@
-.git/
-db-data/
+db-data
+.git
+.gitattributes
+.gitignore
 
 .dockerignore
-docker-compose.yml
 Dockerfile
+
 .env
 .env.example
 .envrc
 
-__pycache__/
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.venv
+.mypy_cache
+
