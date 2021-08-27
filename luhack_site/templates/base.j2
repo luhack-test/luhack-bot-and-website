@@ -14,25 +14,6 @@
                 <meta property="og:site_name" content="LUHack">
                 <meta property="og:description" content="{{ self.og_description() }}">
                 <link rel="canonical" href="https://scc-luhack.lancs.ac.uk/">
-                <script type="application/ld+json">
-                 {
-                     "@context": "https://schema.org",
-                     "@type": "WebSite",
-                     "url": "{{ url_for("index") }}",
-                     "potentialAction": {
-                         "@type": "SearchAction",
-                         "target": "{{ url_for("writeups_search") }}?search={search_term_string}",
-                         "query-input": "required name=search_term_string"
-                     }
-                 }
-                </script>
-                <!-- Google Tag Manager -->
-                <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                })(window,document,'script','dataLayer','GTM-KH9FV5M');</script>
-                <!-- End Google Tag Manager -->
                 <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{{ url_for("static", path="/images/apple-touch-icon-57x57.png") }}" />
                 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for("static", path="/images/apple-touch-icon-114x114.png") }}" />
                 <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for("static", path="/images/apple-touch-icon-72x72.png") }}" />
@@ -46,7 +27,7 @@
                 <link rel="icon" type="image/png" href="{{ url_for("static", path="/images/favicon-32x32.png") }}" sizes="32x32" />
                 <link rel="icon" type="image/png" href="{{ url_for("static", path="/images/favicon-16x16.png") }}" sizes="16x16" />
                 <link rel="icon" type="image/png" href="{{ url_for("static", path="/images/favicon-128.png") }}" sizes="128x128" />
-                <meta name="application-name" content="Site Name"/>
+                <meta name="application-name" content="LUHack"/>
                 <meta name="msapplication-TileColor" content="#FFFFFF" />
                 <meta name="msapplication-TileImage" content="{{ url_for("static", path="/images/mstile-144x144.png") }}" />
                 <meta name="msapplication-square70x70logo" content="{{ url_for("static", path="/images/mstile-70x70.png") }}" />

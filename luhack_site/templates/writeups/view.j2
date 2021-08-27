@@ -1,14 +1,14 @@
 {% extends "writeups/base.j2" %}
 
 {% from "writeups/links.j2" import tag_link, user_link with context %}
-{% from "writeups/article_meta.j2" import article_meta %}
+{% from "writeups/article_meta.j2" import article_meta with context %}
 
 {% block meta %}
     {{ super() }}
-    {{ article_meta(writeup.title, writeup.creation_date, writeup.edit_date) }}
+    {{ article_meta(writeup.author.username if writeup.author_id else "Anonymous", writeup.title, writeup.creation_date, writeup.edit_date) }}
 {% endblock %}
 
-{% block title %}{{ writeup.title }}{% endblock title %}
+{% block title %}LUHack Writeup: {{ writeup.title }}{% endblock title %}
 {% block og_title %}{{ writeup.title }}{% endblock %}
 
 {% block style %}

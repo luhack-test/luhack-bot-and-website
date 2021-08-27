@@ -1,11 +1,18 @@
-{% macro article_meta(headline, datePublished, dateModified) -%}
+{% macro article_meta(author, name, datePublished, dateModified) -%}
     <script type="application/ld+json">
      {
          "@context": "https://schema.org",
-         "@type": "NewsArticle",
-         "headline": "{{ headline }}",
+         "@type": "Article",
+         "author": "{{ author }}",
+         "name": "{{ name }}",
+         "about": "Cyber Security",
+         "url": "{{ request.get_full_path }}",
          "datePublished": "{{ datePublished.isoformat() }}",
-         "dateModified": "{{ dateModified.isoformat() }}"
+         "dateModified": "{{ dateModified.isoformat() }}",
+         "publsher": {
+             "@type": "Organization",
+             "name": "LUHack"
+         }
      }
     </script>
 {%- endmacro %}
