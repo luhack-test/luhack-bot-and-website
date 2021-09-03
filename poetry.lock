@@ -123,22 +123,18 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins"]
 
 [[package]]
-name = "Authlib"
-version = "1.0.0.dev"
-description = ""
+name = "authlib"
+version = "0.15.4"
+description = "The ultimate Python library in building OAuth and OpenID Connect servers."
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
 
 [package.dependencies]
-cryptography = ">=3.2,<4"
+cryptography = "*"
 
-[package.source]
-type = "git"
-url = "https://github.com/lepture/authlib.git"
-reference = "master"
-resolved_reference = "f27b4dabe4843d334570d25af011ca236c8af501"
+[package.extras]
+client = ["requests"]
 
 [[package]]
 name = "certifi"
@@ -822,7 +818,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4"
-content-hash = "1032c229e14274754fc36926b19d2f552c9d849feb4c6d077bce161e889d99bb"
+content-hash = "fd6187c3d6e5eb0121f2aab96b00c35759caea38416ae369a5cc34ea3e199c34"
 
 [metadata.files]
 aiofiles = [
@@ -911,7 +907,10 @@ attrs = [
     {file = "attrs-21.2.0-py2.py3-none-any.whl", hash = "sha256:149e90d6d8ac20db7a955ad60cf0e6881a3f20d37096140088356da6c716b0b1"},
     {file = "attrs-21.2.0.tar.gz", hash = "sha256:ef6aaac3ca6cd92904cdd0d83f629a15f18053ec84e6432106f7a4d04ae4f5fb"},
 ]
-Authlib = []
+authlib = [
+    {file = "Authlib-0.15.4-py2.py3-none-any.whl", hash = "sha256:d9fe5edb59801b16583faa86f88d798d99d952979b9616d5c735b9170b41ae2c"},
+    {file = "Authlib-0.15.4.tar.gz", hash = "sha256:37df3a2554bc6fe0da3cc6848c44fac2ae40634a7f8fc72543947f4330b26464"},
+]
 certifi = [
     {file = "certifi-2021.5.30-py2.py3-none-any.whl", hash = "sha256:50b1e4f8446b06f41be7dd6338db18e0990601dce795c2b1686458aa7e8fa7d8"},
     {file = "certifi-2021.5.30.tar.gz", hash = "sha256:2bbf76fd432960138b3ef6dda3dde0544f27cbf8546c458e60baf371917ba9ee"},

@@ -1,17 +1,13 @@
-from starlette.responses import RedirectResponse
+import logging
 
 from authlib.integrations.starlette_client import OAuth
-
 from starlette.requests import HTTPConnection
+from starlette.responses import RedirectResponse
 from starlette.routing import Router
 
 from luhack_site import settings
 
-# LOL
-try:
-    from httpx._config import UNSET
-except ImportError:
-    UNSET = None
+log: logging.Logger = logging.getLogger(__name__)
 
 router = Router()
 
@@ -30,6 +26,7 @@ oauth.register(
     client_kwargs={"scope": "identify"},
 )
 
+
 @router.route("/")
 async def sign_in(request: HTTPConnection):
     redirect_uri = request.url_for("auth_cb")
@@ -39,8 +36,15 @@ async def sign_in(request: HTTPConnection):
 @router.route("/auth")
 async def auth_cb(request: HTTPConnection):
     token = await oauth.discord.authorize_access_token(request)
-    resp = await oauth.discord.get(DISCORD_API_BASE + "/users/@me", token=token, auth=UNSET)
-    request.session["discord_id"] = int(resp.json()["id"])
+    resp = await oauth.discord.get(DISCORD_API_BASE + "/users/@me", token=token)
+    user = resp.json()
+    log.info(
+        "User %s#%s (%s) completed oauth",
+        user["username"],
+        user["discriminator"],
+        user["id"],
+    )
+    request.session["discord_id"] = int(user["id"])
     return RedirectResponse(url="/")
 
 

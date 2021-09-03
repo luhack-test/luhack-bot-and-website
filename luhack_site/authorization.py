@@ -1,14 +1,17 @@
+import logging
 from functools import wraps
-from starlette.requests import HTTPConnection
+
+from luhack_bot.db.models import User as DBUser
 from starlette.authentication import (
+    AuthCredentials,
     AuthenticationBackend,
     AuthenticationError,
     SimpleUser,
-    AuthCredentials,
     UnauthenticatedUser,
 )
+from starlette.requests import HTTPConnection
 
-from luhack_bot.db.models import User as DBUser
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class User(SimpleUser):
@@ -46,7 +49,10 @@ class TokenAuthBackend(AuthenticationBackend):
         user = request.session.get("user")
         if not user:
             db_user = await DBUser.get(request.session["discord_id"])
+            log.info("First time adding user info for %s, user: %s", request.session["discord_id"], db_user)
+
             if db_user is None:
+                log.info("User %s was not in the database, rejecting", request.session["discord_id"])
                 request.session.pop("discord_id", None)
                 return
             user = {
