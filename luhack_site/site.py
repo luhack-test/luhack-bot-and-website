@@ -52,19 +52,17 @@ app.add_middleware(
     CSPMiddleware,
     script_src=(
         "'self'",
-        "www.googletagmanager.com",
-        "www.google-analytics.com",
         "'sha256-gUOO8cVce0Qg1lxrPgv8NIo//GS1rTLlhFvALeuQ3kg='",
     ),
     connect_src=("'self'", "www.google-analytics.com"),
     default_src=(
         "'self'",
-        "use.fontawesome.com",
+        "cdnjs.cloudflare.com",
         "unpkg.com",
         "fonts.googleapis.com",
         "fonts.gstatic.com",
     ),
-    style_src=("'self'", "use.fontawesome.com", "unpkg.com", "fonts.googleapis.com"),
+    style_src=("'self'", "cdnjs.cloudflare.com", "unpkg.com", "fonts.googleapis.com"),
 )
 app.add_middleware(AuthenticationMiddleware, backend=TokenAuthBackend())
 app.add_middleware(SessionMiddleware, secret_key=settings.TOKEN_SECRET)
