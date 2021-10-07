@@ -1,8 +1,3 @@
-import calendar
-from itertools import groupby
-from textwrap import shorten
-from typing import List, Tuple
-
 import orjson
 import sqlalchemy as sa
 from gino.loader import ColumnLoader
@@ -31,6 +26,9 @@ def should_skip_challenge(c: Challenge, is_admin: bool) -> bool:
     return c.hidden and not is_admin
 
 
+CURRENT_SEASON = 2
+
+
 @router.route("/")
 async def challenge_index(request: HTTPConnection):
     solves = sa.func.count(CompletedChallenge.challenge_id).label("solves")
@@ -42,6 +40,7 @@ async def challenge_index(request: HTTPConnection):
         solved_challenges = (
             db.select([CompletedChallenge.challenge_id])
             .where(CompletedChallenge.discord_id == request.user.discord_id)
+            .where(CompletedChallenge.season == CURRENT_SEASON)
             .cte("solved_challenges")
         )
 
@@ -56,7 +55,13 @@ async def challenge_index(request: HTTPConnection):
 
     challenges = await (
         db.select(select)
-        .select_from(Challenge.outerjoin(CompletedChallenge))
+        .select_from(
+            Challenge.outerjoin(
+                CompletedChallenge,
+                (Challenge.id == CompletedChallenge.challenge_id)
+                & (CompletedChallenge.season == CURRENT_SEASON),
+            )
+        )
         .group_by(Challenge.id)
         .order_by(Challenge.creation_date.desc(), Challenge.id.desc())
         .gino.load(columns)
@@ -91,7 +96,13 @@ async def challenge_view(request: HTTPConnection):
 
     challenge = await (
         db.select([Challenge, solves])
-        .select_from(Challenge.outerjoin(CompletedChallenge))
+        .select_from(
+            Challenge.outerjoin(
+                CompletedChallenge,
+                (Challenge.id == CompletedChallenge.challenge_id)
+                & (CompletedChallenge.season == CURRENT_SEASON),
+            )
+        )
         .group_by(Challenge.id)
         .where(Challenge.slug == slug)
         .gino.load((Challenge, ColumnLoader(solves)))
@@ -110,6 +121,7 @@ async def challenge_view(request: HTTPConnection):
         solved_challenge = await CompletedChallenge.query.where(
             (CompletedChallenge.discord_id == request.user.discord_id)
             & (CompletedChallenge.challenge_id == challenge.id)
+            & (CompletedChallenge.season == CURRENT_SEASON)
         ).gino.first()
     else:
         solved_challenge = False
@@ -141,6 +153,7 @@ async def challenge_by_tag(request: HTTPConnection):
     if request.user.is_authenticated:
         solved_challenges = (
             db.select([CompletedChallenge.challenge_id])
+            .where(CompletedChallenge.season == CURRENT_SEASON)
             .where(CompletedChallenge.discord_id == request.user.discord_id)
             .cte("solved_challenges")
         )
@@ -156,7 +169,13 @@ async def challenge_by_tag(request: HTTPConnection):
 
     challenges = await (
         db.select(select)
-        .select_from(Challenge.outerjoin(CompletedChallenge))
+        .select_from(
+            Challenge.outerjoin(
+                CompletedChallenge,
+                (Challenge.id == CompletedChallenge.challenge_id)
+                & (CompletedChallenge.season == CURRENT_SEASON),
+            )
+        )
         .group_by(Challenge.id)
         .where(Challenge.tags.contains([tag]))
         .order_by(Challenge.creation_date.desc(), Challenge.id.desc())
@@ -243,7 +262,13 @@ async def challenge_submit_answer(request: HTTPConnection):
 
     challenge = await (
         db.select([Challenge, solves])
-        .select_from(Challenge.outerjoin(CompletedChallenge))
+        .select_from(
+            Challenge.outerjoin(
+                CompletedChallenge,
+                (Challenge.id == CompletedChallenge.challenge_id)
+                & (CompletedChallenge.season == CURRENT_SEASON),
+            )
+        )
         .group_by(Challenge.id)
         .where(Challenge.id == id)
         .gino.load((Challenge, ColumnLoader(solves)))
@@ -270,6 +295,7 @@ async def challenge_submit_answer(request: HTTPConnection):
     already_claimed = await CompletedChallenge.query.where(
         (CompletedChallenge.discord_id == request.user.discord_id)
         & (CompletedChallenge.challenge_id == challenge.id)
+        & (CompletedChallenge.season == CURRENT_SEASON)
     ).gino.first()
 
     if already_claimed is not None:
@@ -279,7 +305,9 @@ async def challenge_submit_answer(request: HTTPConnection):
 
     if is_valid:
         await CompletedChallenge.create(
-            discord_id=request.user.discord_id, challenge_id=challenge.id
+            discord_id=request.user.discord_id,
+            challenge_id=challenge.id,
+            season=CURRENT_SEASON,
         )
 
         return redirect_response(
