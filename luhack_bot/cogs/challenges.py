@@ -223,10 +223,10 @@ class Challenges(commands.Cog):
         msg = textwrap.dedent(
             """
             ```md
-            # Most Solved Challenges
+            # Most Solved Challenges in season {season}
             {most_table}
 
-            # Least Solved Challenges
+            # Least Solved Challenges in season {season}
             {least_table}
             ```
             """
