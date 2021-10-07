@@ -213,3 +213,4 @@ class CompletedChallenge(db.Model):
 
     discord_id = db.Column(None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False, primary_key=True)
     challenge_id = db.Column(None, db.ForeignKey("challenges.id", ondelete="CASCADE"), nullable=False, primary_key=True)
+    season = db.Column(db.Integer(), nullable=False, default=1, server_default="1")

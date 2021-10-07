@@ -1,14 +1,14 @@
 import logging
 import textwrap
 from datetime import datetime
-from typing import List, Literal, Optional, Tuple, TypeVar
+from typing import TYPE_CHECKING, List, Literal, Optional, Tuple, TypeVar
 
 import discord
 import sqlalchemy as sa
 from discord.ext import commands
 from gino.loader import ColumnLoader
 from sqlalchemy_searchable import search as pg_search
-from discord.ext.alternatives import literal_converter
+from discord.ext.alternatives import literal_converter as _
 from tabulate import tabulate
 
 from luhack_bot import constants
@@ -28,18 +28,25 @@ def split_on(l: List[Tuple[T, bool]]) -> Tuple[List[T], List[T]]:
     return a, b
 
 
-class ChallengeName(commands.Converter):
-    async def convert(self, ctx, arg: str):
-        r = (
-            await Challenge.query.where(Challenge.slug == arg)
-            .where(sa.not_(Challenge.hidden))
-            .gino.first()
-        )
+if TYPE_CHECKING:
+    ChallengeName = Challenge
+else:
 
-        if r is None:
-            raise commands.BadArgument(f"{arg} is not a challenge")
+    class ChallengeName(commands.Converter):
+        async def convert(self, ctx, arg: str):
+            r = (
+                await Challenge.query.where(Challenge.slug == arg)
+                .where(sa.not_(Challenge.hidden))
+                .gino.first()
+            )
 
-        return r
+            if r is None:
+                raise commands.BadArgument(f"{arg} is not a challenge")
+
+            return r
+
+
+CURRENT_SEASON = 2
 
 
 class Challenges(commands.Cog):
@@ -102,9 +109,9 @@ class Challenges(commands.Cog):
         """
         if challenge_title is None:
             latest_challenge = (
-                await Challenge.query
-                .order_by(Challenge.creation_date.desc(),
-                          Challenge.id.desc())
+                await Challenge.query.order_by(
+                    Challenge.creation_date.desc(), Challenge.id.desc()
+                )
                 .where(sa.not_(Challenge.hidden))
                 .gino.first()
             )
@@ -138,6 +145,7 @@ class Challenges(commands.Cog):
         self,
         ctx,
         tag_condition: Optional[Literal["every", "any"]] = "every",
+        season: Optional[int] = CURRENT_SEASON,
         *tags: str,
     ):
         """View the most and lest solved challenges.
@@ -163,6 +171,7 @@ class Challenges(commands.Cog):
             .select_from(Challenge.outerjoin(CompletedChallenge))
             .where(tag_filter(tags))
             .where(sa.not_(Challenge.hidden))
+            .where(CompletedChallenge.season == season)
             .group_by(Challenge.id)
             .alias("inner")
         )
@@ -181,8 +190,9 @@ class Challenges(commands.Cog):
         q_least = (
             db.select([Challenge.title, Challenge.points, count])
             .select_from(Challenge.outerjoin(CompletedChallenge))
-            .where(sa.not_(Challenge.hidden))
             .where(tag_filter(tags))
+            .where(sa.not_(Challenge.hidden))
+            .where(CompletedChallenge.season == season)
             .group_by(Challenge.id)
             .alias("inner")
         )
@@ -229,6 +239,7 @@ class Challenges(commands.Cog):
         self,
         ctx,
         tag_condition: Optional[Literal["every", "any"]] = "every",
+        season: Optional[int] = CURRENT_SEASON,
         *tags: str,
     ):
         """View the leaderboard for completed challenges.
@@ -255,6 +266,7 @@ class Challenges(commands.Cog):
             .select_from(User.join(CompletedChallenge).join(Challenge))
             .where(tag_filter(tags))
             .where(sa.not_(Challenge.hidden))
+            .where(CompletedChallenge.season == season)
             .group_by(User.discord_id)
             .alias("inner")
         )
@@ -285,15 +297,20 @@ class Challenges(commands.Cog):
             tablefmt="github",
         )
 
-        await ctx.send(f"```\n{table}\n```")
+        await ctx.send(f"Scoreboard for season {season}: ```\n{table}\n```")
 
     @challenges.command()
-    async def info(self, ctx):
+    async def info(
+        self,
+        ctx,
+        season: Optional[int] = CURRENT_SEASON,
+    ):
         """Get info about your solved and unsolved challenges."""
 
         solved_challenges = (
             db.select([CompletedChallenge.challenge_id])
             .where(CompletedChallenge.discord_id == ctx.author.id)
+            .where(CompletedChallenge.season == season)
             .cte("solved_challenges")
         )
 
@@ -308,6 +325,7 @@ class Challenges(commands.Cog):
             db.select([User.discord_id, score])
             .select_from(User.outerjoin(CompletedChallenge).outerjoin(Challenge))
             .where(sa.not_(Challenge.hidden))
+            .where(CompletedChallenge.season == season)
             .group_by(User.discord_id)
             .cte("scores")
         )
@@ -339,7 +357,7 @@ class Challenges(commands.Cog):
 
         msg = textwrap.dedent(
             f"""
-            Challenge info for {ctx.author}:
+            Challenge info for {ctx.author} in season {season}:
 
             Solves: {count}
             Points: {points}
@@ -397,6 +415,7 @@ class Challenges(commands.Cog):
         already_claimed = await CompletedChallenge.query.where(
             (CompletedChallenge.discord_id == ctx.author.id)
             & (CompletedChallenge.challenge_id == challenge.id)
+            & (CompletedChallenge.season == CURRENT_SEASON)
         ).gino.first()
 
         if already_claimed is not None:
@@ -406,13 +425,12 @@ class Challenges(commands.Cog):
             return
 
         await CompletedChallenge.create(
-            discord_id=ctx.author.id, challenge_id=challenge.id
+            discord_id=ctx.author.id, challenge_id=challenge.id, season=CURRENT_SEASON
         )
         await ctx.send(
             f"Congrats, you've completed this challenge and have been awarded {challenge.points} points!"
             + warn_dm_message
         )
-
 
     @commands.check(is_admin)
     @challenges.command()
@@ -492,8 +510,7 @@ class Challenges(commands.Cog):
         challenges = (
             await Challenge.query.where(sa.not_(Challenge.hidden))
             .where(tag_filter(tags))
-            .order_by(Challenge.creation_date.desc(),
-                      Challenge.id.desc())
+            .order_by(Challenge.creation_date.desc(), Challenge.id.desc())
             .gino.all()
         )
 
