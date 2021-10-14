@@ -22,8 +22,8 @@ class ActivityChecker(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        if not constants.is_test_mode:
-            self.background_loop.start()
+        # if not constants.is_test_mode:
+        #     self.background_loop.start()
 
     async def cog_check(self, ctx):
         return is_admin(ctx)
@@ -112,27 +112,27 @@ class ActivityChecker(commands.Cog):
         await email_tools.send_reverify_email(user.email)
         await user.update(flagged_for_deletion=datetime.utcnow()).apply()
 
-    @tasks.loop(hours=24)
-    async def background_loop(self):
-        """The background task for fetching users that haven't messaged in a month."""
-        logger.info("Running pass of removing flagged users")
-        one_week_ago = datetime.utcnow() - timedelta(weeks=1)
+#     @tasks.loop(hours=24)
+#     async def background_loop(self):
+#         """The background task for fetching users that haven't messaged in a month."""
+#         logger.info("Running pass of removing flagged users")
+#         one_week_ago = datetime.utcnow() - timedelta(weeks=1)
 
-        users_to_delete = await User.query.where(
-            (User.flagged_for_deletion != None)
-            & (User.flagged_for_deletion < one_week_ago)
-        ).gino.all()
+#         users_to_delete = await User.query.where(
+#             (User.flagged_for_deletion != None)
+#             & (User.flagged_for_deletion < one_week_ago)
+#         ).gino.all()
 
-        logger.info(f"Users to remove: {users_to_delete}")
+#         logger.info(f"Users to remove: {users_to_delete}")
 
-        for user in users_to_delete:
-            await self.remove_verified_user(user)
+#         for user in users_to_delete:
+#             await self.remove_verified_user(user)
 
-        for member in self.get_inactive_potential_members():
-            await self.bot.log_message(
-                f"Kicking inactive potential-only member {member} ({member.id})"
-            )
-            await member.kick(reason="Inactive potential-only user.")
+#         for member in self.get_inactive_potential_members():
+#             await self.bot.log_message(
+#                 f"Kicking inactive potential-only member {member} ({member.id})"
+#             )
+#             await member.kick(reason="Inactive potential-only user.")
 
     @commands.command()
     async def manually_flag_inactive(self, ctx, member: discord.Member):
