@@ -230,7 +230,7 @@ class Challenges(commands.Cog):
             {least_table}
             ```
             """
-        ).format(most_table=most_table, least_table=least_table)
+        ).format(most_table=most_table, least_table=least_table, season=season)
 
         await ctx.send(msg)
 
