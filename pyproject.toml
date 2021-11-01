@@ -40,7 +40,7 @@ Authlib = "^0.15.4"
 
 [tool.poetry.dev-dependencies]
 psycopg2-binary = "^2.8"
-pyre-check = "^0.9.1"
+pyre-check = "^0.9.8"
 
 [tool.poetry.scripts]
 start_bot = 'luhack_bot:run'
