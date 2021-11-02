@@ -107,6 +107,7 @@ class LUHackBot(commands.Bot):
             return
 
         await ctx.send("Something's borked, sorry")
+        await self.log_message(f"An error happened: {error}")
         logger.error(
             "oof: %s", error, exc_info=(type(error), error, error.__traceback__)
         )

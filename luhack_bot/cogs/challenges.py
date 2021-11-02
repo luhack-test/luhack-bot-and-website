@@ -167,56 +167,58 @@ class Challenges(commands.Cog):
         rank = sa.func.dense_rank().over(order_by=sa.desc("count")).label("rank")
 
         q_most = (
-            db.select([Challenge.title, Challenge.points, count])
+            db.select([Challenge.title, Challenge.points, count, Challenge.hidden])
             .select_from(Challenge.outerjoin(CompletedChallenge))
             .where(tag_filter(tags))
-            .where(sa.not_(Challenge.hidden))
             .where(CompletedChallenge.season == season)
             .group_by(Challenge.id)
             .alias("inner")
         )
 
+        hidden_check_most = sa.case([(q_most.c.hidden, "X")], else_="").label("hidden_check")
+
         most = await (
-            db.select([rank, q_most.c.title, q_most.c.count, q_most.c.points])
+            db.select([rank, q_most.c.title, q_most.c.count, q_most.c.points, hidden_check_most])
             .select_from(q_most)
             .limit(5)
             .order_by(sa.desc(q_most.c.count))
             .gino.load(
-                (rank, q_most.c.title, ColumnLoader(q_most.c.count), q_most.c.points)
+                (rank, q_most.c.title, ColumnLoader(q_most.c.count), q_most.c.points, hidden_check_most)
             )
             .all()
         )
 
         q_least = (
-            db.select([Challenge.title, Challenge.points, count])
+            db.select([Challenge.title, Challenge.points, count, Challenge.hidden])
             .select_from(Challenge.outerjoin(CompletedChallenge))
             .where(tag_filter(tags))
-            .where(sa.not_(Challenge.hidden))
             .where(CompletedChallenge.season == season)
             .group_by(Challenge.id)
             .alias("inner")
         )
 
+        hidden_check_least = sa.case([(q_least.c.hidden, "X")], else_="").label("hidden_check")
+
         least = await (
-            db.select([rank, q_least.c.title, q_least.c.count, q_least.c.points])
+            db.select([rank, q_least.c.title, q_least.c.count, q_least.c.points, hidden_check_least])
             .select_from(q_least)
             .order_by(sa.asc(q_least.c.count))
             .limit(5)
             .gino.load(
-                (rank, q_least.c.title, ColumnLoader(q_least.c.count), q_least.c.points)
+                (rank, q_least.c.title, ColumnLoader(q_least.c.count), q_least.c.points, hidden_check_least)
             )
             .all()
         )
 
         most_table = tabulate(
             most,
-            headers=["Rank", "Challenge Title", "Solves", "Points"],
+            headers=["Rank", "Challenge Title", "Solves", "Points", "Hidden"],
             tablefmt="github",
         )
 
         least_table = tabulate(
             least,
-            headers=["Rank", "Challenge Title", "Solves", "Points"],
+            headers=["Rank", "Challenge Title", "Solves", "Points", "Hidden"],
             tablefmt="github",
         )
 
@@ -265,7 +267,6 @@ class Challenges(commands.Cog):
             db.select([User.discord_id, score, count])
             .select_from(User.join(CompletedChallenge).join(Challenge))
             .where(tag_filter(tags))
-            .where(sa.not_(Challenge.hidden))
             .where(CompletedChallenge.season == season)
             .group_by(User.discord_id)
             .alias("inner")
@@ -324,7 +325,6 @@ class Challenges(commands.Cog):
         scores_q = (
             db.select([User.discord_id, score])
             .select_from(User.outerjoin(CompletedChallenge).outerjoin(Challenge))
-            .where(sa.not_(Challenge.hidden))
             .where(CompletedChallenge.season == season)
             .group_by(User.discord_id)
             .cte("scores")
