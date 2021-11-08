@@ -381,8 +381,6 @@ class Challenges(commands.Cog):
             warn_dm_message = "\n\nP.S. Use this command in DMs next time."
 
         if challenge is None:
-            # if this is a flag solve
-
             challenge = (
                 await Challenge.query.where(Challenge.flag == flag)
                 .where(sa.not_(Challenge.hidden))
@@ -395,7 +393,7 @@ class Challenges(commands.Cog):
                 )
                 return
 
-        elif challenge.answer != flag:
+        if not (challenge.answer == flag or challenge.flag == flag):
             # if this is an answer solve
             await ctx.send("That isn't the correct answer, sorry.")
             return
