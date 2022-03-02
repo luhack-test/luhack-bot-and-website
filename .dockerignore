@@ -1,4 +1,4 @@
-db-data
+db-data/
 .git
 .gitattributes
 .gitignore
@@ -14,6 +14,6 @@ __pycache__
 *.pyc
 *.pyo
 *.pyd
-.venv
+.venv/
 .mypy_cache
 

@@ -203,7 +203,7 @@ async def challenge_by_tag(request: HTTPConnection):
     )
 
 
-async def get_all_tags(include_hidden: bool = True):
+async def get_all_tags(include_hidden: bool = False):
     tags = (
         await sa.select([sa.column("tag")])
         .select_from(Challenge)
