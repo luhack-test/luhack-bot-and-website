@@ -203,12 +203,12 @@ async def challenge_by_tag(request: HTTPConnection):
     )
 
 
-async def get_all_tags():
+async def get_all_tags(include_hidden: bool = True):
     tags = (
         await sa.select([sa.column("tag")])
         .select_from(Challenge)
         .select_from(sa.func.unnest(Challenge.tags).alias("tag"))
-        .where(sa.not_(Challenge.hidden))
+        .where(True if include_hidden else sa.not_(Challenge.hidden))
         .group_by(sa.column("tag"))
         .order_by(sa.func.count())
         .gino.all()
@@ -335,7 +335,7 @@ class NewChallenge(HTTPEndpoint):
         form = ChallengeForm()
 
         images = await encoded_existing_images(request)
-        tags = orjson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags(include_hidden=True))
 
         return templates.TemplateResponse(
             "challenge/new.j2",
@@ -400,7 +400,7 @@ class NewChallenge(HTTPEndpoint):
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = orjson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags(include_hidden=True))
 
         return templates.TemplateResponse(
             "challenge/new.j2",
@@ -439,7 +439,7 @@ class EditChallenge(HTTPEndpoint):
         )
 
         images = await encoded_existing_images(request)
-        tags = orjson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags(include_hidden=True))
 
         return templates.TemplateResponse(
             "challenge/edit.j2",
@@ -513,7 +513,7 @@ class EditChallenge(HTTPEndpoint):
             return redirect_response(url=url)
 
         images = await encoded_existing_images(request)
-        tags = orjson.dumps(await get_all_tags())
+        tags = orjson.dumps(await get_all_tags(include_hidden=True))
 
         return templates.TemplateResponse(
             "challenge/edit.j2",
