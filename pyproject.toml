@@ -36,7 +36,7 @@ httpx = "^0.19"
 orjson = "^3.6"
 discord-ext-alternatives = "^2021.4.13"
 Jinja2 = "^3.0.1"
-Authlib = "^0.15.4"
+Authlib = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 psycopg2-binary = "^2.8"
