@@ -8,6 +8,41 @@ from pygments.util import ClassNotFound
 from pygments.formatters import html
 
 
+AUDIO_PATTERN = (
+    r'!audio\['
+    r'([\S]*?)\]\(([\S]+?)\)'
+)
+
+def parse_audio(inline, m, state):
+    title, link = m.group(1), m.group(2)
+    return 'audio', link, title
+
+def render_html_audio(link, title):
+    return f'<audio controls="controls" src="{link}">{title}</audio>'
+
+VIDEO_PATTERN = (
+    r'!video\['
+    r'([\S]*?)\]\(([\S]+?)\)'
+)
+
+def parse_video(inline, m, state):
+    title, link = m.group(1), m.group(2)
+    return 'video', link, title
+
+def render_html_video(link, title):
+    print('video', link, title)
+    return f'<video controls="controls" src="{link}">{title}</video>'
+
+def plugin_media(md):
+    md.inline.register_rule('audio', AUDIO_PATTERN, parse_audio)
+    md.inline.register_rule('video', VIDEO_PATTERN, parse_video)
+    md.inline.rules.append('audio')
+    md.inline.rules.append('video')
+
+    if md.renderer.NAME == 'html':
+        md.renderer.register('audio', render_html_audio)
+        md.renderer.register('video', render_html_video)
+
 class HighlightRenderer(mistune.HTMLRenderer):
     def block_code(self, code, lang=None):
         def no_highlight():
@@ -62,8 +97,8 @@ highlight_renderer = HighlightRenderer(escape=True)
 highlight_renderer_unsafe = HighlightRenderer(escape=False)
 plaintext_renderer = PlaintextRenderer(escape=True)
 
-highlight_markdown = mistune.create_markdown(renderer=highlight_renderer, plugins=['url', 'table'])
-highlight_markdown_unsafe = mistune.create_markdown(renderer=highlight_renderer_unsafe, plugins=['url', 'table'])
+highlight_markdown = mistune.create_markdown(renderer=highlight_renderer, plugins=['url', 'table', plugin_media])
+highlight_markdown_unsafe = mistune.create_markdown(renderer=highlight_renderer_unsafe, plugins=['url', 'table', plugin_media])
 length_constrained_plaintext_markdown = mistune.create_markdown(renderer=plaintext_renderer, plugins=['url'])
 
 uncounted_tokens = {"block_code", "block_quote", "block_html", "heading",

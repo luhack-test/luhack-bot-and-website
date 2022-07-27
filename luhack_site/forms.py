@@ -3,7 +3,7 @@ import re
 import orjson
 
 from wtforms import Form, StringField, TextAreaField, Field, validators, ValidationError
-from wtforms.fields.core import BooleanField, IntegerField
+from wtforms.fields import BooleanField, IntegerField
 from wtforms.widgets import TextInput
 
 
@@ -43,33 +43,28 @@ class TagListField(Field):
 
 
 class PostForm(Form):
-    title = StringField(
-        "Title", [validators.Length(min=4, max=25)]
-    )
+    title = StringField("Title", [validators.Length(min=4, max=25)])
     tags = TagListField("Tags")
     content = TextAreaField("Content")
 
+
 class WriteupForm(Form):
-    title = StringField(
-        "Title", [validators.Length(min=4, max=25)]
-    )
+    title = StringField("Title", [validators.Length(min=4, max=25)])
     tags = TagListField("Tags")
     private = BooleanField("Private")
     content = TextAreaField("Content")
 
+
 class ChallengeForm(Form):
-    title = StringField(
-        "Title", [validators.Length(min=4, max=25)]
-    )
+    title = StringField("Title", [validators.Length(min=4, max=25)])
     content = TextAreaField("Content")
     flag_or_answer = StringField("Flag/Answer")
     is_flag = BooleanField("Is Flag")
     tags = TagListField("Tags")
     hidden = BooleanField("Hidden")
     depreciated = BooleanField("Depreciated")
-    points = IntegerField(
-        "Points", [validators.NumberRange(min=1)]
-    )
+    points = IntegerField("Points", [validators.NumberRange(min=1)])
+
 
 class AnswerForm(Form):
     answer = StringField("Flag/Answer")

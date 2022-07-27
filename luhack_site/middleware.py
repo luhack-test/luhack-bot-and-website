@@ -80,12 +80,14 @@ class CSPMiddleware(HeaderMiddleware):
         connect_src: typing.Sequence[str] = ("'self'",),
         img_src: typing.Sequence[str] = ("*", "'self'", "data:"),
         style_src: typing.Sequence[str] = ("'self'",),
+        media_src: typing.Sequence[str] = ("*", "'self'", "data:"),
     ):
         ds = "default-src " + " ".join(default_src)
         scs = "script-src " + " ".join(script_src)
         cs = "connect-src " + " ".join(connect_src)
         is_ = "img-src " + " ".join(img_src)
         sts = "style-src " + " ".join(style_src)
-        header_content = ";".join((ds, scs, cs, is_, sts))
+        ms = "media-src " + " ".join(media_src)
+        header_content = ";".join((ds, scs, cs, is_, sts, ms))
 
         super().__init__(app, {"Content-Security-Policy": header_content})
