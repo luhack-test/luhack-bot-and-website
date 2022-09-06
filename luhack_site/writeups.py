@@ -1,8 +1,8 @@
 import orjson
 import sqlalchemy as sa
+from luhack_bot.db.helpers import text_search
 from luhack_bot.db.models import User, Writeup, db
 from slug import slug
-from sqlalchemy_searchable import search as pg_search
 from sqlalchemy_searchable import search_manager
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
@@ -140,12 +140,14 @@ async def writeups_search(request: HTTPConnection):
     s_query = request.query_params.get("search", "")
 
     # sorry about this
-    query = pg_search(sa.select([Writeup.join(User)]), s_query, sort=True)
+
+    query = text_search(
+        Writeup.join(User).select(), s_query, sort=True, vector=Writeup.search_vector
+    )
     query = query.column(
         sa.func.ts_headline(
-            search_manager.options["regconfig"],
             Writeup.content,
-            sa.func.tsq_parse(search_manager.options["regconfig"], s_query),
+            sa.func.parse_websearch(search_manager.options["regconfig"], s_query),
             f"StartSel=**,StopSel=**,MaxWords=70,MinWords=30,MaxFragments=3",
         ).label("headline")
     )

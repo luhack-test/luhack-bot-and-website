@@ -7,11 +7,11 @@ import discord
 import sqlalchemy as sa
 from discord.ext import commands
 from gino.loader import ColumnLoader
-from sqlalchemy_searchable import search as pg_search
 from discord.ext.alternatives import literal_converter as _
 from tabulate import tabulate
 
 from luhack_bot import constants
+from luhack_bot.db.helpers import text_search
 from luhack_bot.db.models import Challenge, CompletedChallenge, User, db
 from luhack_bot.utils.checks import is_admin, is_authed
 
@@ -74,7 +74,7 @@ class Challenges(commands.Cog):
     async def search_challenges(self, search: str) -> List[Challenge]:
         """Search for challenges, return top 3 matching."""
         return (
-            await pg_search(
+            await text_search(
                 Challenge.query.where(sa.not_(Challenge.hidden)), search, sort=True
             )
             .limit(3)

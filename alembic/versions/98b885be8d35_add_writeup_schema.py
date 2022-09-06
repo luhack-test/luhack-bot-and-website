@@ -8,7 +8,7 @@ Create Date: 2019-03-22 04:18:11.449446
 from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-from sqlalchemy_searchable import sync_trigger, sql_expressions
+from sqlalchemy_searchable import sync_trigger
 
 # revision identifiers, used by Alembic.
 revision = "98b885be8d35"
@@ -47,8 +47,6 @@ def upgrade():
         unique=False,
         postgresql_using="gin",
     )
-
-    conn.execute(sql_expressions.statement)
 
     sync_trigger(conn, "writeups", "search_vector", ["title", "content"])
     # ### end Alembic commands ###

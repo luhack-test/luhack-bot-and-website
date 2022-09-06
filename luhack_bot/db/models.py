@@ -27,18 +27,9 @@ class User(db.Model):
     #  unverify any user that's been flagged for more than a week
     flagged_for_deletion = db.Column(db.DateTime, nullable=True)
 
-    completed_challenges = relationship("Challenge", secondary=lambda: CompletedChallenge,
-                                        back_populates="challenges")
-
-
-# class ProspectiveUser(db.Model):
-#     """Prospective users, that are in from an auth code."""
-
-#     __tablename__ = "prospective_users"
-
-#     discord_id = db.Column(db.BigInteger(), primary_key=True)
-#     username = db.Column(db.Text(), nullable=False)
-#     joined_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    completed_challenges = relationship(
+        "Challenge", secondary=lambda: CompletedChallenge, back_populates="challenges"
+    )
 
 
 class Writeup(db.Model):
@@ -48,14 +39,12 @@ class Writeup(db.Model):
     author_id = db.Column(
         None, db.ForeignKey("users.discord_id", ondelete="SET NULL"), nullable=True
     )
-    author = relationship(
-        User, backref=backref("writeups"), lazy="joined"
-    )
+    author = relationship(User, backref=backref("writeups"), lazy="joined")
 
     title = db.Column(db.Text(), nullable=False, unique=True)
 
     slug = db.Column(db.Text(), nullable=False, unique=True)
-    _slug_nonempty = db.CheckConstraint('slug!=""'),
+    _slug_nonempty = (db.CheckConstraint('slug!=""'),)
 
     tags = db.Column(ARRAY(db.Text()), nullable=False)
     content = db.Column(db.Text(), nullable=False)
@@ -96,73 +85,11 @@ class Image(db.Model):
     author_id = db.Column(
         None, db.ForeignKey("users.discord_id", ondelete="SET NULL"), nullable=True
     )
-    author = relationship(
-        User, backref=backref("images"), lazy="joined"
-    )
+    author = relationship(User, backref=backref("images"), lazy="joined")
 
     filetype = db.Column(db.Text(), nullable=False)
     image = db.Column(db.LargeBinary(), nullable=False)
 
-
-class Blog(db.Model):
-    __tablename__ = "blogs"
-
-    id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(
-        None, db.ForeignKey("users.discord_id", ondelete="SET NULL"), nullable=True
-    )
-    author = relationship(
-        User, backref=backref("writeups"), lazy="joined"
-    )
-
-    title = db.Column(db.Text(), nullable=False, unique=True)
-
-    slug = db.Column(db.Text(), nullable=False, unique=True)
-    _slug_nonempty = db.CheckConstraint('slug!=""'),
-
-    tags = db.Column(ARRAY(db.Text()), nullable=False)
-    content = db.Column(db.Text(), nullable=False)
-
-    creation_date = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    edit_date = db.Column(
-        db.DateTime,
-        server_default=func.now(),
-        server_onupdate=func.now(),
-        nullable=False,
-    )
-
-    search_vector = db.Column(
-        TSVectorType("title", "content", weights={"title": "A", "content": "B"})
-    )
-
-    _tags_idx = db.Index("blogs_tags_array_idx", "tags", postgresql_using="gin")
-
-    @classmethod
-    def create_auto(cls, *args, **kwargs):
-        if "slug" not in kwargs:
-            kwargs["slug"] = slug(kwargs["title"])
-        return cls.create(*args, **kwargs)
-
-    def update_auto(self, *args, **kwargs):
-        if "slug" not in kwargs:
-            kwargs["slug"] = slug(kwargs["title"])
-        return self.update(*args, **kwargs)
-
-
-class Todo(db.Model):
-    __tablename__ = "todos"
-
-    id = db.Column(db.Integer, primary_key=True)
-    assigned = db.Column(db.BigInteger(), nullable=True)
-    started = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    deadline = db.Column(db.DateTime)
-
-    # completed date & cancelled = cancelled
-    # completed date & !cancelled = completed
-    cancelled = db.Column(db.Boolean, nullable=False, server_default="f", default=False)
-    completed = db.Column(db.DateTime, nullable=True)
-
-    content = db.Column(db.Text(), nullable=False)
 
 class Challenge(db.Model):
     __tablename__ = "challenges"
@@ -171,7 +98,7 @@ class Challenge(db.Model):
 
     title = db.Column(db.Text(), unique=True, nullable=False)
     slug = db.Column(db.Text(), nullable=False, unique=True)
-    _slug_nonempty = db.CheckConstraint('slug!=""'),
+    _slug_nonempty = (db.CheckConstraint('slug!=""'),)
 
     content = db.Column(db.Text(), nullable=False)
     tags = db.Column(ARRAY(db.Text()), nullable=False)
@@ -183,8 +110,9 @@ class Challenge(db.Model):
 
     points = db.Column(db.Integer(), nullable=False)
 
-    completed_users = relationship(User, secondary=lambda: CompletedChallenge,
-                                   back_populates="users")
+    completed_users = relationship(
+        User, secondary=lambda: CompletedChallenge, back_populates="users"
+    )
 
     creation_date = db.Column(db.DateTime, server_default=func.now(), nullable=False)
 
@@ -208,9 +136,22 @@ class Challenge(db.Model):
             kwargs["slug"] = slug(kwargs["title"])
         return self.update(*args, **kwargs)
 
+
 class CompletedChallenge(db.Model):
     __tablename__ = "completedchallenges"
 
-    discord_id = db.Column(None, db.ForeignKey("users.discord_id", ondelete="CASCADE"), nullable=False, primary_key=True)
-    challenge_id = db.Column(None, db.ForeignKey("challenges.id", ondelete="CASCADE"), nullable=False, primary_key=True)
-    season = db.Column(db.Integer(), nullable=False, default=1, server_default="1", primary_key=True)
+    discord_id = db.Column(
+        None,
+        db.ForeignKey("users.discord_id", ondelete="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    )
+    challenge_id = db.Column(
+        None,
+        db.ForeignKey("challenges.id", ondelete="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    )
+    season = db.Column(
+        db.Integer(), nullable=False, default=1, server_default="1", primary_key=True
+    )

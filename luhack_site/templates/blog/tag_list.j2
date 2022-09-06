@@ -1,9 +1,0 @@
-{% extends "blog/base.j2" %}
-
-{% from "blog/links.j2" import tag_link with context %}
-
-{% block content %}
-    {% for tag in tags -%}
-        {{ tag_link(tag)  }}
-    {%- endfor %}
-{% endblock %}

@@ -43,32 +43,26 @@ def gen_tokens():
     )
 
 
-def export_writeups_and_blog_posts():
+def export_writeups():
     import asyncio
     import json
 
     from luhack_bot.db.helpers import init_db
-    from luhack_bot.db.models import Writeup, Blog
+    from luhack_bot.db.models import Writeup
 
     def id(x):
         return x
 
     writeup_keys = {"id": id, "author_id": id, "title": id, "slug": id, "tags": id, "content": id, "creation_date": str, "edit_date": str}
-    blog_keys = {"id": id, "title": id, "slug": id, "tags": id, "content": id, "creation_date": str, "edit_date": str}
 
     def t_w(w):
         return {k: f(getattr(w, k)) for k, f in writeup_keys.items()}
-
-    def t_b(b):
-        return {k: f(getattr(b, k)) for k, f in blog_keys.items()}
 
     async def inner():
         await init_db()
 
         writeups = await Writeup.query.gino.all()
-        blogs = await Blog.query.gino.all()
 
         print(json.dumps([t_w(w) for w in writeups]))
-        print(json.dumps([t_b(b) for b in blogs]))
 
     asyncio.run(inner())

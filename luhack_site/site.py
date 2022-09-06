@@ -15,7 +15,6 @@ from starlette.staticfiles import StaticFiles
 
 from luhack_site import settings
 from luhack_site.authorization import TokenAuthBackend, can_edit
-from luhack_site.blog import router as blog_router
 from luhack_site.challenges import router as challenge_router
 from luhack_site.images import router as images_router
 from luhack_site.middleware import (
@@ -40,7 +39,6 @@ app = Starlette(
     routes=[
         Mount("/writeups", app=writeups_router),
         Mount("/images", app=images_router),
-        Mount("/blog", app=blog_router),
         Mount("/challenges", app=challenge_router),
         Mount("/oauth", app=oauth_router),
     ]

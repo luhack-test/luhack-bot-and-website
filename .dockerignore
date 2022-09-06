@@ -1,4 +1,4 @@
-db-data/
+/db-data
 .git
 .gitattributes
 .gitignore

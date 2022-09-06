@@ -7,10 +7,9 @@ import zipfile
 import discord
 import sqlalchemy as sa
 from discord.ext import commands
-from sqlalchemy_searchable import search as pg_search
-from discord.ext.alternatives import literal_converter
 
 from luhack_bot import constants
+from luhack_bot.db.helpers import text_search
 from luhack_bot.db.models import Image, Writeup
 from luhack_bot.utils.checks import is_authed
 
@@ -37,7 +36,7 @@ class Writeups(commands.Cog):
 
     async def search_writeups(self, search: str) -> List[Writeup]:
         """Search for writeups, return top 3 matching."""
-        return await pg_search(Writeup.query, search, sort=True).limit(3).gino.all()
+        return await text_search(Writeup.query, search, sort=True).limit(3).gino.all()
 
     def can_edit_writeup(self, writeup: Writeup, user_id: int) -> bool:
         return (
