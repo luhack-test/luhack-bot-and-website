@@ -1,4 +1,8 @@
+from __future__ import annotations
+
+import asyncio
 import logging
+from typing import TYPE_CHECKING, Optional
 
 import discord
 from discord import app_commands
@@ -15,16 +19,17 @@ from luhack_bot.utils.checks import (
     is_in_luhack_int,
 )
 
+if TYPE_CHECKING:
+    from luhack_bot.bot import LUHackBot
+
 logger = logging.getLogger(__name__)
 
 
 class Verification(commands.GroupCog, name="verify"):
-    def __init__(self, bot):
+    def __init__(self, bot: LUHackBot):
         self.bot = bot
 
-        if not constants.is_test_mode:
-            self.fix_missing_roles.start()
-            self.update_members.start()
+        asyncio.create_task(self.start_tasks_when_ready())
 
         #: members that have left the discord but are in the database, we keep
         # track here so we can remove them after they've been away for more than
@@ -32,7 +37,7 @@ class Verification(commands.GroupCog, name="verify"):
         self.members_flagged_as_left = set()
         super().__init__()
 
-    def get_member_in_luhack(self, user_id: int) -> discord.Member:
+    def get_member_in_luhack(self, user_id: int) -> Optional[discord.Member]:
         """Try and fetch a member in the luhack guild."""
         return self.bot.luhack_guild().get_member(user_id)
 
@@ -53,6 +58,12 @@ class Verification(commands.GroupCog, name="verify"):
     async def on_member_join(self, member):
         # if the user is already in the db, then they're verified
         await self.apply_roles(member)
+
+    async def start_tasks_when_ready(self):
+        await self.bot.wait_until_ready()
+        if not constants.is_test_mode:
+            self.fix_missing_roles.start()
+            self.update_members.start()
 
     @tasks.loop(hours=1)
     async def fix_missing_roles(self):
@@ -151,7 +162,7 @@ class Verification(commands.GroupCog, name="verify"):
                 "Seems you're not the same person that generated the token, go away."
             )
 
-        member: discord.Member = self.get_member_in_luhack(user_id)
+        member = self.get_member_in_luhack(user_id)
 
         assert member is not None
 

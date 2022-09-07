@@ -79,14 +79,20 @@ class LUHackBot(commands.Bot):
         assert guild is not None
         return guild
 
-    def potential_role(self):
-        return self.luhack_guild().get_role(constants.potential_luhacker_role_id)
+    def potential_role(self) -> discord.Role:
+        role = self.luhack_guild().get_role(constants.potential_luhacker_role_id)
+        assert role is not None
+        return role
 
-    def prospective_role(self):
-        return self.luhack_guild().get_role(constants.prospective_luhacker_role_id)
+    def prospective_role(self) -> discord.Role:
+        role = self.luhack_guild().get_role(constants.prospective_luhacker_role_id)
+        assert role is not None
+        return role
 
-    def verified_role(self):
-        return self.luhack_guild().get_role(constants.verified_luhacker_role_id)
+    def verified_role(self) -> discord.Role:
+        role = self.luhack_guild().get_role(constants.verified_luhacker_role_id)
+        assert role is not None
+        return role
 
     async def log_message(self, *args, **kwargs):
         luhack_guild = self.luhack_guild()
