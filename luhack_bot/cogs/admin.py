@@ -65,9 +65,9 @@ class Admin(commands.Cog):
     async def reload(self, ctx, module):
         try:
             if module in self.bot.extensions:
-                self.bot.reload_extension(module)
+                await self.bot.reload_extension(module)
             else:
-                self.bot.load_extension(module)
+                await self.bot.load_extension(module)
         except commands.ExtensionError as e:
             await ctx.send(f"Failed to (re)load {module}: {e}")
         else:
@@ -121,5 +121,5 @@ class Admin(commands.Cog):
         result = await eval(f"{fn_name}()", env)
         await ctx.send(result)
 
-def setup(bot):
-    bot.add_cog(Admin(bot))
+async def setup(bot):
+    await bot.add_cog(Admin(bot))

@@ -2,6 +2,8 @@ import logging
 import textwrap
 from aiosmtplib import SMTP
 from email.message import EmailMessage
+from discord import app_commands
+import discord
 
 from discord.ext.commands import BadArgument
 
@@ -69,12 +71,11 @@ def is_lancs_email(email: str) -> bool:
     return email.endswith(("@lancaster.ac.uk", "@lancs.ac.uk", "@live.lancs.ac.uk"))
 
 
-def lancs_email(email: str) -> str:
-    """Command converter that checks the email is a lancaster email."""
+class LancsEmailTransformer(app_commands.Transformer):
+    async def transform(self, interaction: discord.Interaction, value: str) -> str:
+        if not is_lancs_email(value):
+            raise BadArgument(
+                "Invalid email, please provide a valid lancs email, such as @lancaster.ac.uk, @lancs.ac.uk, or @live.lancs.ac.uk"
+            )
 
-    if not is_lancs_email(email):
-        raise BadArgument(
-            "Invalid email, please provide a valid lancs email, such as @lancaster.ac.uk, @lancs.ac.uk, or @live.lancs.ac.uk"
-        )
-
-    return email
+        return value

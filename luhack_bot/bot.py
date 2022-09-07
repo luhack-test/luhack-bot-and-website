@@ -1,10 +1,10 @@
-# Created by DethMetalDuck
-# LUHack_Discord_Verification_Bot contains the main logic for the bot
-import asyncio
 import logging
 import time
+import os
+from typing import Optional
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 from luhack_bot import constants
@@ -14,20 +14,25 @@ from luhack_bot.secrets import bot_client_token
 logger = logging.getLogger(__name__)
 
 
-COGS = ["cogs.activity_checker",
-        "cogs.admin",
-        "cogs.todos",
-        "cogs.verification",
-        "cogs.writeups",
-        "cogs.challenges",
-        "cogs.notifier",
-        ]
+COGS = [
+    "cogs.admin",
+    "cogs.verification",
+    "cogs.writeups",
+    "cogs.challenges",
+    "cogs.notifier",
+]
+
 
 class LUHackBot(commands.Bot):
     def __init__(self, **kwargs):
         intents = discord.Intents.default()
         intents.members = True
-        base_kwargs = {"command_prefix": ["L!", "!"], "pm_help": True, "intents": intents}
+        intents.message_content = True
+        base_kwargs = {
+            "command_prefix": ["L!", "!"],
+            "pm_help": True,
+            "intents": intents,
+        }
         base_kwargs.update(kwargs)
         super().__init__(**base_kwargs)
 
@@ -41,22 +46,38 @@ class LUHackBot(commands.Bot):
         print(f'Timestamp:  {time.strftime("%Y-%m-%d %H:%M:%S")}')
         print("----------------Logs-----------------")
 
-    def run(self, *args, **kwargs):
-        self.loop.create_task(self.load_cogs())
-        super().run(*args, **kwargs)
-
     async def load_cogs(self):
         """Register our cogs."""
-        await self.wait_until_ready()
-       
         for extension in COGS:
             try:
-                self.load_extension("luhack_bot." + extension)
+                await self.load_extension("luhack_bot." + extension)
             except Exception as e:
-                print(f'Failed to load extension {extension}: {e}')
+                print(f"Failed to load extension {extension}: {e}")
 
-    def luhack_guild(self):
-        return self.get_guild(constants.luhack_guild_id)
+    async def setup_hook(self):
+        await init_db()
+        await self.load_cogs()
+
+        if os.getenv("GUILDIFY_COMMANDS") is not None:
+            self.tree.copy_global_to(guild=discord.Object(constants.luhack_guild_id))
+
+        original_on_error = self.tree.on_error
+
+        async def outer_error(*args, **kwargs):
+            await self.on_interaction_error(*args, **kwargs)
+            await original_on_error(*args, **kwargs)
+
+        self.tree.on_error = outer_error
+
+        if os.getenv("SYNC_COMMANDS") is not None:
+            logger.info("Syncing commands")
+            await self.tree.sync()
+            await self.tree.sync(guild=discord.Object(constants.luhack_guild_id))
+
+    def luhack_guild(self) -> discord.Guild:
+        guild = self.get_guild(constants.luhack_guild_id)
+        assert guild is not None
+        return guild
 
     def potential_role(self):
         return self.luhack_guild().get_role(constants.potential_luhacker_role_id)
@@ -75,11 +96,20 @@ class LUHackBot(commands.Bot):
             logger.warn("Log channel is missing")
             return
 
+        assert isinstance(log_chan, discord.TextChannel)
+
         await log_chan.send(*args, **kwargs)
+
+    async def on_interaction_error(self, interaction: discord.Interaction, error: Optional[BaseException]):
+        if isinstance(error, app_commands.TransformerError):
+            error = error.__cause__
+        if isinstance(error, (commands.BadArgument, commands.CheckFailure, commands.CommandOnCooldown)):
+            await interaction.response.send_message(str(error), ephemeral=True)
 
     async def on_command_error(self, ctx, error):
         # when a command was called invalidly, give info
         if ctx.command is not None:
+            assert self.help_command is not None
             cmd = self.help_command.copy()
             cmd.context = ctx
             await cmd.prepare_help_command(ctx, ctx.command.qualified_name)
@@ -114,8 +144,5 @@ class LUHackBot(commands.Bot):
 
 
 def start():
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(init_db())
-
     bot = LUHackBot()
     bot.run(bot_client_token)

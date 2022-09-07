@@ -41,7 +41,7 @@ class Notifier(commands.Cog):
         )
         embed.set_author(
             name=member.display_name,
-            icon_url=member.avatar_url_as(format="png"),
+            icon_url=member.display_avatar.with_format("png"),
         )
         channel = luhack.get_channel(constants.challenge_log_channel_id)
         if channel is not None:
@@ -58,5 +58,5 @@ class Notifier(commands.Cog):
         asyncio.create_task(self.bye())
 
 
-def setup(bot):
-    bot.add_cog(Notifier(bot))
+async def setup(bot):
+    await bot.add_cog(Notifier(bot))

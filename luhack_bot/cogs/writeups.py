@@ -179,12 +179,6 @@ class Writeups(commands.Cog):
         await writeup.delete()
         await ctx.send(f"RIP {writeup.title}")
 
-    @commands.command(aliases=["site_link"])
-    async def site_token(self, ctx):
-        """Deprecated, sign in to the site via OAuth now."""
 
-        await ctx.send("Sign in to the site using OAuth now!")
-
-
-def setup(bot):
-    bot.add_cog(Writeups(bot))
+async def setup(bot):
+    await bot.add_cog(Writeups(bot))

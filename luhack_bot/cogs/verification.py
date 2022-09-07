@@ -1,22 +1,24 @@
 import logging
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 from discord.ext import tasks
 
 from luhack_bot import constants
 from luhack_bot import email_tools
-from luhack_bot import secrets
 from luhack_bot import token_tools
 from luhack_bot.db.models import User
-from luhack_bot.utils.checks import in_channel
-from luhack_bot.utils.checks import is_admin
-from luhack_bot.utils.checks import is_in_luhack
+from luhack_bot.utils.checks import (
+    is_admin_int,
+    is_authed_int,
+    is_in_luhack_int,
+)
 
 logger = logging.getLogger(__name__)
 
 
-class Verification(commands.Cog):
+class Verification(commands.GroupCog, name="verify"):
     def __init__(self, bot):
         self.bot = bot
 
@@ -28,13 +30,14 @@ class Verification(commands.Cog):
         # track here so we can remove them after they've been away for more than
         # a day
         self.members_flagged_as_left = set()
+        super().__init__()
 
     def get_member_in_luhack(self, user_id: int) -> discord.Member:
         """Try and fetch a member in the luhack guild."""
         return self.bot.luhack_guild().get_member(user_id)
 
-    def bot_check_once(self, ctx):
-        return is_in_luhack(ctx)
+    async def interaction_check(self, interaction: discord.Interaction):
+        return await is_authed_int(interaction) and is_in_luhack_int(interaction)
 
     async def apply_roles(self, member: discord.Member):
         user = await User.get(member.id)
@@ -80,24 +83,15 @@ class Verification(commands.Cog):
 
                 await user.update(username=member.name, is_admin=is_admin).apply()
 
-    @commands.command()
-    async def become_prospective(self, ctx, token: str):
-        """Become a prospective luhacker."""
-        if token != secrets.prospective_token:
-            raise commands.CheckFailure("Not a valid prospective token")
-
-        member = self.get_member_in_luhack(ctx.author.id)
-
-        await member.remove_roles(self.bot.potential_role())
-        await member.add_roles(self.bot.prospective_role())
-        await ctx.send("Prospective luhacker granted, congrats!")
-        await self.bot.log_message(f"made member prospective {member} ({member.id})")
-
-    @commands.command(
-        name="token",
-        aliases=["gib_token", "i_wanna_be_wizard_too", "generate_token", "gen_token"],
+    @app_commands.command(
+        name="begin_verify",
     )
-    async def generate_token(self, ctx, email: email_tools.lancs_email):
+    async def begin_verify(
+        self,
+        interaction: discord.Interaction,
+        *,
+        email: app_commands.Transform[str, email_tools.LancsEmailTransformer],
+    ):
         """Generates an authentication token, then emails it to the provided email.
         You must provide a valid lancaster email address or you will not get an
         authentication token.
@@ -105,42 +99,42 @@ class Verification(commands.Cog):
         First step on the path to Grand Master Cyber Wizard
 
         """
-        existing_user = await User.query.where((User.discord_id == ctx.author.id) | (User.email == email)).gino.first()
+        user_id = interaction.user.id
+        existing_user = await User.query.where(
+            (User.discord_id == user_id) | (User.email == email)
+        ).gino.first()
 
-        if existing_user and existing_user.discord_id != ctx.author.id:
-            await ctx.send("Looks like you're already registered with this email address")
+        if existing_user and existing_user.discord_id != user_id:
+            await interaction.response.send_message(
+                "Looks like you're already registered with this email address",
+                ephemeral=True,
+            )
             return
 
-        is_flagged = (
-            existing_user is not None and existing_user.flagged_for_deletion is not None
-        )
-
-        if existing_user is not None and not is_flagged:
+        if existing_user is not None:
             raise commands.CheckFailure("It seems you've already registered.")
 
-        auth_token = token_tools.generate_auth_token(ctx.author.id, email)
+        auth_token = token_tools.generate_auth_token(user_id, email)
 
-        logger.info("Generated token for user: %s, %s", ctx.author, auth_token)
+        logger.info("Generated token for user: %s, %s", interaction.user, auth_token)
 
         await email_tools.send_verify_email(email, auth_token)
 
-        await ctx.send(f"Okay, I've sent an email to: `{email}` with your token!")
+        await interaction.response.send_message(
+            f"Okay, I've sent an email to: `{email}` with your token!", ephemeral=True
+        )
 
-    @commands.command(
-        name="verify", aliases=["auth_plz", "i_really_wanna_be_wizard", "verify_token"]
-    )
-    async def verify_token(self, ctx, auth_token: str):
+    @app_commands.command(name="verify")
+    async def verify_token(self, interaction: discord.Interaction, *, auth_token: str):
         """Takes an authentication token and elevates you to Verified LUHacker.
         Note that tokens expire after 30 minutes.
 
         Second step on the path to Grand Master Cyber Wizard.
         """
-        existing_user = await User.get(ctx.author.id)
-        is_flagged = (
-            existing_user is not None and existing_user.flagged_for_deletion is not None
-        )
+        user_id = interaction.user.id
+        existing_user = await User.get(user_id)
 
-        if existing_user is not None and not is_flagged:
+        if existing_user is not None:
             raise commands.CheckFailure("It seems you've already registered.")
 
         user = token_tools.decode_auth_token(auth_token)
@@ -152,22 +146,16 @@ class Verification(commands.Cog):
 
         user_id, user_email = user
 
-        if user_id != ctx.author.id:
+        if user_id != user_id:
             raise commands.CheckFailure(
                 "Seems you're not the same person that generated the token, go away."
             )
 
-        member: discord.Member = self.get_member_in_luhack(ctx.author.id)
+        member: discord.Member = self.get_member_in_luhack(user_id)
 
         assert member is not None
 
-        logger.info("Verifying member: %s", ctx.author)
-
-        if is_flagged:
-            await existing_user.update(flagged_for_deletion=None).apply()
-            await ctx.send("Congrats, you've been re-verified!")
-            await self.bot.log_message(f"re-verified member {member} ({member.id})")
-            return
+        logger.info("Verifying member: %s", interaction.user)
 
         user = User(discord_id=user_id, username=member.name, email=user_email)
         await user.create()
@@ -177,14 +165,18 @@ class Verification(commands.Cog):
         )
         await member.add_roles(self.bot.verified_role())
 
-        await ctx.send(
-            "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!"
+        await interaction.response.send_message(
+            "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!",
+            ephemeral=True,
         )
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
-    @commands.check(is_admin)
-    @commands.command()
-    async def add_user_manually(self, ctx, member: discord.Member, email: str):
+    @app_commands.command(name="verify_manually")
+    @app_commands.default_permissions(manage_channels=True)
+    @app_commands.check(is_admin_int)
+    async def add_user_manually(
+        self, interaction: discord.Interaction, *, member: discord.Member, email: str
+    ):
         """Manually auth a member."""
         logger.info("Verifying member: %s", member)
 
@@ -199,39 +191,29 @@ class Verification(commands.Cog):
         await member.send(
             "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!"
         )
-        await ctx.send(f"Manually verified {member}")
+        await interaction.response.send_message(f"Manually verified {member}")
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
-    @commands.check(is_admin)
-    @commands.check(in_channel(constants.inner_magic_circle_id))
-    @commands.command()
-    async def user_info(self, ctx, member: discord.Member):
+    @app_commands.command(name="user_info")
+    @app_commands.default_permissions(manage_channels=True)
+    @app_commands.check(is_admin_int)
+    async def user_info(
+        self, interaction: discord.Interaction, *, member: discord.Member
+    ):
         """Get info for a user."""
         user = await User.get(member.id)
 
         if user is None:
-            await ctx.send("No info for that user ;_;")
+            await interaction.response.send_message(
+                "No info for that user ;_;", ephemeral=True
+            )
             return
 
-        await ctx.send(
-            f"User: {user.username} ({user.discord_id}) <{user.email}>. Joined at: {user.joined_at}, Last talked: {user.last_talked}"
+        await interaction.response.send_message(
+            f"User: {user.username} ({user.discord_id}) <{user.email}>. Joined at: {user.joined_at}",
+            ephemeral=True,
         )
 
-    @commands.check(is_admin)
-    @commands.check(in_channel(constants.inner_magic_circle_id))
-    @commands.command()
-    async def check_email(self, ctx, name: str):
-        """See what user an email belongs to."""
-        users = await User.query.gino.all()
 
-        for user in users:
-            if name in user.email:
-                await ctx.send(
-                    f"User: {user.username} ({user.discord_id}). Joined at: {user.joined_at}, Last talked: {user.last_talked}"
-                )
-                break
-        else:
-            await ctx.send("No user with that email exists.")
-
-def setup(bot):
-    bot.add_cog(Verification(bot))
+async def setup(bot):
+    await bot.add_cog(Verification(bot))

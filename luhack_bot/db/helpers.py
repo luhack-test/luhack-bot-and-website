@@ -7,7 +7,7 @@ from luhack_bot.secrets import db_url
 
 
 async def init_db():
-    await db.set_bind(db_url)
+    await db.set_bind(db_url, echo=True)
 
 def inspect_search_vectors(entity):
     return [

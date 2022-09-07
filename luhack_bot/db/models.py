@@ -19,13 +19,8 @@ class User(db.Model):
     email = db.Column(EncryptedType(db.Text(), email_encryption_key), nullable=False)
     #: when the user became verified, not when they joined the guild
     joined_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    last_talked = db.Column(db.DateTime, server_default=func.now(), nullable=False)
 
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-
-    #: set to the time when the acc was flagged for deletion, we then delete and
-    #  unverify any user that's been flagged for more than a week
-    flagged_for_deletion = db.Column(db.DateTime, nullable=True)
 
     completed_challenges = relationship(
         "Challenge", secondary=lambda: CompletedChallenge, back_populates="challenges"

@@ -1,19 +1,19 @@
 import logging
 import textwrap
 from datetime import datetime
-from typing import TYPE_CHECKING, List, Literal, Optional, Tuple, TypeVar
+from typing import Any, Callable, Coroutine, List, Literal, Optional, Tuple, TypeVar
 
 import discord
 import sqlalchemy as sa
 from discord.ext import commands
+from discord import app_commands
 from gino.loader import ColumnLoader
-from discord.ext.alternatives import literal_converter as _
 from tabulate import tabulate
 
 from luhack_bot import constants
 from luhack_bot.db.helpers import text_search
 from luhack_bot.db.models import Challenge, CompletedChallenge, User, db
-from luhack_bot.utils.checks import is_admin, is_authed
+from luhack_bot.utils.checks import is_admin_int, is_authed, is_authed_int
 
 logger = logging.getLogger(__name__)
 
@@ -28,45 +28,136 @@ def split_on(l: List[Tuple[T, bool]]) -> Tuple[List[T], List[T]]:
     return a, b
 
 
-if TYPE_CHECKING:
-    ChallengeName = Challenge
-else:
+async def title_autocomplete(
+    interaction: discord.Interaction, current: str
+) -> list[app_commands.Choice[str]]:
+    if not current:
+        results = await (
+            db.select([Challenge.title, Challenge.slug])
+            .where(sa.not_(Challenge.hidden))
+            .order_by(Challenge.title)
+            .limit(25)
+            .gino.all()
+        )
+    else:
+        similarity = sa.func.levenshtein_less_equal(
+            current, Challenge.title, 0, 1, 1, 10
+        ).label("sim")
 
-    class ChallengeName(commands.Converter):
-        async def convert(self, ctx, arg: str):
-            r = (
-                await Challenge.query.where(Challenge.slug == arg)
-                .where(sa.not_(Challenge.hidden))
-                .gino.first()
+        inner = db.select([Challenge, similarity]).alias("inner")
+
+        results = await (
+            db.select([inner.c.title, inner.c.slug, inner.c.sim])
+            .select_from(inner)
+            .where(inner.c.sim < 10)
+            .where(sa.not_(inner.c.hidden))
+            .limit(25)
+            .order_by(sa.asc(inner.c.sim))
+            .gino.load((inner.c.title, inner.c.slug))
+            .all()
+        )
+
+    return [app_commands.Choice(name=name, value=value) for name, value in results]
+
+
+async def tag_autocomplete(
+    interaction: discord.Interaction, current: str
+) -> list[app_commands.Choice[str]]:
+    tags = (
+        sa.select([sa.column("tag")])
+        .select_from(Challenge)
+        .select_from(sa.func.unnest(Challenge.tags).alias("tag"))
+        .group_by(sa.column("tag"))
+        .order_by(sa.func.count())
+        .cte("tags")
+    )
+
+    if not current:
+        results = await (
+            db.select([tags.c.tag])
+            .select_from(tags)
+            .order_by(tags.c.tag)
+            .limit(25)
+            .gino.load((ColumnLoader(tags.c.tag),))
+            .all()
+        )
+    else:
+
+        similarity = sa.func.levenshtein_less_equal(
+            current, tags.c.tag, 0, 1, 1, 10
+        ).label("sim")
+
+        inner = db.select([tags.c.tag, similarity]).alias("inner")
+
+        results = await (
+            db.select([inner.c.tag, inner.c.sim])
+            .select_from(inner)
+            .where(inner.c.sim < 10)
+            .limit(25)
+            .order_by(sa.asc(inner.c.sim))
+            .gino.load((ColumnLoader(tags.c.tag),))
+            .all()
+        )
+
+    return [app_commands.Choice(name=name, value=name) for name, in results]
+
+
+class ListSepTransformer(app_commands.Transformer):
+    async def transform(
+        self, interaction: discord.Interaction, value: str
+    ) -> list[str]:
+        return [x.strip() for x in value.split(",")]
+
+
+def list_sep_choices(
+    inner: Callable[
+        [discord.Interaction, str], Coroutine[Any, Any, list[app_commands.Choice[str]]]
+    ]
+) -> Callable[
+    [discord.Interaction, str], Coroutine[Any, Any, list[app_commands.Choice[str]]]
+]:
+    async def impl(
+        interaction: discord.Interaction, current: str
+    ) -> list[app_commands.Choice[str]]:
+        *prev_completed, to_complete = [item.strip() for item in current.split(",")]
+
+        completed = await inner(interaction, to_complete)
+
+        return [
+            app_commands.Choice(
+                name=", ".join([*prev_completed, c.name]),
+                value=", ".join([*prev_completed, c.value]),
             )
+            for c in completed
+        ]
 
-            if r is None:
-                raise commands.BadArgument(f"{arg} is not a challenge")
-
-            return r
+    return impl
 
 
 CURRENT_SEASON = 2
 
 
-class Challenges(commands.Cog):
+def tag_url(tag):
+    return constants.challenges_base_url / "tag" / tag
+
+
+def challenge_url(slug):
+    return constants.challenges_base_url / "view" / slug
+
+
+class Challenges(commands.GroupCog, name="challenge"):
+    """Challenge related commands"""
+
     def __init__(self, bot):
         self.bot = bot
+        super().__init__()
 
-    async def cog_check(self, ctx):
-        return await is_authed(ctx)
+    async def interaction_check(self, interaction: discord.Interaction):
+        return await is_authed_int(interaction)
 
-    @staticmethod
-    def tag_url(tag):
-        return constants.challenges_base_url / "tag" / tag
-
-    @staticmethod
-    def challenge_url(slug):
-        return constants.challenges_base_url / "view" / slug
-
-    async def get_challenge(self, title: str) -> Optional[Challenge]:
+    async def get_challenge(self, slug: str) -> Optional[Challenge]:
         return (
-            await Challenge.query.where(Challenge.title == title)
+            await Challenge.query.where(Challenge.slug == slug)
             .where(sa.not_(Challenge.hidden))
             .gino.first()
         )
@@ -84,7 +175,7 @@ class Challenges(commands.Cog):
     def format_challenge(self, challenge: Challenge) -> str:
         tags = " ".join(challenge.tags)
         tags_fmt = f" [tags: {tags}]" if tags else ""
-        return f"{challenge.title} [points: {challenge.points}] ({self.challenge_url(challenge.slug)}){tags_fmt}"
+        return f"{challenge.title} [points: {challenge.points}] ({challenge_url(challenge.slug)}){tags_fmt}"
 
     async def show_similar_challenges(
         self, ctx, title: str, found_message: str = "Possible challenges are:"
@@ -100,53 +191,42 @@ class Challenges(commands.Cog):
         else:
             await ctx.send("No challenges found, sorry.")
 
-    @commands.group(aliases=["challenge", "ch"], invoke_without_command=True)
-    async def challenges(self, ctx, challenge_title: Optional[str]):
-        """LUHack challenges.
-
-        Use the `challenges` command on its own to view the latest challenge or
-        search for one.
-        """
-        if challenge_title is None:
-            latest_challenge = (
-                await Challenge.query.order_by(
-                    Challenge.creation_date.desc(), Challenge.id.desc()
-                )
-                .where(sa.not_(Challenge.hidden))
-                .gino.first()
-            )
-
-            if latest_challenge is None:
-                await ctx.send("There are no challenges currently")
-                return
-
-            s = self.format_challenge(latest_challenge)
-            await ctx.send(f"The latest challenge is: {s}")
-            return
-
-        challenge = await self.get_challenge(challenge_title)
+    @app_commands.command(name="get")
+    @app_commands.describe(title="The title of the challenge")
+    @app_commands.autocomplete(title=title_autocomplete)
+    async def view_challenge(self, interaction: discord.Interaction, title: str):
+        """Get a challenge by title"""
+        challenge = await self.get_challenge(title)
 
         if challenge is None:
-            await self.show_similar_challenges(
-                ctx,
-                challenge_title,
-                "Challenge by that title not found, similar challenges are:",
-            )
+            await interaction.response.send_message("Dunno")
             return
 
-        await ctx.send(self.format_challenge(challenge))
+        await interaction.response.send_message(self.format_challenge(challenge))
 
-    @challenges.command(aliases=["bt"])
-    async def by_tag(self, ctx, tag: str):
-        await ctx.send(self.tag_url(tag))
+    @app_commands.command(name="tags")
+    @app_commands.describe(tag="The tag to link to")
+    @app_commands.autocomplete(tag=tag_autocomplete)
+    async def by_tag(self, interaction: discord.Interaction, tag: str):
+        """Get a link to challenges with a tag."""
+        await interaction.response.send_message(tag_url(tag))
 
-    @challenges.command()
+    @app_commands.command(name="stats")
+    @app_commands.describe(
+        tag_condition="Filter by challenges with EVERY tag or ANY tag, defautls to EVERY"
+    )
+    @app_commands.describe(
+        season="The season to get the stats in, defaults to the latest"
+    )
+    @app_commands.describe(tags="Tags to search for, separate with ',' to add many")
+    @app_commands.autocomplete(tags=list_sep_choices(tag_autocomplete))
     async def stats(
         self,
-        ctx,
+        interaction: discord.Interaction,
+        *,
         tag_condition: Optional[Literal["every", "any"]] = "every",
         season: Optional[int] = CURRENT_SEASON,
-        *tags: str,
+        tags: Optional[app_commands.Transform[list[str], ListSepTransformer]],
     ):
         """View the most and lest solved challenges.
 
@@ -156,6 +236,9 @@ class Challenges(commands.Cog):
         Note that specifying no tags with "every" filters to all challenges,
         while no tags with "any" filters to zero challenges!
         """
+
+        if tags is None:
+            tags = []
 
         tag_filter = (
             Challenge.tags.contains
@@ -175,15 +258,31 @@ class Challenges(commands.Cog):
             .alias("inner")
         )
 
-        hidden_check_most = sa.case([(q_most.c.hidden, "X")], else_="").label("hidden_check")
+        hidden_check_most = sa.case([(q_most.c.hidden, "X")], else_="").label(
+            "hidden_check"
+        )
 
         most = await (
-            db.select([rank, q_most.c.title, q_most.c.count, q_most.c.points, hidden_check_most])
+            db.select(
+                [
+                    rank,
+                    q_most.c.title,
+                    q_most.c.count,
+                    q_most.c.points,
+                    hidden_check_most,
+                ]
+            )
             .select_from(q_most)
             .limit(5)
             .order_by(sa.desc(q_most.c.count))
             .gino.load(
-                (rank, q_most.c.title, ColumnLoader(q_most.c.count), q_most.c.points, hidden_check_most)
+                (
+                    rank,
+                    q_most.c.title,
+                    ColumnLoader(q_most.c.count),
+                    q_most.c.points,
+                    hidden_check_most,
+                )
             )
             .all()
         )
@@ -197,15 +296,31 @@ class Challenges(commands.Cog):
             .alias("inner")
         )
 
-        hidden_check_least = sa.case([(q_least.c.hidden, "X")], else_="").label("hidden_check")
+        hidden_check_least = sa.case([(q_least.c.hidden, "X")], else_="").label(
+            "hidden_check"
+        )
 
         least = await (
-            db.select([rank, q_least.c.title, q_least.c.count, q_least.c.points, hidden_check_least])
+            db.select(
+                [
+                    rank,
+                    q_least.c.title,
+                    q_least.c.count,
+                    q_least.c.points,
+                    hidden_check_least,
+                ]
+            )
             .select_from(q_least)
             .order_by(sa.asc(q_least.c.count))
             .limit(5)
             .gino.load(
-                (rank, q_least.c.title, ColumnLoader(q_least.c.count), q_least.c.points, hidden_check_least)
+                (
+                    rank,
+                    q_least.c.title,
+                    ColumnLoader(q_least.c.count),
+                    q_least.c.points,
+                    hidden_check_least,
+                )
             )
             .all()
         )
@@ -234,15 +349,24 @@ class Challenges(commands.Cog):
             """
         ).format(most_table=most_table, least_table=least_table, season=season)
 
-        await ctx.send(msg)
+        await interaction.response.send_message(msg)
 
-    @challenges.command(aliases=["top10"])
+    @app_commands.command(name="leaderboard")
+    @app_commands.describe(
+        tag_condition="Filter by challenges with EVERY tag or ANY tag, defautls to EVERY"
+    )
+    @app_commands.describe(
+        season="The season to get the stats in, defaults to the latest"
+    )
+    @app_commands.describe(tags="Tags to search for, separate with ',' to add many")
+    @app_commands.autocomplete(tags=list_sep_choices(tag_autocomplete))
     async def leaderboard(
         self,
-        ctx,
+        interaction: discord.Interaction,
+        *,
         tag_condition: Optional[Literal["every", "any"]] = "every",
         season: Optional[int] = CURRENT_SEASON,
-        *tags: str,
+        tags: Optional[app_commands.Transform[list[str], ListSepTransformer]],
     ):
         """View the leaderboard for completed challenges.
 
@@ -252,6 +376,9 @@ class Challenges(commands.Cog):
         Note that specifying no tags with "every" filters to all challenges,
         while no tags with "any" filters to zero challenges!
         """
+
+        if tags is None:
+            tags = []
 
         tag_filter = (
             Challenge.tags.contains
@@ -298,19 +425,25 @@ class Challenges(commands.Cog):
             tablefmt="github",
         )
 
-        await ctx.send(f"Scoreboard for season {season}: ```\n{table}\n```")
+        await interaction.response.send_message(
+            f"Scoreboard for season {season}: ```\n{table}\n```"
+        )
 
-    @challenges.command()
+    @app_commands.command(name="info")
+    @app_commands.describe(
+        season="The season to get the stats in, defaults to the latest"
+    )
     async def info(
         self,
-        ctx,
+        interaction: discord.Interaction,
+        *,
         season: Optional[int] = CURRENT_SEASON,
     ):
         """Get info about your solved and unsolved challenges."""
 
         solved_challenges = (
             db.select([CompletedChallenge.challenge_id])
-            .where(CompletedChallenge.discord_id == ctx.author.id)
+            .where(CompletedChallenge.discord_id == interaction.user.id)
             .where(CompletedChallenge.season == season)
             .cte("solved_challenges")
         )
@@ -332,7 +465,7 @@ class Challenges(commands.Cog):
         my_score = (
             db.select([sa.func.coalesce(scores_q.c.score, 0)])
             .select_from(scores_q)
-            .where(scores_q.c.discord_id == ctx.author.id)
+            .where(scores_q.c.discord_id == interaction.user.id)
         )
         rank_value = await (
             db.select([sa.func.count(sa.distinct(scores_q.c.score)) + 1])
@@ -357,7 +490,7 @@ class Challenges(commands.Cog):
 
         msg = textwrap.dedent(
             f"""
-            Challenge info for {ctx.author} in season {season}:
+            Challenge info for {interaction.user} in season {season}:
 
             Solves: {count}
             Points: {points}
@@ -367,35 +500,44 @@ class Challenges(commands.Cog):
         """
         )
 
-        await ctx.send(msg)
+        await interaction.response.send_message(msg)
 
-    @challenges.command(aliases=["solve", "submit"])
-    async def claim(self, ctx, challenge: Optional[ChallengeName] = None, *, flag: str):
-        """Claim a flag, make sure to use this in DMs."""
-        warn_dm_message = ""
-
+    @app_commands.command(name="claim")
+    @app_commands.describe(flag="The flag or answer to submit")
+    @app_commands.describe(title="The title of the challenge")
+    @app_commands.rename(title="challenge")
+    @app_commands.autocomplete(title=title_autocomplete)
+    async def claim(
+        self,
+        interaction: discord.Interaction,
+        *,
+        flag: str,
+        title: Optional[str] = None,
+    ):
+        """Claim a challenge or flag. You'll need to specify the challenge name if you're submitting a non flag answer."""
         flag = flag.strip()
 
-        if ctx.guild:
-            await ctx.message.delete()
-            warn_dm_message = "\n\nP.S. Use this command in DMs next time."
-
-        if challenge is None:
+        if title is None:
             challenge = (
                 await Challenge.query.where(Challenge.flag == flag)
                 .where(sa.not_(Challenge.hidden))
                 .gino.first()
             )
 
-            if challenge is None:
-                await ctx.send(
-                    "That doesn't look to be a valid flag." + warn_dm_message
-                )
-                return
+        else:
+            challenge = await self.get_challenge(title)
+
+        if challenge is None:
+            await interaction.response.send_message(
+                "That doesn't look to be a valid flag or answer.", ephemeral=True
+            )
+            return
 
         if not (challenge.answer == flag or challenge.flag == flag):
             # if this is an answer solve
-            await ctx.send("That isn't the correct answer, sorry.")
+            await interaction.response.send_message(
+                "That isn't the correct answer, sorry.", ephemeral=True
+            )
             return
 
         if challenge.depreciated:
@@ -407,37 +549,56 @@ class Challenges(commands.Cog):
                 a writeup has been released, or for other reasons.
                 """
             )
-            await ctx.send(msg)
+            await interaction.response.send_message(msg, ephemeral=True)
             return
 
         already_claimed = await CompletedChallenge.query.where(
-            (CompletedChallenge.discord_id == ctx.author.id)
+            (CompletedChallenge.discord_id == interaction.user.id)
             & (CompletedChallenge.challenge_id == challenge.id)
             & (CompletedChallenge.season == CURRENT_SEASON)
         ).gino.first()
 
         if already_claimed is not None:
-            await ctx.send(
-                "It looks like you've already claimed this flag." + warn_dm_message
+            await interaction.response.send_message(
+                "It looks like you've already claimed this flag.", ephemeral=True
             )
             return
 
         await CompletedChallenge.create(
-            discord_id=ctx.author.id, challenge_id=challenge.id, season=CURRENT_SEASON
+            discord_id=interaction.user.id,
+            challenge_id=challenge.id,
+            season=CURRENT_SEASON,
         )
-        await ctx.send(
-            f"Congrats, you've completed this challenge and have been awarded {challenge.points} points!"
-            + warn_dm_message
+        await interaction.response.send_message(
+            f"Congrats, you've completed this challenge and have been awarded {challenge.points} points!",
+            ephemeral=True,
         )
 
-    @commands.check(is_admin)
-    @challenges.command()
+
+@app_commands.guild_only()
+@app_commands.default_permissions(manage_channels=True)
+class ChallengeAdmin(commands.GroupCog, name="challenge_admin"):
+    def __init__(self, bot):
+        self.bot = bot
+        super().__init__()
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        return is_admin_int(interaction)
+
+    @app_commands.command(name="admin")
+    @app_commands.describe(op="Operation to perform")
+    @app_commands.describe(
+        tag_condition="Filter by challenges with EVERY tag or ANY tag, defautls to EVERY"
+    )
+    @app_commands.describe(tags="Tags to search for, separate with ',' to add many")
+    @app_commands.autocomplete(tags=list_sep_choices(tag_autocomplete))
     async def admin(
         self,
-        ctx,
+        interaction: discord.Interaction,
+        *,
         op: Literal["hide", "unhide", "depreciate", "undepreciate"],
         tag_condition: Optional[Literal["every", "any"]] = "every",
-        *tags: str,
+        tags: Optional[app_commands.Transform[list[str], ListSepTransformer]],
     ):
         """Perform admin operations on challenges.
 
@@ -475,16 +636,22 @@ class Challenges(commands.Cog):
         )
         r = strip_prefix(r, "UPDATE ")
 
-        await ctx.send(f"Updated {r} challenges")
+        await interaction.response.send_message(f"Updated {r} challenges")
 
-    @commands.check(is_admin)
-    @challenges.command()
+    @app_commands.command(name="announce")
+    @app_commands.describe(op="Operation to perform")
+    @app_commands.describe(
+        tag_condition="Filter by challenges with EVERY tag or ANY tag, defautls to EVERY"
+    )
+    @app_commands.describe(tags="Tags to search for, separate with ',' to add many")
+    @app_commands.autocomplete(tags=list_sep_choices(tag_autocomplete))
     async def announce(
         self,
-        ctx,
-        op: Literal["avail", "depreciated"],
+        interaction: discord.Interaction,
+        *,
+        op: Literal["available", "depreciated"],
         tag_condition: Optional[Literal["every", "any"]] = "every",
-        *tags: str,
+        tags: Optional[app_commands.Transform[list[str], ListSepTransformer]],
     ):
         """Perform admin announcement of challenges.
 
@@ -513,7 +680,7 @@ class Challenges(commands.Cog):
         )
 
         data_fn = {
-            "avail": lambda c: (
+            "available": lambda c: (
                 "Challenge Available",
                 f"The challenge '{c.title}' has just been made available!",
                 discord.Colour.green(),
@@ -525,11 +692,19 @@ class Challenges(commands.Cog):
             ),
         }[op]
 
-        channel = ctx.bot.luhack_guild().get_channel(constants.challenge_log_channel_id)
+        channel = self.bot.luhack_guild().get_channel(
+            constants.challenge_log_channel_id
+        )
 
         if channel is None:
-            await ctx.send("Couldn't find challenge log channel?")
+            await interaction.response.send_message(
+                "Couldn't find challenge log channel?", ephemeral=True
+            )
             return
+
+        await interaction.response.send_message(
+            f"Okay, announcing {len(challenges)} challenges"
+        )
 
         for challenge in challenges:
             title, desc, colour = data_fn(challenge)
@@ -538,7 +713,7 @@ class Challenges(commands.Cog):
                 description=desc,
                 color=colour,
                 timestamp=datetime.utcnow(),
-                url=str(self.challenge_url(challenge.slug)),
+                url=str(challenge_url(challenge.slug)),
             )
             await channel.send(embed=embed)
 
@@ -549,5 +724,8 @@ def strip_prefix(s, pre):
     return s
 
 
-def setup(bot):
-    bot.add_cog(Challenges(bot))
+async def setup(bot):
+    await bot.add_cog(Challenges(bot))
+    await bot.add_cog(
+        ChallengeAdmin(bot), guilds=[discord.Object(id=constants.luhack_guild_id)]
+    )
