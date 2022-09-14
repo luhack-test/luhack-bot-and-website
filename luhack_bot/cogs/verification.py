@@ -168,19 +168,22 @@ class Verification(commands.GroupCog, name="verify"):
 
         logger.info("Verifying member: %s", interaction.user)
 
-        user = User(discord_id=user_id, username=member.name, email=user_email)
-        await user.create()
-
-        await member.remove_roles(
-            self.bot.potential_role(), self.bot.prospective_role()
-        )
-        await member.add_roles(self.bot.verified_role())
-
         await interaction.response.send_message(
             "Permissions granted, you can now access all of the discord channels. You are now on the path to Grand Master Cyber Wizard!",
             ephemeral=True,
         )
         await self.bot.log_message(f"verified member {member} ({member.id})")
+
+        user = User(discord_id=user_id, username=member.name, email=user_email)
+        await user.create()
+
+        await member.remove_roles(
+            self.bot.potential_role()
+        )
+        await member.add_roles(self.bot.verified_role())
+
+        logger.info("Finished verifying member: %s", interaction.user)
+
 
     @app_commands.command(name="verify_manually")
     @app_commands.default_permissions(manage_channels=True)
@@ -195,7 +198,7 @@ class Verification(commands.GroupCog, name="verify"):
         await user.create()
 
         await member.remove_roles(
-            self.bot.potential_role(), self.bot.prospective_role()
+            self.bot.potential_role()
         )
         await member.add_roles(self.bot.verified_role())
 
