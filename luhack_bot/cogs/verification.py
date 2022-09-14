@@ -42,7 +42,7 @@ class Verification(commands.GroupCog, name="verify"):
         return self.bot.luhack_guild().get_member(user_id)
 
     async def interaction_check(self, interaction: discord.Interaction):
-        return await is_authed_int(interaction) and is_in_luhack_int(interaction)
+        return is_in_luhack_int(interaction)
 
     async def apply_roles(self, member: discord.Member):
         user = await User.get(member.id)
