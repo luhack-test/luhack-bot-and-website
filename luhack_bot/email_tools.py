@@ -24,7 +24,7 @@ async def send_verify_email(target_email: str, token: str):
 
         Your authentication token is: {token}
 
-        DM the bot and use the command: "/verify verify {token}"
+        DM the bot and use the command: "/verify complete {token}"
         """
     )
 

@@ -95,7 +95,7 @@ class Verification(commands.GroupCog, name="verify"):
                 await user.update(username=member.name, is_admin=is_admin).apply()
 
     @app_commands.command(
-        name="begin_verify",
+        name="begin",
     )
     async def begin_verify(
         self,
@@ -135,7 +135,7 @@ class Verification(commands.GroupCog, name="verify"):
             f"Okay, I've sent an email to: `{email}` with your token!", ephemeral=True
         )
 
-    @app_commands.command(name="verify")
+    @app_commands.command(name="complete")
     async def verify_token(self, interaction: discord.Interaction, *, auth_token: str):
         """Takes an authentication token and elevates you to Verified LUHacker.
         Note that tokens expire after 30 minutes.
@@ -185,9 +185,18 @@ class Verification(commands.GroupCog, name="verify"):
         logger.info("Finished verifying member: %s", interaction.user)
 
 
+@app_commands.guild_only()
+@app_commands.default_permissions(manage_channels=True)
+class VerificationAdmin(commands.GroupCog, name="verify_admin"):
+    def __init__(self, bot: LUHackBot):
+        self.bot = bot
+
+        super().__init__()
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        return is_admin_int(interaction)
+
     @app_commands.command(name="verify_manually")
-    @app_commands.default_permissions(manage_channels=True)
-    @app_commands.check(is_admin_int)
     async def add_user_manually(
         self, interaction: discord.Interaction, *, member: discord.Member, email: str
     ):
@@ -209,8 +218,6 @@ class Verification(commands.GroupCog, name="verify"):
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
     @app_commands.command(name="user_info")
-    @app_commands.default_permissions(manage_channels=True)
-    @app_commands.check(is_admin_int)
     async def user_info(
         self, interaction: discord.Interaction, *, member: discord.Member
     ):
@@ -231,3 +238,4 @@ class Verification(commands.GroupCog, name="verify"):
 
 async def setup(bot):
     await bot.add_cog(Verification(bot))
+    await bot.add_cog(VerificationAdmin(bot))
