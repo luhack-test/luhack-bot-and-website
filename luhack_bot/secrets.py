@@ -10,13 +10,22 @@ def env_fail(var: str):
     print(f"Warning, missing env var: {var}")
     exit(1)
 
+def ensure_env(key: str):
+    return os.getenv(key) or env_fail(key)
 
 db_url = os.getenv("DB_URL")
 
-bot_client_token = os.getenv("BOT_TOKEN") or env_fail("BOT_TOKEN")
+bot_client_token = ensure_env("BOT_TOKEN")
 
-email_encryption_key = os.getenv("EMAIL_KEY") or env_fail("EMAIL_KEY")
+email_encryption_key = ensure_env("EMAIL_KEY")
 
-signing_secret = os.getenv("TOKEN_SECRET") or env_fail("TOKEN_SECRET")
+signing_secret = ensure_env("TOKEN_SECRET")
 
-prospective_token = os.getenv("PROSPECTIVE_TOKEN") or env_fail("PROSPECTIVE_TOKEN")
+prospective_token = ensure_env("PROSPECTIVE_TOKEN")
+
+tailnet = ensure_env("TS_TAILNET")
+
+tailscale_key = ensure_env("TS_API_KEY")
+
+tailscale_authstate2 = ensure_env("TS_AUTHSTATE2")
+tailscale_tailcontrol = ensure_env("TS_TAILCONTROL")

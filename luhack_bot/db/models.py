@@ -150,3 +150,13 @@ class CompletedChallenge(db.Model):
     season = db.Column(
         db.Integer(), nullable=False, default=1, server_default="1", primary_key=True
     )
+
+class Machine(db.Model):
+    """Target infrastructure machines"""
+
+    __tablename__ = "machines"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    hostname = db.Column(db.Text(), nullable=False, unique=True)
+    description = db.Column(db.Text(), nullable=False)

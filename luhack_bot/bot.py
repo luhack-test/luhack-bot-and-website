@@ -20,6 +20,7 @@ COGS = [
     "cogs.writeups",
     "cogs.challenges",
     "cogs.notifier",
+    "cogs.infra",
 ]
 
 

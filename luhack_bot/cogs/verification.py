@@ -15,7 +15,6 @@ from luhack_bot import token_tools
 from luhack_bot.db.models import User
 from luhack_bot.utils.checks import (
     is_admin_int,
-    is_authed_int,
     is_in_luhack_int,
 )
 
@@ -175,11 +174,9 @@ class Verification(commands.GroupCog, name="verify"):
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
         user = User(discord_id=user_id, username=member.name, email=user_email)
-        await user.create()
+        await user.create()  # type: ignore
 
-        await member.remove_roles(
-            self.bot.potential_role()
-        )
+        await member.remove_roles(self.bot.potential_role())
         await member.add_roles(self.bot.verified_role())
 
         logger.info("Finished verifying member: %s", interaction.user)
@@ -204,11 +201,9 @@ class VerificationAdmin(commands.GroupCog, name="verify_admin"):
         logger.info("Verifying member: %s", member)
 
         user = User(discord_id=member.id, username=member.name, email=email)
-        await user.create()
+        await user.create()  # type: ignore
 
-        await member.remove_roles(
-            self.bot.potential_role()
-        )
+        await member.remove_roles(self.bot.potential_role())
         await member.add_roles(self.bot.verified_role())
 
         await member.send(

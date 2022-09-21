@@ -5,7 +5,7 @@ description = "LUHack's discord bot"
 authors = ["Ben Simms <ben@bensimms.moe>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4"
+python = ">=3.9,<4"
 itsdangerous = "^2.0"
 cryptography = "^37.0"
 gino = "^1.0"
@@ -35,7 +35,12 @@ orjson = "^3.6"
 Jinja2 = "^3.0.1"
 Authlib = "^1.0.1"
 SQLAlchemy-Searchable = "^1.4.1"
-httpx = "^0.23.0"
+httpx = {extras = ["http2"], version = "^0.23.0"}
+tailscale = "^0.3.0"
+pygtrie = "^2.5.0"
+cachetools = "^5.2.0"
+rapidfuzz = "^2.10.0"
+aioretry = "^5.0.2"
 
 [tool.poetry.dev-dependencies]
 psycopg2-binary = "^2.8"
