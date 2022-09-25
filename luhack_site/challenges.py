@@ -26,7 +26,7 @@ def should_skip_challenge(c: Challenge, is_admin: bool) -> bool:
     return c.hidden and not is_admin
 
 
-CURRENT_SEASON = 2
+CURRENT_SEASON = 3
 
 
 @router.route("/")

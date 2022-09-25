@@ -134,7 +134,7 @@ def list_sep_choices(
     return impl
 
 
-CURRENT_SEASON = 2
+CURRENT_SEASON = 3
 
 
 def tag_url(tag):
