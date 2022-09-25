@@ -176,7 +176,8 @@ class Infra(commands.GroupCog, name="infra"):
             url=f"https://login.tailscale.com/admin/invite/{invite}",
             label="Click here to join",
         )
-        await interaction.followup.send(view=discord.ui.View().add_item(button))
+        msg = f"This lab is located on `{device.addresses[0]}`"
+        await interaction.followup.send(msg, view=discord.ui.View().add_item(button))
 
     @app_commands.command(name="describe")
     @app_commands.describe(hostname="Hostname to describe")
