@@ -15,5 +15,5 @@ __pycache__
 *.pyo
 *.pyd
 .venv/
-.mypy_cache
+/**/.mypy_cache
 
