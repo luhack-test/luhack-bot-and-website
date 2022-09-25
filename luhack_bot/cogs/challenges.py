@@ -598,7 +598,7 @@ class ChallengeAdmin(commands.GroupCog, name="challenge_admin"):
         *,
         op: Literal["hide", "unhide", "depreciate", "undepreciate"],
         tag_condition: Optional[Literal["every", "any"]] = "every",
-        tags: Optional[app_commands.Transform[list[str], ListSepTransformer]],
+        tags: app_commands.Transform[list[str], ListSepTransformer] = [],
     ):
         """Perform admin operations on challenges.
 
@@ -651,7 +651,7 @@ class ChallengeAdmin(commands.GroupCog, name="challenge_admin"):
         *,
         op: Literal["available", "depreciated"],
         tag_condition: Optional[Literal["every", "any"]] = "every",
-        tags: Optional[app_commands.Transform[list[str], ListSepTransformer]],
+        tags: app_commands.Transform[list[str], ListSepTransformer] = [],
     ):
         """Perform admin announcement of challenges.
 
