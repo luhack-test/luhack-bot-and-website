@@ -507,8 +507,6 @@ class EditChallenge(HTTPEndpoint):
             ).apply()
 
             url = request.url_for("challenge_view", slug=challenge.slug)
-            if not challenge.hidden:
-                await log_edit("challenge", challenge.title, request.user.username, url)
 
             return redirect_response(url=url)
 
