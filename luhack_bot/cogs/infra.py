@@ -4,12 +4,11 @@ from typing import TYPE_CHECKING, Optional
 
 import aioretry
 import httpx
+from pydantic import BaseModel, Field, parse_obj_as
 import rapidfuzz
 import cachetools
 import pygtrie
 import discord
-import tailscale
-from tailscale import Tailscale
 from discord.ext import commands
 from luhack_bot import secrets
 import sqlalchemy.dialects.postgresql as psa
@@ -28,17 +27,41 @@ if TYPE_CHECKING:
     from luhack_bot.bot import LUHackBot
 
 
-async def devices() -> list[tailscale.Device]:
-    async with Tailscale(tailnet=secrets.tailnet, api_key=secrets.tailscale_key) as ts:
-        return list((await ts.devices()).values())
+class Device(BaseModel):
+    addresses: list[str]
+    tags: list[str] = Field(alias="allowedTags", default_factory=list)
+    connected: bool = Field(alias="connectedToControl")
+    id: str
+    name: str
+    fqdn: str
+    hostname: str
+
+
+async def devices() -> list[Device]:
+    cookies = {
+        "tailscale-authstate2": secrets.tailscale_authstate2,
+        "tailcontrol": secrets.tailscale_tailcontrol,
+    }
+    async with httpx.AsyncClient(
+        base_url="https://login.tailscale.com/admin/api",
+        cookies=cookies,
+        http2=True,
+        timeout=0.5,
+    ) as client:
+        resp = await client.get("/machines")
+        resp.raise_for_status()
+        body = resp.json()
+        return parse_obj_as(list[Device], body["data"]["machines"])
 
 
 @async_cached(cache=cachetools.TTLCache(maxsize=1024, ttl=60))
-async def target_devices() -> list[tailscale.Device]:
-    return [dev for dev in await devices() if dev.tags and "tag:target" in dev.tags]
+async def target_devices() -> list[Device]:
+    return [
+        dev for dev in await devices() if "tag:target" in dev.tags and dev.connected
+    ]
 
 
-async def get_device(name: str) -> Optional[tailscale.Device]:
+async def get_device(name: str) -> Optional[Device]:
     devices = await target_devices()
 
     # me when I build a dict just to query it once
@@ -56,7 +79,7 @@ def attach_desc(trie: pygtrie.CharTrie, name: str) -> str:
 @async_cached(cache=cachetools.TTLCache(maxsize=1024, ttl=60))
 async def target_devices_descriptions(
     query: Optional[str] = None,
-) -> list[tuple[str, tailscale.Device]]:
+) -> list[tuple[str, Device]]:
     machines = await db.all(Machine.query)
     t = pygtrie.CharTrie({m.hostname: m.description for m in machines})
 
@@ -76,10 +99,6 @@ async def target_devices_descriptions(
     return [(attach_desc(t, dev.name), dev) for dev in devices if dev.name in matching]
 
 
-def format_name(name: str) -> str:
-    return name.split(".")[0]
-
-
 async def machine_autocomplete(
     interaction: discord.Interaction, current: str
 ) -> list[app_commands.Choice[str]]:
@@ -88,7 +107,7 @@ async def machine_autocomplete(
 
     return [
         app_commands.Choice(
-            name=f"{desc} ({format_name(dev.name)})" if desc else format_name(dev.name),
+            name=f"{desc} ({dev.name})" if desc else dev.name,
             value=dev.name,
         )
         for desc, dev in machines
@@ -171,7 +190,7 @@ class Infra(commands.GroupCog, name="infra"):
         logger.info(msg)
         await self.bot.log_message(msg)
 
-        invite = await generate_invite(device.device_id)
+        invite = await generate_invite(device.id)
         button = discord.ui.Button(
             url=f"https://login.tailscale.com/admin/invite/{invite}",
             label="Click here to join",

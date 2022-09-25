@@ -36,11 +36,11 @@ Jinja2 = "^3.0.1"
 Authlib = "^1.0.1"
 SQLAlchemy-Searchable = "^1.4.1"
 httpx = {extras = ["http2"], version = "^0.23.0"}
-tailscale = "^0.3.0"
 pygtrie = "^2.5.0"
 cachetools = "^5.2.0"
 rapidfuzz = "^2.10.0"
 aioretry = "^5.0.2"
+pydantic = "^1.10.2"
 
 [tool.poetry.dev-dependencies]
 psycopg2-binary = "^2.8"
