@@ -1,4 +1,5 @@
 from __future__ import annotations
+import textwrap
 
 from typing import TYPE_CHECKING, Optional
 
@@ -9,6 +10,7 @@ import rapidfuzz
 import cachetools
 import pygtrie
 import discord
+from discord import ui
 from discord.ext import commands
 from luhack_bot import secrets
 import sqlalchemy.dialects.postgresql as psa
@@ -16,7 +18,7 @@ import sqlalchemy.dialects.postgresql as psa
 from luhack_bot.cogs.challenges import logging
 from luhack_bot.cogs.verification import app_commands
 from luhack_bot.db.helpers import db
-from luhack_bot.db.models import Machine
+from luhack_bot.db.models import Machine, MachineDisplay
 from luhack_bot.utils.async_cache import async_cached
 from luhack_bot.utils.checks import is_admin_int, is_authed_int
 
@@ -68,6 +70,12 @@ async def get_device(name: str) -> Optional[Device]:
     for dev in devices:
         if dev.name == name:
             return dev
+
+
+async def get_devices_with_hostname(hostname: str) -> list[Device]:
+    devices = await target_devices()
+
+    return [dev for dev in devices if dev.hostname == hostname]
 
 
 def attach_desc(trie: pygtrie.CharTrie, name: str) -> str:
@@ -162,10 +170,62 @@ async def generate_invite(node: str):
         return invite.json()["data"]["code"]
 
 
+class MachineInfoView(ui.View):
+    def __init__(self, bot: LUHackBot):
+        self.bot = bot
+        super().__init__(timeout=None)
+
+    async def _borked(self, interaction: discord.Interaction):
+        await interaction.followup.send(
+            "This machine info card is borked, complain to ben", ephemeral=True
+        )
+
+    @ui.button(label="Click here to join", custom_id="machine_info_join")
+    async def join(self, interaction: discord.Interaction, button: ui.Button):
+        assert interaction.message is not None
+
+        await interaction.response.defer(ephemeral=True)
+
+        display: Optional[MachineDisplay] = await MachineDisplay.get(
+            interaction.message.id
+        )
+        if display is None:
+            await self._borked(interaction)
+            return
+
+        machines = await get_devices_with_hostname(display.machine_hostname)
+        if len(machines) == 0:
+            await self._borked(interaction)
+            return
+
+        if len(machines) > 1:
+            logger.warn("Got more than one machine for %s", display.machine_hostname)
+
+        machine = machines[0]
+
+        msg = f"{interaction.user} requested access to node {machine.name}"
+        logger.info(msg)
+        await self.bot.log_message(msg)
+
+        ip = machine.addresses[0]
+        invite = await generate_invite(machine.id)
+        button = discord.ui.Button(
+            url=f"https://login.tailscale.com/admin/invite/{invite}",
+            label="Click here to join",
+        )
+        msg = f"This lab is located on `{ip}`"
+        await interaction.followup.send(
+            msg, view=discord.ui.View().add_item(button), ephemeral=True
+        )
+
+
 @app_commands.guild_only()
 class Infra(commands.GroupCog, name="infra"):
     def __init__(self, bot: LUHackBot):
         self.bot = bot
+
+        self._machine_info_view = MachineInfoView(bot)
+        self.bot.add_view(self._machine_info_view)
 
         super().__init__()
 
@@ -197,6 +257,38 @@ class Infra(commands.GroupCog, name="infra"):
         )
         msg = f"This lab is located on `{device.addresses[0]}`"
         await interaction.followup.send(msg, view=discord.ui.View().add_item(button))
+
+    @app_commands.command(name="display")
+    @app_commands.describe(name="The machine to generate a display for")
+    @app_commands.autocomplete(name=machine_autocomplete)
+    @app_commands.default_permissions(manage_channels=True)
+    @app_commands.check(is_admin_int)
+    async def display_server(self, interaction: discord.Interaction, *, name: str):
+        """Generate a message with info about a machine."""
+
+        if (device := await get_device(name)) is None:
+            await interaction.response.send_message(
+                "I don't know that device", ephemeral=True
+            )
+            return
+
+        ip = device.addresses[0]
+
+        msg = textwrap.dedent(
+            f"""
+        **Machine:** `{device.name}`
+        **IP:** `{ip}`
+        """
+        )
+
+        await interaction.response.send_message(
+            msg,
+            view=self._machine_info_view,
+        )
+        message = await interaction.original_response()
+        await MachineDisplay.create(
+            discord_message_id=message.id, machine_hostname=device.hostname
+        )
 
     @app_commands.command(name="describe")
     @app_commands.describe(hostname="Hostname to describe")

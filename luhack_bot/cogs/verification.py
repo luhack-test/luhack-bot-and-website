@@ -173,8 +173,7 @@ class Verification(commands.GroupCog, name="verify"):
         )
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
-        user = User(discord_id=user_id, username=member.name, email=user_email)
-        await user.create()  # type: ignore
+        user = await User.create(discord_id=user_id, username=member.name, email=user_email)
 
         await member.remove_roles(self.bot.potential_role())
         await member.add_roles(self.bot.verified_role())
@@ -200,8 +199,7 @@ class VerificationAdmin(commands.GroupCog, name="verify_admin"):
         """Manually auth a member."""
         logger.info("Verifying member: %s", member)
 
-        user = User(discord_id=member.id, username=member.name, email=email)
-        await user.create()  # type: ignore
+        await User.create(discord_id=member.id, username=member.name, email=email)
 
         await member.remove_roles(self.bot.potential_role())
         await member.add_roles(self.bot.verified_role())

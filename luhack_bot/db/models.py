@@ -160,3 +160,11 @@ class Machine(db.Model):
 
     hostname = db.Column(db.Text(), nullable=False, unique=True)
     description = db.Column(db.Text(), nullable=False)
+
+class MachineDisplay(db.Model):
+    """Machine display messages"""
+
+    __tablename__ = "machine_displays"
+
+    discord_message_id = db.Column(db.BigInteger(), primary_key=True)
+    machine_hostname = db.Column(db.Text(), nullable=False)
