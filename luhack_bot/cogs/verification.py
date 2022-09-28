@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import re
 import asyncio
 import logging
+import textwrap
 from typing import TYPE_CHECKING, Optional
 
 import discord
@@ -22,6 +24,28 @@ if TYPE_CHECKING:
     from luhack_bot.bot import LUHackBot
 
 logger = logging.getLogger(__name__)
+
+
+class CorrectEmailView(discord.ui.View):
+    def __init__(self, *, timeout: Optional[float] = 180):
+        self.value: Optional[bool] = None
+        super().__init__(timeout=timeout)
+
+    @discord.ui.button(label="Yes", style=discord.ButtonStyle.green)
+    async def confirm(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
+        self.value = True
+        await interaction.response.defer()
+        await interaction.edit_original_response(view=None, content="Okay, using the corrected email")
+        self.stop()
+
+    @discord.ui.button(label="No", style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.value = False
+        await interaction.response.defer()
+        await interaction.edit_original_response(view=None, content="Using the email you gave")
+        self.stop()
 
 
 class Verification(commands.GroupCog, name="verify"):
@@ -96,6 +120,9 @@ class Verification(commands.GroupCog, name="verify"):
     @app_commands.command(
         name="begin",
     )
+    @app_commands.describe(
+        email="Your lancaster email, in the form `j.doe1@lancs.ac.uk`"
+    )
     async def begin_verify(
         self,
         interaction: discord.Interaction,
@@ -109,20 +136,43 @@ class Verification(commands.GroupCog, name="verify"):
         First step on the path to Grand Master Cyber Wizard
 
         """
+
+        user, domain = email.split("@")
+        await interaction.response.defer(ephemeral=True)
+
+        if not "." in user:
+            if (m := re.fullmatch(r"^(\w+?)(\w)(\d*)$", user)) is not None:
+                surname, initial, number = m.group(1, 2, 3)
+                corrected = f"{initial}.{surname}{number}@{domain}"
+                view = CorrectEmailView()
+                msg = textwrap.dedent(
+                    f"""
+                Looks like your email is in the incorrect format, is this your email?
+                `{corrected}`
+                """
+                )
+                await interaction.followup.send(content=msg, view=view)
+                await view.wait()
+                if view.value:
+                    email = corrected
+
         user_id = interaction.user.id
         existing_user = await User.query.where(
             (User.discord_id == user_id) | (User.email == email)
         ).gino.first()
 
         if existing_user and existing_user.discord_id != user_id:
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "Looks like you're already registered with this email address",
                 ephemeral=True,
             )
             return
 
         if existing_user is not None:
-            raise commands.CheckFailure("It seems you've already registered.")
+            await interaction.followup.send(
+                "It seems you've already registered.", ephemeral=True
+            )
+            return
 
         auth_token = token_tools.generate_auth_token(user_id, email)
 
@@ -130,7 +180,7 @@ class Verification(commands.GroupCog, name="verify"):
 
         await email_tools.send_verify_email(email, auth_token)
 
-        await interaction.response.send_message(
+        await interaction.followup.send(
             f"Okay, I've sent an email to: `{email}` with your token!", ephemeral=True
         )
 
@@ -173,7 +223,9 @@ class Verification(commands.GroupCog, name="verify"):
         )
         await self.bot.log_message(f"verified member {member} ({member.id})")
 
-        user = await User.create(discord_id=user_id, username=member.name, email=user_email)
+        user = await User.create(
+            discord_id=user_id, username=member.name, email=user_email
+        )
 
         await member.remove_roles(self.bot.potential_role())
         await member.add_roles(self.bot.verified_role())

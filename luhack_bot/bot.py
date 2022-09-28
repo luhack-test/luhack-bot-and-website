@@ -108,10 +108,14 @@ class LUHackBot(commands.Bot):
         await log_chan.send(*args, **kwargs)
 
     async def on_interaction_error(self, interaction: discord.Interaction, error: Optional[BaseException]):
-        if isinstance(error, app_commands.TransformerError):
+        logger.exception(error)
+        if isinstance(error, (app_commands.TransformerError, app_commands.CommandInvokeError)):
             error = error.__cause__
         if isinstance(error, (commands.BadArgument, commands.CheckFailure, commands.CommandOnCooldown)):
-            await interaction.response.send_message(str(error), ephemeral=True)
+            if interaction.response.is_done():
+                await interaction.followup.send(str(error), ephemeral=True)
+            else:
+                await interaction.response.send_message(str(error), ephemeral=True)
 
     async def on_command_error(self, ctx, error):
         # when a command was called invalidly, give info
