@@ -116,6 +116,8 @@ class LUHackBot(commands.Bot):
                 await interaction.followup.send(str(error), ephemeral=True)
             else:
                 await interaction.response.send_message(str(error), ephemeral=True)
+        else:
+            await self.log_message(f"An error happened: {error}")
 
     async def on_command_error(self, ctx, error):
         # when a command was called invalidly, give info

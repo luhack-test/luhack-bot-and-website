@@ -250,7 +250,19 @@ class Infra(commands.GroupCog, name="infra"):
         logger.info(msg)
         await self.bot.log_message(msg)
 
-        invite = await generate_invite(device.id)
+        try:
+            invite = await generate_invite(device.id)
+        except Exception as e:
+            await interaction.followup.send(
+                textwrap.dedent(
+                    """
+            Sorry, failed to get an invite for this node.
+            Please try again with an alternative instance if possible.
+            """
+                )
+            )
+            raise e
+
         button = discord.ui.Button(
             url=f"https://login.tailscale.com/admin/invite/{invite}",
             label="Click here to join",
