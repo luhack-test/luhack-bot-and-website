@@ -1,6 +1,6 @@
 from __future__ import annotations
 import textwrap
-
+import re
 from typing import TYPE_CHECKING, Optional
 
 import aioretry
@@ -10,7 +10,7 @@ import rapidfuzz
 import cachetools
 import pygtrie
 import discord
-from discord import ui
+from discord import ButtonStyle, ComponentType, InteractionType, ui
 from discord.ext import commands
 from luhack_bot import secrets
 import sqlalchemy.dialects.postgresql as psa
@@ -18,9 +18,10 @@ import sqlalchemy.dialects.postgresql as psa
 from luhack_bot.cogs.challenges import logging
 from luhack_bot.cogs.verification import app_commands
 from luhack_bot.db.helpers import db
-from luhack_bot.db.models import Machine, MachineDisplay
+from luhack_bot.db.models import Machine
 from luhack_bot.utils.async_cache import async_cached
 from luhack_bot.utils.checks import is_admin_int, is_authed_int
+from luhack_bot.utils.list_sep_transform import ListSepTransformer, list_sep_choices
 
 
 logger = logging.getLogger(__name__)
@@ -170,36 +171,45 @@ async def generate_invite(node: str):
         return invite.json()["data"]["code"]
 
 
-class MachineInfoView(ui.View):
+@app_commands.guild_only()
+class Infra(commands.GroupCog, name="infra"):
     def __init__(self, bot: LUHackBot):
         self.bot = bot
-        super().__init__(timeout=None)
+
+        super().__init__()
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        return await is_authed_int(interaction)
+
+    @commands.GroupCog.listener()
+    async def on_interaction(self, interaction: discord.Interaction):
+        if interaction.type != InteractionType.component:
+            return
+        assert interaction.data is not None
+        if interaction.data.get("component_type") != ComponentType.button.value:
+            return
+        custom_id = interaction.data.get("custom_id")
+        print(custom_id)
+        assert isinstance(custom_id, str)
+        if (m := re.fullmatch(r"machine_info_join:(\S+)", custom_id)) is not None:
+            hostname = m.group(1)
+            await self.send_join_info(interaction, hostname)
 
     async def _borked(self, interaction: discord.Interaction):
         await interaction.followup.send(
             "This machine info card is borked, complain to ben", ephemeral=True
         )
 
-    @ui.button(label="Click here to join", custom_id="machine_info_join")
-    async def join(self, interaction: discord.Interaction, button: ui.Button):
-        assert interaction.message is not None
-
+    async def send_join_info(self, interaction: discord.Interaction, hostname: str):
         await interaction.response.defer(ephemeral=True)
 
-        display: Optional[MachineDisplay] = await MachineDisplay.get(
-            interaction.message.id
-        )
-        if display is None:
-            await self._borked(interaction)
-            return
-
-        machines = await get_devices_with_hostname(display.machine_hostname)
+        machines = await get_devices_with_hostname(hostname)
         if len(machines) == 0:
             await self._borked(interaction)
             return
 
         if len(machines) > 1:
-            logger.warn("Got more than one machine for %s", display.machine_hostname)
+            logger.warn("Got more than one machine for %s", hostname)
 
         machine = machines[0]
 
@@ -217,20 +227,6 @@ class MachineInfoView(ui.View):
         await interaction.followup.send(
             msg, view=discord.ui.View().add_item(button), ephemeral=True
         )
-
-
-@app_commands.guild_only()
-class Infra(commands.GroupCog, name="infra"):
-    def __init__(self, bot: LUHackBot):
-        self.bot = bot
-
-        self._machine_info_view = MachineInfoView(bot)
-        self.bot.add_view(self._machine_info_view)
-
-        super().__init__()
-
-    async def interaction_check(self, interaction: discord.Interaction):
-        return await is_authed_int(interaction)
 
     @app_commands.command(name="join")
     @app_commands.describe(name="The machine to join")
@@ -271,35 +267,53 @@ class Infra(commands.GroupCog, name="infra"):
         await interaction.followup.send(msg, view=discord.ui.View().add_item(button))
 
     @app_commands.command(name="display")
-    @app_commands.describe(name="The machine to generate a display for")
-    @app_commands.autocomplete(name=machine_autocomplete)
+    @app_commands.describe(hostnames="The machine to generate a display for")
+    @app_commands.autocomplete(hostnames=list_sep_choices(hostname_autocomplete))
     @app_commands.default_permissions(manage_channels=True)
     @app_commands.check(is_admin_int)
-    async def display_server(self, interaction: discord.Interaction, *, name: str):
-        """Generate a message with info about a machine."""
+    async def display_server(
+        self,
+        interaction: discord.Interaction,
+        *,
+        hostnames: app_commands.Transform[list[str], ListSepTransformer],
+    ):
+        """Generate a message with info about some machines."""
 
-        if (device := await get_device(name)) is None:
-            await interaction.response.send_message(
-                "I don't know that device", ephemeral=True
-            )
+        await interaction.response.defer()
+
+        machines: list[Device] = []
+        for hostname in hostnames:
+            machines.extend(await get_devices_with_hostname(hostname))
+
+        if not machines:
+            await interaction.followup.send("No servers lol")
             return
 
-        ip = device.addresses[0]
+        names = ", ".join(f"`{machine.name}`" for machine in machines)
+        ips = ", ".join(f"`{machine.addresses[0]}`" for machine in machines)
+        s = "s" if len(machines) > 1 else ""
 
         msg = textwrap.dedent(
             f"""
-        **Machine:** `{device.name}`
-        **IP:** `{ip}`
+        **Machine{s}:** {names}
+        **IP{s}:** {ips}
+        Click one of the buttons to join
         """
         )
 
-        await interaction.response.send_message(
+        view = ui.View(timeout=None)
+        for machine in machines:
+            view.add_item(
+                ui.Button(
+                    style=discord.ButtonStyle.grey,
+                    label=f"Join {machine.name}",
+                    custom_id=f"machine_info_join:{machine.hostname}",
+                )
+            )
+
+        await interaction.followup.send(
             msg,
-            view=self._machine_info_view,
-        )
-        message = await interaction.original_response()
-        await MachineDisplay.create(
-            discord_message_id=message.id, machine_hostname=device.hostname
+            view=view,
         )
 
     @app_commands.command(name="describe")

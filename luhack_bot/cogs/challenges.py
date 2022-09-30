@@ -1,7 +1,7 @@
 import logging
 import textwrap
 from datetime import datetime
-from typing import Any, Callable, Coroutine, List, Literal, Optional, Tuple, TypeVar
+from typing import List, Literal, Optional, Tuple, TypeVar
 
 import discord
 import sqlalchemy as sa
@@ -14,6 +14,7 @@ from luhack_bot import constants
 from luhack_bot.db.helpers import text_search
 from luhack_bot.db.models import Challenge, CompletedChallenge, User, db
 from luhack_bot.utils.checks import is_admin_int, is_authed, is_authed_int
+from luhack_bot.utils.list_sep_transform import ListSepTransformer, list_sep_choices
 
 logger = logging.getLogger(__name__)
 
@@ -100,38 +101,6 @@ async def tag_autocomplete(
         )
 
     return [app_commands.Choice(name=name, value=name) for name, in results]
-
-
-class ListSepTransformer(app_commands.Transformer):
-    async def transform(
-        self, interaction: discord.Interaction, value: str
-    ) -> list[str]:
-        return [x.strip() for x in value.split(",")]
-
-
-def list_sep_choices(
-    inner: Callable[
-        [discord.Interaction, str], Coroutine[Any, Any, list[app_commands.Choice[str]]]
-    ]
-) -> Callable[
-    [discord.Interaction, str], Coroutine[Any, Any, list[app_commands.Choice[str]]]
-]:
-    async def impl(
-        interaction: discord.Interaction, current: str
-    ) -> list[app_commands.Choice[str]]:
-        *prev_completed, to_complete = [item.strip() for item in current.split(",")]
-
-        completed = await inner(interaction, to_complete)
-
-        return [
-            app_commands.Choice(
-                name=", ".join([*prev_completed, c.name]),
-                value=", ".join([*prev_completed, c.value]),
-            )
-            for c in completed
-        ]
-
-    return impl
 
 
 CURRENT_SEASON = 3
