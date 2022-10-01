@@ -297,18 +297,20 @@ class Infra(commands.GroupCog, name="infra"):
         s = "s" if len(machines) > 1 else ""
 
         if as_websites:
-            links = ", ".join(f"https://{machine.name}.{secrets.tailscale_domain_suffix}" for machine in machines)
-            links = f"\n**Link{s}:** {links}"
+            links = ", ".join(
+                f"https://{machine.name}.{secrets.tailscale_domain_suffix}"
+                for machine in machines
+            )
+            links = [f"**Link{s}:** {links}"]
         else:
-            links = "{}"
+            links = []
 
-
-        msg = textwrap.dedent(
-            f"""
-        **Machine{s}:** {names}
-        **IP{s}:** {ips}{links}
-        Click one of the buttons to join
-        """
+        msg = "\n".join(
+            [f"**Machine{s}:** {names}", f"**IP{s}:** {ips}"]
+            + links
+            + [
+                "Click one of the buttons to join",
+            ]
         )
 
         view = ui.View(timeout=None)
