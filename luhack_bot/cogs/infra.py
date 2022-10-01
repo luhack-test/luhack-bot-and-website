@@ -186,9 +186,10 @@ class Infra(commands.GroupCog, name="infra"):
         if interaction.type != InteractionType.component:
             return
         assert interaction.data is not None
-        if interaction.data.get("component_type") != ComponentType.button.value:
+        data = interaction.data
+        if data.get("component_type") != ComponentType.button.value:
             return
-        custom_id = interaction.data.get("custom_id")
+        custom_id = data.get("custom_id")
         print(custom_id)
         assert isinstance(custom_id, str)
         if (m := re.fullmatch(r"machine_info_join:(\S+)", custom_id)) is not None:
@@ -268,6 +269,7 @@ class Infra(commands.GroupCog, name="infra"):
 
     @app_commands.command(name="display")
     @app_commands.describe(hostnames="The machine to generate a display for")
+    @app_commands.describe(as_websites="Show links as well as IP addresses")
     @app_commands.autocomplete(hostnames=list_sep_choices(hostname_autocomplete))
     @app_commands.default_permissions(manage_channels=True)
     @app_commands.check(is_admin_int)
@@ -276,6 +278,7 @@ class Infra(commands.GroupCog, name="infra"):
         interaction: discord.Interaction,
         *,
         hostnames: app_commands.Transform[list[str], ListSepTransformer],
+        as_websites: bool = False,
     ):
         """Generate a message with info about some machines."""
 
@@ -293,10 +296,17 @@ class Infra(commands.GroupCog, name="infra"):
         ips = ", ".join(f"`{machine.addresses[0]}`" for machine in machines)
         s = "s" if len(machines) > 1 else ""
 
+        if as_websites:
+            links = ", ".join(f"https://{machine.name}.{secrets.tailscale_domain_suffix}" for machine in machines)
+            links = f"\n**Link{s}:** {links}"
+        else:
+            links = "{}"
+
+
         msg = textwrap.dedent(
             f"""
         **Machine{s}:** {names}
-        **IP{s}:** {ips}
+        **IP{s}:** {ips}{links}
         Click one of the buttons to join
         """
         )
