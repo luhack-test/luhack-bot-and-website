@@ -298,7 +298,7 @@ class Infra(commands.GroupCog, name="infra"):
 
         if as_websites:
             links = ", ".join(
-                f"https://{machine.name}.{secrets.tailscale_domain_suffix}"
+                f"http://{machine.addresses[0]}"
                 for machine in machines
             )
             links = [f"**Link{s}:** {links}"]
