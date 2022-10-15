@@ -6,7 +6,7 @@ from discord.ext import commands
 import orjson
 
 from luhack_bot import constants
-from luhack_bot.cogs.challenges import Challenges
+from luhack_bot.cogs.challenges import challenge_url
 from luhack_bot.db.models import db, Challenge, db
 
 
@@ -37,7 +37,7 @@ class Notifier(commands.Cog):
             description=f"{member.mention} just solved '{challenge.title}' and was awarded {challenge.points} points.",
             color=discord.Colour.dark_teal(),
             timestamp=datetime.utcnow(),
-            url=str(Challenges.challenge_url(challenge.slug)),
+            url=str(challenge_url(challenge.slug)),
         )
         embed.set_author(
             name=member.display_name,
