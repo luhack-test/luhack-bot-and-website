@@ -38,7 +38,7 @@ SQLAlchemy-Searchable = "^1.4.1"
 httpx = {extras = ["http2"], version = "^0.23.0"}
 pygtrie = "^2.5.0"
 cachetools = "^5.2.0"
-rapidfuzz = "^2.10.0"
+rapidfuzz = "^2.13.6"
 aioretry = "^5.0.2"
 pydantic = "^1.10.2"
 
