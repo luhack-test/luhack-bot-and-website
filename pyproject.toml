@@ -33,7 +33,7 @@ aiosmtplib = "^1.1.4"
 mistune = "2.0.4"
 orjson = "^3.6"
 Jinja2 = "^3.0.1"
-Authlib = "^1.0.1"
+Authlib = "^1.2.1"
 SQLAlchemy-Searchable = "^1.4.1"
 httpx = {extras = ["http2"], version = "^0.23.0"}
 pygtrie = "^2.5.0"
