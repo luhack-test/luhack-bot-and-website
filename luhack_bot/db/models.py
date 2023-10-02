@@ -160,3 +160,13 @@ class Machine(db.Model):
 
     hostname = db.Column(db.Text(), nullable=False, unique=True)
     description = db.Column(db.Text(), nullable=False)
+
+class TailscaleAuth(db.Model):
+    """Stores tailscale secrets"""
+
+    __tablename__ = "tskey"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    tailcontrol = db.Column(db.Text(), nullable=False)
+    authstate2 = db.Column(db.Text(), nullable=False)

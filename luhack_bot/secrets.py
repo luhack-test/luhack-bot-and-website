@@ -25,8 +25,4 @@ prospective_token = ensure_env("PROSPECTIVE_TOKEN")
 
 tailnet = ensure_env("TS_TAILNET")
 
-tailscale_key = ensure_env("TS_API_KEY")
-
-tailscale_authstate2 = ensure_env("TS_AUTHSTATE2")
-tailscale_tailcontrol = ensure_env("TS_TAILCONTROL")
 tailscale_domain_suffix = ensure_env("TS_DOMAIN_SUFFIX")

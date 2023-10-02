@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Optional
 
 import aioretry
 import httpx
-from pydantic import BaseModel, Field, parse_obj_as
+from pydantic import BaseModel, Field, TypeAdapter
 import rapidfuzz
 import cachetools
 import pygtrie
 import discord
-from discord import ButtonStyle, ComponentType, InteractionType, ui
+from discord import ComponentType, InteractionType, ui
 from discord.ext import commands
 from luhack_bot import secrets
 import sqlalchemy.dialects.postgresql as psa
@@ -18,7 +18,7 @@ import sqlalchemy.dialects.postgresql as psa
 from luhack_bot.cogs.challenges import logging
 from luhack_bot.cogs.verification import app_commands
 from luhack_bot.db.helpers import db
-from luhack_bot.db.models import Machine
+from luhack_bot.db.models import Machine, TailscaleAuth
 from luhack_bot.utils.async_cache import async_cached
 from luhack_bot.utils.checks import is_admin_int, is_authed_int
 from luhack_bot.utils.list_sep_transform import ListSepTransformer, list_sep_choices
@@ -33,28 +33,37 @@ if TYPE_CHECKING:
 class Device(BaseModel):
     addresses: list[str]
     tags: list[str] = Field(alias="allowedTags", default_factory=list)
-    connected: bool = Field(alias="connectedToControl")
+    connected: bool = Field(alias="connectedToControl", default=False)
     id: str
     name: str
     fqdn: str
     hostname: str
 
+async def ts_cookies():
+    auth = await TailscaleAuth.query.gino.first()
+    if auth is None:
+        raise Exception("No tailscal auth")
+    return {
+        "tailscale-authstate2": auth.authstate2,
+        "tailcontrol": auth.tailcontrol,
+    }
 
 async def devices() -> list[Device]:
-    cookies = {
-        "tailscale-authstate2": secrets.tailscale_authstate2,
-        "tailcontrol": secrets.tailscale_tailcontrol,
-    }
-    async with httpx.AsyncClient(
-        base_url="https://login.tailscale.com/admin/api",
-        cookies=cookies,
-        http2=True,
-        timeout=0.5,
-    ) as client:
-        resp = await client.get("/machines")
-        resp.raise_for_status()
-        body = resp.json()
-        return parse_obj_as(list[Device], body["data"]["machines"])
+    try:
+        cookies = await ts_cookies()
+        async with httpx.AsyncClient(
+            base_url="https://login.tailscale.com/admin/api",
+            cookies=cookies,
+            http2=True,
+            timeout=0.5,
+        ) as client:
+            resp = await client.get("/machines")
+            resp.raise_for_status()
+            body = resp.json()
+            return TypeAdapter(list[Device]).validate_python(body["data"]["machines"])
+    except Exception as e:
+        logger.exception(e)
+        raise
 
 
 @async_cached(cache=cachetools.TTLCache(maxsize=1024, ttl=60))
@@ -147,16 +156,18 @@ def retry_policy(info: aioretry.RetryInfo) -> aioretry.RetryPolicyStrategy:
 
 @aioretry.retry(retry_policy)
 async def generate_invite(node: str):
-    cookies = {
-        "tailscale-authstate2": secrets.tailscale_authstate2,
-        "tailcontrol": secrets.tailscale_tailcontrol,
-    }
+    cookies = await ts_cookies()
     async with httpx.AsyncClient(
         base_url="https://login.tailscale.com/admin/api",
         cookies=cookies,
         http2=True,
         timeout=0.5,
     ) as client:
+        shares = await client.get(f"/node/{node}/share-settings")
+        shares.raise_for_status()
+        for share in shares.json()["data"]["invites"]:
+            return share["code"]
+
         self_ = await client.get("/self")
         self_.raise_for_status()
         csrf = self_.headers["x-csrf-token"]
@@ -164,12 +175,11 @@ async def generate_invite(node: str):
         logger.debug("tailscale response: %s", self_.text)
 
         headers = {"X-CSRF-Token": csrf}
-        body = {"node": node, "includeExitNodes": False}
+        body = {"node": node, "maxAccept": 1000}
         invite = await client.post("/invite/new", headers=headers, json=body)
         invite.raise_for_status()
 
         return invite.json()["data"]["code"]
-
 
 @app_commands.guild_only()
 class Infra(commands.GroupCog, name="infra"):
@@ -376,6 +386,17 @@ class Infra(commands.GroupCog, name="infra"):
         target_devices.clear()
 
         await interaction.response.send_message(f"Cleared", ephemeral=True)
+
+    @app_commands.command(name="add_ts_auth")
+    @app_commands.default_permissions(manage_channels=True)
+    @app_commands.check(is_admin_int)
+    async def add_ts_auth(self, interaction: discord.Interaction, *, tailcontrol: str, authstate2: str):
+        """Update the tailscale auth cookies."""
+
+        await TailscaleAuth.delete.gino.status()
+        await TailscaleAuth.create(tailcontrol=tailcontrol, authstate2=authstate2)
+
+        await interaction.response.send_message(f"Updated", ephemeral=True)
 
 
 async def setup(bot: LUHackBot):

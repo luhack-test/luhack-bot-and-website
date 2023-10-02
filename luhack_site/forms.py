@@ -67,4 +67,4 @@ class ChallengeForm(Form):
 
 
 class AnswerForm(Form):
-    answer = StringField("Flag/Answer")
+    answer = StringField("Enter your flag/answer")
