@@ -1,3 +1,3 @@
 push:
-    docker build -t ghcr.io/simmsb/luhack-bot-and-site:latest .
-    docker push ghcr.io/simmsb/luhack-bot-and-site:latest
+    docker build -t ghcr.io/luhack-test/luhack-bot-and-site:latest .
+    docker push ghcr.io/luhack-test/luhack-bot-and-site:latest
