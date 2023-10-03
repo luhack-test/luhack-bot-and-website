@@ -103,7 +103,7 @@ async def tag_autocomplete(
     return [app_commands.Choice(name=name, value=name) for name, in results]
 
 
-CURRENT_SEASON = 3
+CURRENT_SEASON = 4
 
 
 def tag_url(tag):
