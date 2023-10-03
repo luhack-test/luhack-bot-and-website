@@ -101,10 +101,9 @@ highlight_markdown = mistune.create_markdown(renderer=highlight_renderer, plugin
 highlight_markdown_unsafe = mistune.create_markdown(renderer=highlight_renderer_unsafe, plugins=['url', 'table', plugin_media])
 length_constrained_plaintext_markdown = mistune.create_markdown(renderer=plaintext_renderer, plugins=['url'])
 
-uncounted_tokens = {"block_code", "block_quote", "block_html", "heading",
-                    "list", "list_item", "table", "table_row", "table_cell",
-                    "linebreak", "newline", "image"
-                    }
+tokens_in_previews = {
+    "text", "link", "emphasis", "strong", "codespan", "linebreak", "softbreak", "paragraph", "strikethrough"
+}
 
 def len_limit_hook(md, state):
     limit = 500
@@ -112,7 +111,7 @@ def len_limit_hook(md, state):
     out = []
 
     for tok in state.tokens:
-        if tok["type"] in uncounted_tokens:
+        if tok["type"] not in tokens_in_previews:
             continue
 
         if "text" not in tok:
@@ -121,11 +120,8 @@ def len_limit_hook(md, state):
         length = len(tok["text"])
 
         if (current + length) >= limit:
-            if tok["type"] in {"paragraph", "text"}:
-                tok["text"] = textwrap.shorten(tok["text"], limit - current, placeholder="...")
-                out.append(tok)
-            else:
-                out.append({"type": "text", "text": "..."})
+            tok["text"] = textwrap.shorten(tok["text"], max(limit - current, 5), fix_sentence_endings=True)
+            out.append(tok)
             break
 
         current += length
