@@ -27,7 +27,7 @@ python-dateutil = "^2.8.2"
 parsedatetime = "^2.6"
 "discord.py" = "^2.3.2"
 uvicorn = "^0.23"
-psycopg2-binary = "^2.9.8"
+psycopg2-binary = "^2.9.9"
 tabulate = "^0.9"
 aiosmtplib = "^2.0.2"
 mistune = "3.0.2"
@@ -43,7 +43,7 @@ aioretry = "^5.0.2"
 pydantic = "^2.4.2"
 
 [tool.poetry.dev-dependencies]
-psycopg2-binary = "^2.9.8"
+psycopg2-binary = "^2.9.9"
 pyre-check = "^0.9.1"
 
 [tool.poetry.scripts]
