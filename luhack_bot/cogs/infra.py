@@ -108,9 +108,9 @@ async def target_devices_descriptions(
         matching = {
             h
             for h, _, _ in rapidfuzz.process.extract(
-                query, names, limit=25, score_cutoff=0.5
+                query, names, limit=25, score_cutoff=70
             )
-        }
+        } or set(names)
     else:
         matching = set(names)
 
