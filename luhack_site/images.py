@@ -90,7 +90,7 @@ async def encoded_existing_images(request: HTTPConnection) -> bytes:
     images = [
         {
             "filename": f"{id}.{ext}",
-            "path": request.url_for("images", file_name=(id, ext)),
+            "path": str(request.url_for("images", file_name=(id, ext))),
         }
         for (id, ext) in images
     ]
