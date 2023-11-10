@@ -114,6 +114,10 @@ def challenge_url(slug):
     return constants.challenges_base_url / "view" / slug
 
 
+def markdown_display(challenge: Challenge) -> str:
+    return f"[{challenge.title}]({challenge_url(challenge.slug)})"
+
+
 class Challenges(commands.GroupCog, name="challenge"):
     """Challenge related commands"""
 
@@ -144,7 +148,7 @@ class Challenges(commands.GroupCog, name="challenge"):
     def format_challenge(self, challenge: Challenge) -> str:
         tags = " ".join(challenge.tags)
         tags_fmt = f" [tags: {tags}]" if tags else ""
-        return f"{challenge.title} [points: {challenge.points}] ({challenge_url(challenge.slug)}){tags_fmt}"
+        return f"{markdown_display(challenge)} [points: {challenge.points}] {tags_fmt}"
 
     async def show_similar_challenges(
         self, ctx, title: str, found_message: str = "Possible challenges are:"
@@ -454,9 +458,8 @@ class Challenges(commands.GroupCog, name="challenge"):
         points = sum(c.points for c in solved)
         count = len(solved)
 
-        solved_msg = ", ".join(c.title for c in solved) or "No solves"
-        unsolved_msg = ", ".join(c.title for c in unsolved) or "All solved"
-
+        solved_msg = ", ".join(markdown_display(c) for c in solved) or "No solves"
+        unsolved_msg = ", ".join(markdown_display(c) for c in unsolved) or "All solved"
         msg = textwrap.dedent(
             f"""
             Challenge info for {interaction.user} in season {season}:
@@ -464,8 +467,8 @@ class Challenges(commands.GroupCog, name="challenge"):
             Solves: {count}
             Points: {points}
             Rank: {rank_value}
-            Solved: `{solved_msg}`
-            Unsolved: `{unsolved_msg}`
+            Solved: {solved_msg}
+            Unsolved: {unsolved_msg}
         """
         )
 
