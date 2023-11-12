@@ -28,6 +28,6 @@ challenge_log_channel_id = 576418418211684393
 inner_magic_circle_id = 631618075254325257
 writeups_base_url = yarl.URL("https://scc-luhack.lancs.ac.uk/writeups")
 challenges_base_url = yarl.URL("https://scc-luhack.lancs.ac.uk/challenges")
-
+challenges_view_base_url = yarl.URL("https://luhack.uk/c")  # short redirect url to https://scc-luhack.lancs.ac.uk/challenges/view/<slug>
 from_email_address = os.getenv("FROM_EMAIL_ADDRESS") or env_fail("FROM_EMAIL_ADDRESS")
 is_test_mode = (os.getenv("TEST_MODE") or "0") == "1"
