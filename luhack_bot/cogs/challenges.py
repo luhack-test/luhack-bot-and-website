@@ -111,11 +111,57 @@ def tag_url(tag):
 
 
 def challenge_url(slug):
-    return constants.challenges_base_url / "view" / slug
+    return constants.challenges_view_base_url / slug
 
 
 def markdown_display(challenge: Challenge) -> str:
     return f"[{challenge.title}]({challenge_url(challenge.slug)})"
+
+
+def make_info_response(count, interaction, points, rank_value,
+    season, solved, unsolved):
+    solved_msg = ", ".join(
+        markdown_display(c) for c in solved) or "No solves"
+    unsolved_msg = ", ".join(
+        markdown_display(c) for c in unsolved) or "All solved"
+    minimised_solved_msg = ", ".join(
+        c.title for c in solved) or "No solves"
+    minimised_unsolved_msg = ", ".join(
+        c.title for c in unsolved) or "All solved"
+
+    msg = get_info_msg(count, interaction, points, rank_value, season,
+                       solved_msg, unsolved_msg)
+
+    msg_len = len(msg)
+    base_msg_len = msg_len - len(solved_msg) - len(unsolved_msg)
+
+    if msg_len < 2000:
+        return msg
+    elif base_msg_len + len(minimised_unsolved_msg) + len(minimised_solved_msg) < 2000:
+        return get_info_msg(count, interaction, points, rank_value, season,
+                            minimised_solved_msg, minimised_unsolved_msg)
+    elif base_msg_len + len(minimised_unsolved_msg) + len("Unavailable (Message too long)") < 2000:
+        return get_info_msg(count, interaction, points, rank_value, season,
+                       "Unavailable (Message too long)", unsolved_msg)
+    return get_info_msg(count, interaction, points, rank_value, season,
+                            "Unavailable (Message too long)",
+                        "Unavailable (Message too long)")
+
+
+def get_info_msg(count, interaction, points, rank_value, season, solved_msg,
+    unsolved_msg):
+    msg = textwrap.dedent(
+        f"""
+        Challenge info for {interaction.user} in season {season}:
+
+        Solves: {count}
+        Points: {points}
+        Rank: {rank_value}
+        Solved: {solved_msg}
+        Unsolved: {unsolved_msg}
+    """
+    )
+    return msg
 
 
 class Challenges(commands.GroupCog, name="challenge"):
@@ -458,21 +504,14 @@ class Challenges(commands.GroupCog, name="challenge"):
         points = sum(c.points for c in solved)
         count = len(solved)
 
-        solved_msg = ", ".join(markdown_display(c) for c in solved) or "No solves"
-        unsolved_msg = ", ".join(markdown_display(c) for c in unsolved) or "All solved"
-        msg = textwrap.dedent(
-            f"""
-            Challenge info for {interaction.user} in season {season}:
+        msg = make_info_response(count, interaction, points,
+                                            rank_value, season, solved,
+                                            unsolved)
 
-            Solves: {count}
-            Points: {points}
-            Rank: {rank_value}
-            Solved: {solved_msg}
-            Unsolved: {unsolved_msg}
-        """
-        )
 
         await interaction.response.send_message(msg)
+
+
 
     @app_commands.command(name="claim")
     @app_commands.describe(flag="The flag or answer to submit")
