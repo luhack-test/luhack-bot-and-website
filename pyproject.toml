@@ -7,7 +7,7 @@ authors = ["Ben Simms <ben@bensimms.moe>"]
 [tool.poetry.dependencies]
 python = ">=3.9,<4"
 itsdangerous = "^2.1.2"
-cryptography = "^41.0.4"
+cryptography = "^41.0.7"
 gino = "^1.0.1"
 python-dotenv = "^1.0"
 sqlalchemy_utils = "^0.41.1"
