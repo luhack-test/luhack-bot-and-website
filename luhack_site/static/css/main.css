@@ -19,11 +19,8 @@ body {
   color: var(--color);
 }
 
-main {
-  padding-inline: 1rem;
-}
-
 article {
+  padding-inline: 1rem;
   max-width: 100ch;
   margin: auto;
   margin-bottom: 1rem;
