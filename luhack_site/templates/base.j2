@@ -41,71 +41,82 @@
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" integrity="sha512-tk4nGrLxft4l30r9ETuejLU0a3d7LwMzj0eXjzc16JQj+5U1IeVoCuGLObRDc3+eQMUcEQY1RIDPGvuA7SNQ2w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" integrity="sha512-sVSECYdnRMezwuq5uAjKQJEcu2wybeAPjU4VJQ9pCRcCY4pIpIw4YMHIOQ0CypfwHRvdSPbH++dA3O4Hihm/LQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
                 <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
-                <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
                 <link rel="stylesheet" href="{{ url_for('static', path="/css/main.css") }}">
                 <link rel="stylesheet" href="{{ url_for('static', path="/css/highlight.min.css") }}">
             {%- endblock style %}
         {%- endblock head %}
     </head>
     <body>
-        <div class="with-sidebar">
-            {%- block body %}
-                <div class="fill-height">
-                    <div id="menu" class="sidebar">
-                        <div class="header">
-                            <h1 class="brand-title">
-                                <a class="logo" href="{{ url_for("index") }}">
-                                    <img src="{{ url_for('static', path="/images/luhack_logo.png") }}" alt="LUHack logo" width="100%" />
-                                </a>
-                            </h1>
-                            <nav class="nav">
-                                {% block nav %}
-                                    <ul class="nav-list">
-                                        <li class="nav-item">
-                                            <a class="button" href="{{ url_for("index") }}">Home</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="button" href="{{ url_for("writeups_index") }}">Writeups</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="button" href="{{ url_for("challenge_index") }}">Challenges</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="button" href="https://slides.luhack.uk">Slides</a>
-                                        </li>
-                                        {% block nav_cont %}{% endblock nav_cont %}
-                                    </ul>
-                                {% endblock nav %}
-                            </nav>
-
-                            <br />
-
-                            {% block search_bar %}{% endblock search_bar %}
-
-                            <div class="header-content">
-                                {%- block header_content %}{% endblock header_content %}
-                            </div>
-                        </div>
-                        <div class="footer">
-                            <div class="legal">
-                                <div class="">
-                                    {% if request.user.is_authenticated %}
-                                        <a href="{{ url_for("logout") }}" title="Log Out">Authed as: {{ request.user.username }}</a>
-                                    {% else %}
-                                        <a href="{{ url_for("sign_in") }}" title="Sign In">Sign In</a>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="not-sidebar">
-                        <main>
-                            {%- block content %}{% endblock content %}
-                        </main>
-                    </div>
-                </div>
-                {%- block script %}{% endblock script %}
-            {%- endblock body %}
-        </div>
+      {%- block body %}
+        <nav class="main">
+          <a href="https://luhack.uk/" id="logo">
+            <svg
+              height="2rem"
+              width="1.5rem"
+              viewBox="0 0 134 190"
+              xmlns="http://www.w3.org/2000/svg"
+              xml:space="preserve"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-miterlimit="1.5"
+            >
+              <g stroke="#ddd">
+                <path
+                  d="m34 73 1-33C35 22 50 8 67 8c14 0 27 10 31 24m27 70v57c0 13-10 23-22 23H31c-13 0-23-10-23-23v-57c0-12 10-23 23-23h72c12 0 22 11 22 23Z"
+                  fill="none"
+                  stroke-width="15.6"
+                />
+                <g fill="#ddd" stroke-width="3.9">
+                  <path
+                    d="M65 130c-6-1-11-6-11-12 0-7 6-13 13-13s13 6 13 13c0 6-5 11-11 12"
+                  />
+                  <path d="M72 126v19H62v-19" />
+                </g>
+              </g>
+            </svg>
+          </a>
+        
+          <input type="checkbox" id="nav-toggle" />
+          <div id="main-nav">
+            <a href="https://discord.com/invite/SjQSnQ9">Join in</a>
+            <a href="https://luhack.uk/talks">Give a talk</a>
+            <a href="https://luhack.uk/sponsors">Sponsor us</a>
+            <a href="https://scc-luhack.lancs.ac.uk/challenges/">Challenges</a>
+            <a href="https://scc-luhack.lancs.ac.uk/writeups">Blog</a>
+            <a href="https://slides.luhack.uk">Slides</a>
+          </div>
+          <label for="nav-toggle" id="burger">
+            <svg
+              viewBox="0 0 64 64"
+              xmlns="http://www.w3.org/2000/svg"
+              xml:space="preserve"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              stroke-linejoin="round"
+              stroke-miterlimit="2"
+            >
+              <path fill="#ddd" d="M8 44h48v6H8zm0-15h48v6H8zm0-15h48v6H8z" />
+            </svg>
+          </label>
+        </nav>
+        <header class="app-header">
+          {% block nav %}
+            {% block nav_cont %}{% endblock nav_cont %}
+          {% endblock nav %}
+          {% block search_bar %}{% endblock search_bar %}
+          {%- block header_content %}{% endblock header_content %}
+          {% if request.user.is_authenticated %}
+              <a href="{{ url_for("logout") }}" title="Log Out">Authed as: {{ request.user.username }}</a>
+          {% else %}
+              <a href="{{ url_for("sign_in") }}" title="Sign In">Sign In</a>
+          {% endif %}
+        </header>
+        <main>
+          {%- block content %}{% endblock content %}
+        </main>
+        {%- block script %}{% endblock script %}
+      {%- endblock body %}
     </body>
 </html>

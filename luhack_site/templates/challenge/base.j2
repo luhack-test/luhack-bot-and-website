@@ -6,10 +6,8 @@
 {% block title %}LUHack Challenges{% endblock %}
 
 {% block nav_cont %}
-    <br />
+    <a href="{{ url_for("challenge_all_tags") }}">Tag List</a>
     {% if request.user.is_admin %}
-        <li class="nav-item">
-            <a class="button" href="{{ url_for("NewChallenge") }}">New Challenge</a>
-        </li>
+            <a href="{{ url_for("NewChallenge") }}">New Challenge</a>
     {% endif %}
 {% endblock %}

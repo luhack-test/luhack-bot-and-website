@@ -3,7 +3,9 @@
 {% from "challenge/links.j2" import tag_link with context %}
 
 {% block content %}
+    <article>
     {% for tag in tags -%}
         {{ tag_link(tag)  }}
     {%- endfor %}
+    </article>
 {% endblock %}

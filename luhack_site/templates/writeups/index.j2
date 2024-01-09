@@ -3,9 +3,11 @@
 {% from "writeups/preview.j2" import writeup_preview with context %}
 
 {% block content %}
+  <article>
     <div class="posts">
         {% for (writeup, content) in writeups %}
             {{ writeup_preview(writeup, content, url_for('writeups_view', slug=writeup.slug)) }}
         {% endfor %}
     </div>
+  </article>
 {% endblock %}

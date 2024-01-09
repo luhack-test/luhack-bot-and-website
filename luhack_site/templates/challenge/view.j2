@@ -12,60 +12,71 @@
 {% endblock %}
 
 {% block header_content %}
-    <div class="article-meta">
-        <h2>{{ challenge.title }}</h2>
-        <h5 class="date">{{ challenge.creation_date }}</h5>
-        <h5>Solved {{ solves }} {{ "time" if solves == 1 else "times" }}</h5>
-        <h5>{{ challenge.points }} Points</h5>
-        {% if challenge.hidden %}
-            <div class="tags">
-                <span class="post-note-warning-sidebar">hidden</span>
-            </div>
-            <br/>
-        {% endif %}
-        {% if challenge.depreciated %}
-            <div class="tags">
-                <span class="post-note-warning-sidebar">depreciated</span>
-            </div>
-            <br/>
-        {% endif %}
-        <div class="tags">
-            {% for tag in challenge.tags %}
-                {{ tag_link(tag) }}
-            {% endfor %}
-        </div>
-
-        {% if not solved_challenge %}
-            <br />
-            <form class="pure-form" method="POST" action="{{ url_for("challenge_submit_answer", id=challenge.id) }}">
-                {{ with_errors(submit_form.answer, class="search-bar", placeholder="Flag/Answer") }}
-            </form>
-        {% else %}
-            <h4>Solved!</h4>
-        {% endif %}
-
-        {% if challenge.answer %}
-            <h5>
-                <span data-select-other-content="claim-command">Claim Command: </span>
-                <br />
-                <span class="codeline"><span id="claim-command" class="selectall">/challenge claim challenge:{{ challenge.slug }} flag:</span><span data-select-other-content="claim-command">{{ "<answer>" }}</span></span>
-            </h5>
-        {% else %}
-            <h5>
-                <span data-select-other-content="claim-command">Claim Command: </span>
-                <br />
-                <span class="codeline"><span id="claim-command" class="selectall">/challenge claim flag:</span><span data-select-other-content="claim-command">{{ "<flag>" }}</span></span>
-            </h5>
-        {% endif %}
-    </div>
 {% endblock %}
 
 {% block content %}
-    {% if can_edit(request) %}
-        <a class="pure-button pure-button-primary" href="{{ url_for("EditChallenge", id=challenge.id) }}">Edit</a>
-        <a class="pure-button button-danger" href="{{ url_for("challenge_delete", id=challenge.id) }}" data-confirm="are you sure?">Delete</a>
-        <br />
-        <br />
-    {% endif %}
+
+  <h1 class="page-title">{{ challenge.title }}</h1>
+
+  <article>
+      {% if can_edit(request) %}
+      <div class="admin-options">
+          <a class="pure-button button-danger" href="{{ url_for("challenge_delete", id=challenge.id) }}" data-confirm="are you sure?">Delete</a>
+          <a class="pure-button pure-button-primary" href="{{ url_for("EditChallenge", id=challenge.id) }}">Edit</a>
+      </div>
+      {% endif %}
+
+    <div class="article-meta">
+      <h4>Solved {{ solves }} {{ "time" if solves == 1 else "times" }}</h4>
+      <h4>{{ challenge.points }} Points</h4>
+      <h4 class="date">{{ challenge.creation_date.strftime('%d/%m/%Y') }}</h4>
+    </div>
+
+      {% if challenge.hidden %}
+          <div class="tags">
+              <span class="post-note-warning-sidebar">hidden</span>
+          </div>
+          <br/>
+      {% endif %}
+      {% if challenge.depreciated %}
+          <div class="tags">
+              <span class="post-note-warning-sidebar">depreciated</span>
+          </div>
+          <br/>
+      {% endif %}
+      <div class="tags">
+          {% for tag in challenge.tags %}
+              {{ tag_link(tag) }}
+          {% endfor %}
+      </div>
+
+
+    <section class="solve">
+      {% if not solved_challenge %}
+          <h3>Enter the flag:</h3>
+          <form class="pure-form" method="POST" action="{{ url_for("challenge_submit_answer", id=challenge.id) }}">
+              {{ with_errors(submit_form.answer, class="search-bar", placeholder="Flag/Answer") }}
+          </form>
+      {% else %}
+          <h4>Solved!</h4>
+      {% endif %}
+
+      {% if challenge.answer %}
+          <h5>
+              <span data-select-other-content="claim-command">Claim Command: </span>
+              <br />
+              <span class="codeline"><span id="claim-command" class="selectall">/challenge claim challenge:{{ challenge.slug }} flag:</span><span data-select-other-content="claim-command">{{ "<answer>" }}</span></span>
+          </h5>
+      {% else %}
+          <h5>
+              <span data-select-other-content="claim-command">Claim Command: </span>
+              <br />
+              <span class="codeline"><span id="claim-command" class="selectall">/challenge claim flag:</span><span data-select-other-content="claim-command">{{ "<flag>" }}</span></span>
+          </h5>
+      {% endif %}
+    </section>
+
     {{ rendered | safe }}
+
+  </article>
 {% endblock %}

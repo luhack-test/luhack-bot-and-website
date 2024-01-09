@@ -5,9 +5,6 @@
         <header class="post-header">
             <h2 class="post-title"><a href="{{ url }}">{{ challenge.title }}</a></h2>
             <p class="post-meta">
-                Posted on {{ challenge.creation_date }}
-            </p>
-            <p class="post-meta">
                 {% if challenge.hidden %}
                     <span class="post-note-warning">hidden</span>
                 {% endif %}
@@ -17,14 +14,19 @@
                 {% if did_solve %}
                     <span class="post-note-good">solved</span>
                 {% endif %}
-                Solved {{ solves }} {{ "time" if solves == 1 else "times" }} | {{ challenge.points }} Points
-                {% for tag in challenge.tags -%}
-                    {% if loop.first %}
-                        | under
-                    {% endif %}
+                <span>
+                Solved {{ solves }} {{ "time" if solves == 1 else "times" }}
+                </span>
+                <span>
+                {{ challenge.points }} Points
+                </span>
+                <span>{{ challenge.creation_date.strftime('%d/%m/%Y') }}</span>
+            </p>
+            <div class="tags">
+                            {% for tag in challenge.tags -%}
                     {{ tag_link(tag) }}
                 {%- endfor %}
-            </p>
+            </div>
         </header>
         <div class="post-description">
             <p>

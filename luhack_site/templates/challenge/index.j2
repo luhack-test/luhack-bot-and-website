@@ -3,9 +3,11 @@
 {% from "challenge/preview.j2" import challenge_preview with context %}
 
 {% block content %}
+  <article>
     <div class="posts">
         {% for (challenge, content, solves, did_solve) in challenges %}
             {{ challenge_preview(challenge, content, url_for('challenge_view', slug=challenge.slug), solves, did_solve) }}
         {% endfor %}
     </div>
+  </article>
 {% endblock %}

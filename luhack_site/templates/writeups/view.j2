@@ -17,25 +17,32 @@
 {% endblock %}
 
 {% block header_content %}
+{% endblock %}
+
+
+{% block content %}
+  <h1 class="page-title">{{ writeup.title }}</h1>
+
+  <article>
+    {% if can_edit(request, writeup.author_id) %}
+      <div class="admin-options">
+        <a class="pure-button button-danger" href="{{ url_for("writeups_delete", id=writeup.id) }}" data-confirm="are you sure?">Delete</a>
+        <a class="pure-button pure-button-primary" href="{{ url_for("EditWriteup", id=writeup.id) }}">Edit</a>
+      </div>
+    {% endif %}
+
     <div class="article-meta">
-        <h2>{{ writeup.title }}</h2>
         {% if writeup.author_id %}
             <h4 class="author">By: {{ user_link(writeup.author.username) }}</h4>
         {% endif %}
-        <h4 class="date">{{ writeup.creation_date }}</h4>
+        <h4 class="date">{{ writeup.creation_date.strftime('%d/%m/%Y') }}</h4>
+    </div>
         <div class="tags">
             {% for tag in writeup.tags %}
                 {{ tag_link(tag) }}
             {% endfor %}
         </div>
-    </div>
-{% endblock %}
-{% block content %}
-    {% if can_edit(request, writeup.author_id) %}
-        <a class="pure-button pure-button-primary" href="{{ url_for("EditWriteup", id=writeup.id) }}">Edit</a>
-        <a class="pure-button button-danger" href="{{ url_for("writeups_delete", id=writeup.id) }}" data-confirm="are you sure?">Delete</a>
-        <br />
-        <br />
-    {% endif %}
+
     {{ rendered | safe }}
+  </article>
 {% endblock %}

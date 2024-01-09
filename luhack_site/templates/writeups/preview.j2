@@ -5,18 +5,18 @@
         <header class="post-header">
             <h2 class="post-title"><a href="{{ url }}">{{ writeup.title }}</a></h2>
             <p class="post-meta">
+                <span class="author">
                 {% if writeup.author_id %}
-                    Posted by {{ user_link(writeup.author.username) }} on {{ writeup.creation_date }}
-                {% else %}
-                    Posted on {{ writeup.creation_date }}
+                    {{ user_link(writeup.author.username) }}
                 {% endif %}
-                {% for tag in writeup.tags -%}
-                    {% if loop.first %}
-                        under
-                    {% endif %}
+                </span>
+                                {{ writeup.creation_date.strftime('%d/%m/%Y') }}
+            </p>
+            <div class="tags">
+{% for tag in writeup.tags -%}
                     {{ tag_link(tag) }}
                 {%- endfor %}
-            </p>
+</div>
         </header>
         <div class="post-description">
             <p>
