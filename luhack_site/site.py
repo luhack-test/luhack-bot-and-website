@@ -10,6 +10,7 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.requests import HTTPConnection
 from starlette.responses import Response
+from starlette.responses import RedirectResponse
 from starlette.routing import Mount
 from starlette.staticfiles import StaticFiles
 
@@ -57,10 +58,9 @@ app.add_middleware(
         "'self'",
         "cdnjs.cloudflare.com",
         "unpkg.com",
-        "fonts.googleapis.com",
-        "fonts.gstatic.com",
+        "fonts.bunny.net"
     ),
-    style_src=("'self'", "cdnjs.cloudflare.com", "unpkg.com", "fonts.googleapis.com"),
+    style_src=("'self'", "cdnjs.cloudflare.com", "unpkg.com", "fonts.bunny.net"),
 )
 app.add_middleware(AuthenticationMiddleware, backend=TokenAuthBackend())
 app.add_middleware(SessionMiddleware, secret_key=settings.TOKEN_SECRET)
@@ -89,9 +89,8 @@ templates.env.globals.update(can_edit=can_edit)
 
 
 @app.route("/")
-async def index(request: HTTPConnection):
-    return templates.TemplateResponse("index.j2", {"request": request})
-
+async def index(_:HTTPConnection):
+    return RedirectResponse(url="https://luhack.uk", status_code=301)
 
 @app.route("/plzauth")
 async def need_auth(request: HTTPConnection):
