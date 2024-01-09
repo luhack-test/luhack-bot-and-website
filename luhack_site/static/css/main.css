@@ -19,9 +19,14 @@ body {
   color: var(--color);
 }
 
+main {
+  padding-inline: 1rem;
+}
+
 article {
   max-width: 100ch;
   margin: auto;
+  margin-bottom: 1rem;
 }
 
 a {
@@ -167,6 +172,7 @@ form input {
 
 form button {
   float: right;
+  margin-bottom: 1rem;
 }
 
 form label {
