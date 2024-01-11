@@ -82,6 +82,7 @@ nav {
   display: flex;
   align-items: center;
   background-color: var(--background-highlight);
+  justify-content: space-between;
 }
 
 nav a {
@@ -89,19 +90,21 @@ nav a {
 }
 
 #logo {
-  height: 2rem;
-  width: 1.5rem;
+  height: 3rem;
+  width: 3rem;
   margin: 0.7rem;
   margin-left: 2rem;
   display: block;
+  flex-shrink: 0;
 }
 
 #main-nav {
   display: flex;
-  width: 100%;
+  width: auto;
   justify-content: center;
   flex-wrap: wrap;
-  margin-right: 4.2rem;
+  /* To match #logos effective flexbox size */
+  margin-right: calc(2rem + 3rem + 0.7rem);
 }
 
 #main-nav a {
@@ -115,16 +118,15 @@ nav a {
 
 #burger {
   display: none;
-  height: 2rem;
-  width: 2rem;
+  height: 3rem;
+  width: 3rem;
   margin: 0.7rem;
   margin-right: 2rem;
   cursor: pointer;
 }
 
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 770px) {
   nav {
-    justify-content: space-between;
     align-items: start;
   }
   #burger {
